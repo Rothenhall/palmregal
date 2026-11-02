@@ -32,7 +32,7 @@ export default function Home() {
             <p className="statement" data-words>Serviced suites with their own living room, kitchenette and balcony, set among <em>palms and lawns,</em> five minutes&apos; walk from Gopalpur beach. And your pets are welcome too.</p>
             <div className="badges" data-stagger><span className="chip">Pet friendly</span><span className="chip">5 min walk to the beach</span><span className="chip">Doctor on call</span><span className="chip">EV charging on request</span></div>
           </div>
-          <figure className="para" data-gl="photo" data-depth="-150" data-lens data-par>
+          <figure className="para" data-gl="photo" data-depth="-150" data-par>
             <img src="/img/exterior-1.webp" alt="Palm Regal building with landscaped lawns and palms" loading="lazy" />
             <figcaption><i />The lawns at Palm Regal, Gopalpur on Sea</figcaption>
           </figure>
@@ -59,7 +59,7 @@ export default function Home() {
         <div className="wrap">
           <div className="host">
             <div className="host-media">
-              <div className="img main" data-gl="photo" data-lens><img src="/img/view-2.webp" alt="Balcony looking over the gardens" loading="lazy" /><span className="stand">Host photo to come</span></div>
+              <div className="img main" data-gl="photo"><img src="/img/view-2.webp" alt="Balcony looking over the gardens" loading="lazy" /><span className="stand">Host photo to come</span></div>
               <div className="sig"><b>Welcome home</b><small>Your hosts at Palm Regal</small></div>
             </div>
             <div>

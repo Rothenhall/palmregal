@@ -16,7 +16,7 @@ export function SuiteGallery({ photos, todo }: { photos: { src: string; alt: str
   const step = (d: number) => { const tr = track.current!; let i = Math.round(tr.scrollLeft / tr.clientWidth) + d; if (i >= photos.length) i = 0; if (i < 0) i = photos.length - 1; tr.scrollTo({ left: i * tr.clientWidth, behavior: 'smooth' }); };
   return (
     <div className="gal">
-      <div className="gal-track" ref={track} data-gl="gal" data-lens data-src={photos[0].src}>
+      <div className="gal-track" ref={track} data-gl="gal" data-src={photos[0].src}>
         {photos.map((p, i) => <div className="img" key={p.src + i}><img src={p.src} alt={p.alt} loading="lazy" />{todo && <span className="stand">Photo to confirm</span>}</div>)}
       </div>
       {photos.length > 1 && <>

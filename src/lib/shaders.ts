@@ -8,11 +8,28 @@ float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<4;i++){v+=a*vnoise(p);p*=2.03;a*
 /* a liquid drop: soft wobbling rim, dome normal, normalised distance from centre */
 float dropShape(vec2 q,float R,float t,out vec3 n,out float d){
   float ang=atan(q.y,q.x);
-  float Rw=R*(1.+.03*sin(3.*ang+t*1.1)+.018*sin(5.*ang-t*.8));
+  float Rw=R*(1.+.045*sin(3.*ang+t*.9)+.025*sin(5.*ang-t*.7)+.012*sin(8.*ang+t*1.3));
   float l=length(q);d=l/max(Rw,1e-3);
   float h=sqrt(max(1.-d*d,0.));
   n=normalize(vec3(q/max(Rw,1e-3)*.9,h+.05));
   return smoothstep(Rw+1.,Rw-1.,l);
+}
+/* liquid metal: a teal-tinted chrome horizon, the surroundings mirrored in, hard highlights and a dark rim */
+vec3 chrome(vec3 n,float t){
+  vec3 r=reflect(vec3(0.,0.,-1.),normalize(vec3(n.xy*1.35,n.z)));
+  vec3 c=mix(vec3(.03,.10,.12),vec3(.22,.40,.44),smoothstep(-.7,.05,r.y));
+  c=mix(c,vec3(.80,.93,.93),smoothstep(.05,.45,r.y));
+  c=mix(c,vec3(.34,.56,.60),smoothstep(.55,.95,r.y));
+  c+=vec3(.03,.05,.05)*sin(r.y*5.+r.x*3.+t*.4);
+  return c;
+}
+vec3 metalLight(vec3 base,vec3 n,float d,float t){
+  vec3 g=base;
+  g+=vec3(1.)*pow(max(dot(n,normalize(LDIR)),0.),90.)*1.3;
+  g+=vec3(.85,1.,1.)*pow(max(dot(n,normalize(vec3(.55,-.35,.75))),0.),36.)*.28;
+  g*=1.-.5*smoothstep(.78,.99,d);
+  g+=vec3(.75,.92,.92)*smoothstep(.955,.99,d)*(1.-smoothstep(.99,1.,d))*.5;
+  return g;
 }
 /* teal tint, fresnel rim, highlight, caustic and rim line */
 vec3 glassLight(vec3 g,vec3 n,float d,vec2 dir,float tint){
@@ -60,12 +77,12 @@ void main(){
     col.rgb*=1.-.22*smoothstep(1.32,.92,sd);
     vec3 n;float d;float cov=dropShape(q,R,uTime,n,d);
     if(cov>0.){
-      vec2 lp=c+q*mix(.6,1.,d*d)-n.xy*R*.08;
-      vec2 ca=n.xy*R*.011;
-      vec4 L=scene(lp);
-      vec3 g=vec3(scene(lp+ca).r,L.g,scene(lp-ca).b);
-      g=glassLight(g,n,d,normalize(q+1e-4),.5);
-      col=mix(col,vec4(g,max(L.a,.85)),cov);
+      vec3 rr=reflect(vec3(0.,0.,-1.),normalize(vec3(n.xy*1.35,n.z)));
+      vec3 env=scene(c-rr.xy*R*1.7).rgb;
+      env=mix(env,vec3(dot(env,vec3(.3,.59,.11))),.45)*vec3(.82,1.,1.02);
+      vec3 g=mix(chrome(n,uTime),env*1.1,.38);
+      g=metalLight(g,n,d,uTime);
+      col=mix(col,vec4(g,1.),cov);
     }
   }
   float rad=min(vUv.y>.5?uRadT:uRadB,min(uSize.x,uSize.y)*.5);
@@ -83,9 +100,8 @@ void main(){
   float sd=length(q-vec2(.1,-.32)*R)/R;
   float sh=smoothstep(1.2,.55,sd)*mix(.16,.3,dark);
   vec3 n;float d;float cov=dropShape(q,R,uTime*.8+uSeed,n,d);
-  vec3 env=mix(uBg*mix(.80,.70,dark),mix(uBg,vec3(1.),mix(.45,.25,dark)),smoothstep(-.9,.9,-n.y));
-  vec3 g=glassLight(env,n,d,normalize(q+1e-4),mix(.45,.2,dark));
-  g+=AQUA*.1*fbm(q/R*2.+uTime*.15)*dark;
+  vec3 g=mix(chrome(n,uTime*.8+uSeed),uBg,.18);
+  g=metalLight(g,n,d,uTime);
   gl_FragColor=mix(vec4(NIGHT*.7,sh),vec4(g,.96),cov);
 }`;
 export const WATER = COMMON+`uniform vec2 uMouse;uniform float uRip;

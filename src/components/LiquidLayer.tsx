@@ -71,12 +71,12 @@ export function LiquidLayer() {
         const kind = el.dataset.gl!; if (kind === 'water') return; if (!fine && kind !== 'hero') return;
         const isHero = kind === 'hero', depth = +(el.dataset.depth || 0), zoom = depth ? 1 + Math.abs(depth) / 1200 + .02 : 1, rr = radii(el);
         const u = Object.assign(base(), { uA: { value: null }, uB: { value: null }, uHasA: { value: 0 }, uHasB: { value: 1 }, uP: { value: isHero ? 1 : 0 }, uZoomA: { value: zoom }, uZoomB: { value: zoom }, uAspA: { value: 1.5 }, uAspB: { value: 1.5 }, uShift: { value: 0 }, uRadT: { value: rr[0] }, uRadB: { value: rr[1] }, uDropAmt: { value: 0 }, uLife: { value: isHero ? 1 : 0 }, uOrigin: { value: new THREE.Vector2() }, uDrop: { value: new THREE.Vector3() } });
-        const it: Item = { el, kind, u, mesh: addMesh(S.PHOTO, u, 1), depth, zoom, lens: isHero || el.hasAttribute('data-lens'), over: false, ptr: new THREE.Vector2(), pos: new THREE.Vector2(-1, -1), revealed: isHero, ready: false, pending: false, busy: false, cur: null, want: null };
+        const it: Item = { el, kind, u, mesh: addMesh(S.PHOTO, u, 1), depth, zoom, lens: isHero || el.hasAttribute('data-lens'), over: false, ptr: new THREE.Vector2(), cur2: new THREE.Vector2(), pos: new THREE.Vector2(-1, -1), revealed: isHero, ready: false, pending: false, busy: false, cur: null, want: null };
         const src = srcOf(el); it.cur = it.want = src;
         tex(src).then(t => { if (!t || !alive) return; u.uB.value = t; u.uAspB.value = t.image.width / t.image.height; it.ready = true; el.classList.add('gl-ready'); if (isHero) gsap.fromTo(u.uZoomB, { value: 1.1 }, { value: 1, duration: 8, ease: 'none' }); if (it.pending) reveal(it); });
         el.querySelectorAll('img').forEach(im => tex(im.getAttribute('src')!));
         if (fine && it.lens) {
-          on(el, 'pointermove', (e: PointerEvent) => { const r = el.getBoundingClientRect(); it.ptr.set(e.clientX - r.left, r.bottom - e.clientY); if (!isHero && u.uDropAmt.value < .05) it.pos.copy(it.ptr); it.over = true; });
+          on(el, 'pointermove', (e: PointerEvent) => { const r = el.getBoundingClientRect(); (isHero ? it.cur2 : it.ptr).set(e.clientX - r.left, r.bottom - e.clientY); if (!isHero && u.uDropAmt.value < .05) it.pos.copy(it.ptr); it.over = true; });
           on(el, 'pointerleave', () => { it.over = false; });
         }
         /* components ask for a new photo with a cancelable "gl:src" event; cancelling means "the liquid layer has it" */
@@ -121,7 +121,10 @@ export function LiquidLayer() {
             let R: number, target: number;
             if (it.kind === 'hero') {
               const p = parseFloat(it.el.dataset.p ?? '1'); R = Math.max(80, Math.min(170, r.width * .085));
-              if (!it.over) it.ptr.copy(drift.set(r.width * (.74 + .07 * Math.sin(t * .19)), r.height * (.5 + .09 * Math.sin(t * .13 + 1.3))));
+              /* drifts on its own; the cursor only nudges it */
+              drift.set(r.width * (.72 + .08 * Math.sin(t * .17)), r.height * (.5 + .1 * Math.sin(t * .11 + 1.3)));
+              if (it.over) drift.lerp(it.cur2, .18);
+              it.ptr.copy(drift);
               target = Math.max(0, Math.min(1, (p - .6) / .35));
             } else { R = Math.max(48, Math.min(84, Math.min(r.width, r.height) * .16)); target = it.over ? 1 : 0; }
             if (it.pos.x < 0) it.pos.copy(it.ptr);
