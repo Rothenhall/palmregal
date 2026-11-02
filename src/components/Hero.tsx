@@ -5,6 +5,8 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { heroSlides, site } from '@/content/site';
 import { hasMotion } from '@/lib/env';
+import { BookBar } from './BookForm';
+import { Todo } from './Todo';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -84,9 +86,16 @@ export function Hero() {
               </div>
             </div>
           </div>
+          {/* Booking sits in the full-screen hero and fades in with the caption */}
+          <div className="wrap hero-book">
+            <BookBar />
+            <p className="book-msg">Book direct with the resort: your dates go straight to reception. <Todo>Booking engine or WhatsApp: question for Jahnavi</Todo></p>
+          </div>
         </div>
         <div className="hero-hint" aria-hidden="true">Scroll<i /></div>
       </div>
+      {/* /#book lands where the hero is full screen and the booking bar is showing */}
+      <span id="book" className="hero-anchor" aria-hidden="true" />
       <span className="sr">Check-in {site.checkIn}, check-out {site.checkOut}.</span>
     </section>
   );

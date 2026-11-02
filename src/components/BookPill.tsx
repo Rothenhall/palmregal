@@ -16,7 +16,7 @@ export function BookPill() {
 
   useEffect(() => {
     const check = () => {
-      const book = document.getElementById('book'), foot = document.querySelector('.foot');
+      const book = document.querySelector('.hero-book') ?? document.getElementById('book'), foot = document.querySelector('.foot');
       const past = book ? book.getBoundingClientRect().bottom < 60 : window.scrollY > 520;
       const beforeFoot = !foot || foot.getBoundingClientRect().top > innerHeight * .6;
       setShow(past && beforeFoot);

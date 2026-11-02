@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { Hero } from '@/components/Hero';
-import { BookBar } from '@/components/BookForm';
 import { Delights } from '@/components/Delights';
 import { DayStory } from '@/components/DayStory';
 import { Faq } from '@/components/Faq';
@@ -13,13 +12,6 @@ export default function Home() {
   return (
     <>
       <Hero />
-
-      <section className="book" id="book" data-bg="night" aria-label="Check availability">
-        <div className="wrap">
-          <BookBar />
-          <p className="book-msg">Book direct with the resort: your dates go straight to reception. <Todo>Booking engine or WhatsApp: question for Jahnavi</Todo></p>
-        </div>
-      </section>
 
       <section className="sec" data-bg="mint" aria-labelledby="intro-h">
         <Shade />
