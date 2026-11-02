@@ -219,3 +219,11 @@ export const facilityGroups = [
   { id: 'move', title: 'Move and', em: 'breathe.', text: 'A gym, a yoga lawn and a jogging track inside the property.' },
   { id: 'grounds', title: 'The grounds', em: 'and the sea.', text: 'Lawns for your pets, a sea view deck over the Bay of Bengal and a temple among the trees.' },
 ];
+
+/** Gallery chapters: each groups photos by their `group` */
+export const CHAPTERS = [
+  { id: 'grounds', group: 'Grounds', title: 'The', em: 'grounds.', text: 'Palms, lawns and lamp-lit paths around the suites.' },
+  { id: 'suites', group: 'Suites', title: 'The', em: 'suites.', text: 'Living rooms, bedrooms, kitchenettes and balconies.' },
+  { id: 'resort-life', group: 'Facilities', title: 'Resort', em: 'life.', text: 'The pool, the gaming lounge, the gym and the banquet hall.' },
+  { id: 'the-sea', group: 'Sea', title: 'The', em: 'sea.', text: 'The deck over the Bay of Bengal and Gopalpur beach at dusk.' },
+];

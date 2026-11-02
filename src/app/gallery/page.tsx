@@ -1,24 +1,17 @@
 import type { Metadata } from 'next';
 import { PageHero, Cta } from '@/components/Blocks';
-import { GalleryGrid } from '@/components/GalleryGrid';
-import { Icon } from '@/components/Icons';
-import { Todo } from '@/components/Todo';
+import { GalleryChapters } from '@/components/GalleryGrid';
+import { CHAPTERS } from '@/content/site';
+import { SubNav } from '@/components/SubNav';
 
 export const metadata: Metadata = { title: 'Gallery', description: 'Photos of the suites, gardens, pool and sea at Palm Regal, Gopalpur on Sea.' };
 
 export default function Gallery() {
   return (
     <>
-      <PageHero img="/img/amphitheatre.webp" alt="Lawns and amphitheatre at Palm Regal" crumb="Gallery" eyebrow="Photos and tour" title="See it before" em="you arrive." lede="The gardens, the suites, the pool and the sea, as our guests find them." />
-      <section className="sec" data-bg="mint" style={{ paddingTop: 'clamp(60px,7vw,100px)' }} aria-label="Photos">
-        <div className="wrap">
-          <figure className="para" style={{ marginTop: 0, marginBottom: 'clamp(50px,7vw,90px)' }} data-gl="photo" data-depth="-90">
-            <img src="/img/amphitheatre.webp" alt="Palm Regal lawns and amphitheatre" loading="lazy" />
-            <figcaption><Icon id="i-play" />Video tour <Todo>YouTube link to come</Todo></figcaption>
-          </figure>
-          <GalleryGrid />
-        </div>
-      </section>
+      <PageHero img="/img/amphitheatre.webp" alt="Lawns and amphitheatre at Palm Regal" crumb="Gallery" eyebrow="In four chapters" title="See it before" em="you arrive." lede="The gardens, the suites, the pool and the sea, as our guests find them." />
+      <SubNav label="Gallery chapters" items={CHAPTERS.map(c => ({ id: c.id, label: `${c.title} ${c.em.replace('.', '')}` }))} />
+      <GalleryChapters />
       <Cta />
     </>
   );

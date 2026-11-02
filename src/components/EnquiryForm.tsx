@@ -23,7 +23,7 @@ export function EnquiryForm() {
       const via = send(body);
       setDone(`Your enquiry is ready to send by ${via}. The resort replies from ${via === 'email' ? 'palmregalresort@gmail.com' : 'its WhatsApp number'}.`);
     }}>
-      <h2>Send an <em>enquiry.</em></h2>
+      <div className="form-head"><p className="eyebrow">Or write to us</p><h2>Send an <em>enquiry.</em></h2></div>
       <div className="f"><label htmlFor="e-name">Name</label><input id="e-name" autoComplete="name" value={v.name} onChange={set('name')} aria-invalid={!!err.name} aria-describedby="e-name-err" /><span className="err" id="e-name-err">{err.name}</span></div>
       <div className="f"><label htmlFor="e-phone">Phone or WhatsApp</label><input id="e-phone" type="tel" autoComplete="tel" value={v.phone} onChange={set('phone')} aria-invalid={!!err.phone} aria-describedby="e-phone-err" /><span className="err" id="e-phone-err">{err.phone}</span></div>
       <div className="f"><label htmlFor="e-in">Check-in</label><input id="e-in" type="date" min={d.min} value={d.checkIn} onChange={e => d.onIn(e.target.value)} /></div>
