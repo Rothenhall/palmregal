@@ -3,88 +3,28 @@ import { Hero } from '@/components/Hero';
 import { BookBar } from '@/components/BookForm';
 import { DelightsStack } from '@/components/DelightsStack';
 import { DayJourney } from '@/components/DayJourney';
-import { Icon, Shade } from '@/components/Icons';
+import { Icon } from '@/components/Icons';
 import { Todo } from '@/components/Todo';
 import { CoastMap } from '@/components/CoastMap';
 import { MomentsWall } from '@/components/MomentsWall';
-import { BookingSteps, ReviewBelt, SuiteTall, ThreeWays } from '@/components/Sections';
-import { facilities, pillars } from '@/content/site';
+import { ReviewBelt, SuiteTall, ThreeWays } from '@/components/Sections';
+import { facilities } from '@/content/site';
 import { DRAFT } from '@/lib/book';
 
-/* "A day by the Bay": the page runs from morning at the top to night at the footer */
+/* Bold and immersive: an evening mood throughout, seven sections, one dark language */
 export default function Home() {
   return (
     <>
       <Hero />
 
-      <section className="book" id="book" data-bg="mint" aria-label="Check availability">
+      <section className="book" id="book" data-bg="dusk" aria-label="Check availability">
         <div className="wrap">
           <BookBar />
           <p className="book-msg">Book direct with the resort: your dates go straight to reception. <Todo>Booking engine or WhatsApp: question for Jahnavi</Todo></p>
         </div>
       </section>
 
-      <section className="sec" data-bg="mint" aria-labelledby="intro-h">
-        <Shade speed={-0.3} />
-        <div className="wrap">
-          <h2 id="intro-h" className="sr">About Palm Regal</h2>
-          <div className="statement-row">
-            <div className="fill" data-fill>
-              <p className="statement">Serviced suites with their own living room, kitchenette and balcony, set among <em>palms and lawns,</em> five minutes&apos; walk from Gopalpur beach. And your pets are welcome too.</p>
-              <p className="statement fill-top" aria-hidden="true">Serviced suites with their own living room, kitchenette and balcony, set among <em>palms and lawns,</em> five minutes&apos; walk from Gopalpur beach. And your pets are welcome too.</p>
-              <i className="fill-line" aria-hidden="true" />
-            </div>
-            <div className="badges"><div className="badges-in"><span className="chip">Pet friendly</span><span className="chip">5 min walk to the beach</span><span className="chip">Doctor on call</span><span className="chip">EV charging on request</span></div></div>
-          </div>
-          <figure className="para" data-gl="photo" data-depth="-150" data-par>
-            <img src="/img/exterior-1.webp" alt="Palm Regal building with landscaped lawns and palms" loading="lazy" />
-            <figcaption><i />The lawns at Palm Regal, Gopalpur on Sea</figcaption>
-          </figure>
-        </div>
-      </section>
-
-      <section className="sec" data-bg="mint" aria-labelledby="pil-h">
-        <Shade left speed={-0.3} />
-        <div className="wrap">
-          <div className="head center"><p className="eyebrow">What Palm Regal is about</p><h2 id="pil-h" data-split data-drop>Green, sea <em>and home.</em></h2></div>
-          <div className="pillars2">
-            {pillars.map((p, i) => (
-              <div className="pil-par" key={p.key}><article className="pil" data-reveal>
-                <div className="img" data-gl="photo" data-depth="-130"><img src={p.img} alt="" loading="lazy" /></div>
-                <span className="pil-shade" />
-                <span className="pil-n">0{i + 1}</span>
-                <div className="pil-copy">
-                  <Icon id={`p-${p.key}`} />
-                  <h3>{p.title}</h3>
-                  <p>{p.text}</p>
-                </div>
-              </article></div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="sec lux" data-bg="sage" aria-labelledby="host-h">
-        <div className="wrap">
-          <div className="host">
-            <div className="host-media">
-              <div className="img main" data-gl="photo" data-depth="-120"><img src="/img/view-2.webp" alt="Balcony looking over the gardens" loading="lazy" /><span className="stand">Host photo to come</span></div>
-              <div className="sig"><b>Welcome home</b><small>Your hosts at Palm Regal</small></div>
-            </div>
-            <div>
-              <p className="eyebrow">Our story</p>
-              <h2 id="host-h" data-split data-drop>Started by a family. <em>Run like a home.</em></h2>
-              <div className="host-copy" data-reveal>
-                <p>Palm Regal is a resort homestay: suites with room to live, cook and slow down, and people who look after every stay themselves, from the first message to the last morning.</p>
-                <p>Tell us what you need before you arrive, whether it&apos;s an early check-in, a meal from The Shack or a taxi to Chilika, and we&apos;ll have it ready. <Todo>Host photo and words from Jahnavi</Todo></p>
-              </div>
-              <Link className="btn btn--teal" href="/contact/">Say hello <Icon id="i-arrow" /></Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="sec" data-bg="sage" id="suites" aria-labelledby="suites-h">
+      <section className="sec" data-bg="night" id="suites" aria-labelledby="suites-h">
         <div className="wrap">
           <div className="head-row" style={{ marginBottom: 'var(--head-gap)' }}>
             <div className="head"><p className="eyebrow">Our suites</p><h2 id="suites-h" data-split data-drop>Room to live, <em>not just sleep.</em></h2></div>
@@ -94,15 +34,8 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="sec" data-bg="mint" aria-labelledby="how-h">
-        <div className="wrap">
-          <div className="head center"><p className="eyebrow">Book direct</p><h2 id="how-h" data-split data-drop>Three steps. <em>No middleman.</em></h2></div>
-          <BookingSteps />
-        </div>
-      </section>
 
-
-      <section className="sec dsec" data-bg="mint" id="facilities" aria-labelledby="dl-h">
+      <section className="sec dsec" data-bg="dusk" id="facilities" aria-labelledby="dl-h">
         <div className="wrap">
           <div className="dsec-head">
             <span className="dsec-count num" aria-hidden="true">{facilities.length}</span>

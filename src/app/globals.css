@@ -1289,3 +1289,17 @@ html:not(.motion) .dcard { position: relative; top: 0 }
   html.motion .suites-stack .suite { position: sticky; top: calc(var(--hdr) + 76px) }
 }
 @media (max-width: 900px), (max-height: 759px) { .dcard, .suites-stack .suite { transform: none !important; filter: none !important } }
+
+/* ===== Bold and immersive: the homepage in evening tones ===== */
+.realhero { background: var(--teal-950) }
+.realhero .rh-stick { color: var(--on-dark) }
+.rh-brand { color: var(--on-dark) }
+.rh-word em { color: var(--teal-200) }
+.rh-kicker { color: var(--teal-200) }
+html.shift .book { background: var(--teal-950) }
+.book .book-msg { color: var(--c-muted) }
+.book .wrap { padding-block: 34px 44px }
+.dsec-count { -webkit-text-stroke-color: rgba(180, 228, 228, .6) }
+[data-bg="dusk"] .dcard--dusk, [data-bg="night"] .dcard--dusk { box-shadow: inset 0 0 0 1px var(--glass-edge), 0 30px 60px -36px rgba(0, 0, 0, .7) }
+[data-bg="dusk"] .dcard--teal { box-shadow: inset 0 0 0 1px rgba(180, 228, 228, .14), 0 30px 60px -36px rgba(0, 0, 0, .7) }
+#suites .tall-card { box-shadow: 0 30px 60px -30px rgba(0, 0, 0, .7) }

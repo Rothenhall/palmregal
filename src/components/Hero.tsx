@@ -23,7 +23,7 @@ export function Hero() {
   const [cur, setCur] = useState(0);
 
   useEffect(() => {
-    if (!hasMotion()) { root.current!.dataset.dark = '1'; return; }
+    if (!hasMotion()) return;
     const sec = root.current!;
     const mob = innerWidth < 760;
     const ctx = gsap.context(() => {
@@ -32,7 +32,6 @@ export function Hero() {
       const tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: sec, start: 'top top', end: 'bottom bottom', scrub: .8, invalidateOnRefresh: true,
         onUpdate: self => {
           const p = self.progress, n = p < .42 ? 0 : p < .72 ? 1 : 2; setCur(c => (c === n ? c : n));
-          const dark = p > .12 ? '1' : '0'; if (sec.dataset.dark !== dark) { sec.dataset.dark = dark; window.dispatchEvent(new Event('pr:hero')); }
         } } });
       /* 1 · the arch opens to the screen; the photo inside settles from 1.35 to 1.02 as it does */
       tl.fromTo(arch, { width: () => arch.offsetWidth, height: () => arch.offsetHeight, borderTopLeftRadius: r0, borderTopRightRadius: r0, borderBottomLeftRadius: 8, borderBottomRightRadius: 8 },
@@ -61,7 +60,7 @@ export function Hero() {
   }, []);
 
   return (
-    <section className="hero realhero" ref={root} aria-label="Welcome to Palm Regal" data-dark="0">
+    <section className="hero realhero" ref={root} aria-label="Welcome to Palm Regal" data-dark="1">
       <div className="rh-stick">
         {SHOTS.map((s, i) => (
           <div className={'rh-shot ' + (i === 0 ? 'first' : 's' + i)} key={s.src}>

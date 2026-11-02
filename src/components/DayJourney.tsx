@@ -30,7 +30,7 @@ export function DayJourney() {
 
   const total = String(day.length).padStart(2, '0');
   return (
-    <section ref={root} id="gallery" className={'djourney' + (held ? ' held' : '')} data-bg="canopy" aria-labelledby="day-h">
+    <section ref={root} id="gallery" className={'djourney' + (held ? ' held' : '')} data-bg="night" aria-labelledby="day-h">
       <div className="dj-stick wrap">
         <div className="dj-left">
           <p className="eyebrow" id="day-h">A day at Palm Regal</p>
