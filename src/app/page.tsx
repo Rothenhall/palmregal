@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Hero } from '@/components/Hero';
 import { BookBar } from '@/components/BookForm';
 import { Delights } from '@/components/Delights';
-import { DayStory } from '@/components/DayStory';
+import { DayJourney } from '@/components/DayJourney';
 import { Icon, Shade } from '@/components/Icons';
 import { Todo } from '@/components/Todo';
 import { CoastMap } from '@/components/CoastMap';
@@ -109,15 +109,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="sec" data-bg="canopy" id="gallery" aria-labelledby="day-h">
-        <div className="wrap">
-          <div className="head-row" style={{ marginBottom: 'clamp(30px,4vw,60px)' }}>
-            <div className="head"><p className="eyebrow">A day here</p><h2 id="day-h" data-split data-drop>A day at <em>Palm Regal.</em></h2></div>
-            <Link className="tlink" href="/gallery/">Full gallery <Icon id="i-arrow" /></Link>
-          </div>
-          <DayStory />
-        </div>
-      </section>
+      <DayJourney />
 
       <section className="sec lux" data-bg="dusk" id="location" aria-labelledby="loc-h">
         <div className="wrap">

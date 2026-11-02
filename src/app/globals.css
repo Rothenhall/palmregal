@@ -1204,3 +1204,40 @@ html:not(.motion) .fill > .statement:not(.fill-top) { color: var(--teal-800) } h
 .suites-stack .suite { position: sticky; top: calc(var(--hdr) + 76px); border-top: 0; padding: clamp(20px, 3vw, 40px); background: var(--c-surface); border: 1px solid var(--c-line); border-radius: var(--r-lg); box-shadow: var(--shadow-card); transform-origin: 50% 0; will-change: transform }
 html:not(.motion) .suites-stack .suite { position: relative; top: 0 }
 @media (max-width: 900px) { .suites-stack .suite { top: calc(var(--hdr) + 64px) } }
+
+/* ===== A day at Palm Regal: held journey (after the reference's pinned journey) ===== */
+.djourney { position: relative; color: var(--on-dark) }
+.djourney.held { height: 440svh }
+.dj-stick { display: grid; grid-template-columns: 1.05fr 1fr; gap: 4vw; align-items: center; padding-block: var(--sec-y) }
+.djourney.held .dj-stick { position: sticky; top: 0; height: 100svh; padding-block: calc(var(--hdr) + 4vh) 6vh }
+.dj-left { display: flex; flex-direction: column; justify-content: center; height: 100% }
+.dj-num { display: flex; align-items: flex-end; gap: 14px; margin: 3vh 0 3vh; font: 300 clamp(96px, 15vw, 240px)/.8 var(--display); color: transparent; -webkit-text-stroke: 1px rgba(180, 228, 228, .55) }
+.dj-num span { display: inline-block; animation: dj-in .6s var(--ease) }
+.dj-num b { font: 600 .8rem/1 var(--body); letter-spacing: .2em; -webkit-text-stroke: 0; color: var(--teal-200); padding-bottom: 1.1vw }
+@keyframes dj-in { from { opacity: 0; transform: translateY(18px) } to { opacity: 1; transform: none } }
+.dj-steps { position: relative; min-height: 270px }
+.djourney.held .dj-step { position: absolute; inset: 0 0 auto 0; opacity: 0; transform: translateY(24px); transition: opacity .55s var(--ease), transform .6s var(--ease); pointer-events: none }
+.djourney.held .dj-step.on { opacity: 1; transform: none; pointer-events: auto }
+.djourney:not(.held) .dj-step { padding-block: 22px; border-top: 1px solid var(--line-d) }
+.dj-step time { font-size: .72rem; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; color: var(--teal-200) }
+.dj-step h3 { font-size: clamp(2.4rem, 4.6vw, 4.6rem); line-height: 1; margin: 14px 0 20px }
+.dj-step h3 em { color: #cfe6c4 }
+.dj-step p { max-width: 44ch; color: rgba(238, 245, 242, .78); font-size: 1.05rem }
+.dj-mobile-img { display: none }
+.dj-foot { display: flex; justify-content: space-between; align-items: center; gap: 20px; margin-top: 3vh }
+.dj-dots { display: flex; gap: 10px }
+.dj-dots i { height: 2px; width: 34px; background: rgba(238, 245, 242, .22); transition: background .5s, width .6s var(--ease) }
+.dj-dots i.on { background: var(--teal-200); width: 70px }
+.dj-right { height: 100%; display: grid; place-items: center }
+.dj-arch { position: relative; width: min(100%, 520px); height: min(72svh, 680px); border-radius: var(--r-arch); overflow: hidden; background: var(--teal-900) }
+.dj-arch img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; clip-path: inset(100% 0 0 0); transition: clip-path 1.2s var(--ease) }
+.dj-arch img:first-child, .dj-arch img.on { clip-path: inset(0) }
+.djourney:not(.held) .dj-right, .djourney:not(.held) .dj-num, .djourney:not(.held) .dj-dots { display: none }
+.djourney:not(.held) .dj-stick { grid-template-columns: 1fr }
+.djourney:not(.held) .dj-mobile-img { display: block; margin-top: 16px; border-radius: var(--r-md); overflow: hidden; aspect-ratio: 16/9 } .dj-mobile-img img { width: 100%; height: 100%; object-fit: cover }
+@media (max-width: 900px) {
+  .djourney.held .dj-stick { grid-template-columns: 1fr; gap: 2vh; align-content: start; padding-top: calc(var(--hdr) + 2vh) }
+  .dj-right { order: -1; height: 34svh } .dj-arch { height: 34svh; width: min(62%, 300px) }
+  .dj-left { height: auto } .dj-num { font-size: 19vw; margin: 1vh 0 } .dj-steps { min-height: 250px }
+  .dj-step h3 { font-size: 2.3rem; margin: 8px 0 12px }
+}
