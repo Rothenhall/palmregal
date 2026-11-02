@@ -21,7 +21,7 @@ export function Footer() {
         </div>
         <p className="notice">Please book only through this website, our official phone number or {site.email}. <Todo>Optional notice, wording from the resort</Todo></p>
       </div>
-      <div className="water" data-gl="water"><Fireflies /><div className="bigword" aria-hidden="true"><img src="/img/emblem.png" alt="" />Palm <em>Regal</em></div></div>
+      <div className="water" data-gl="water"><Fireflies /><div className="bigword" aria-hidden="true" data-speed=".28" data-ptrigger=".foot"><img src="/img/emblem.png" alt="" />Palm <em>Regal</em></div></div>
       <div className="foot-bottom"><span>© {new Date().getFullYear()} Palm Regal Resort Homestay, Gopalpur</span><span>Website by Rothenhall</span></div>
     </footer>
   );

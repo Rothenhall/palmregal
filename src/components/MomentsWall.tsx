@@ -31,13 +31,13 @@ export function MomentsWall() {
 
   return (
     <>
-      <div className={'mwall' + (open !== null ? ' dim' : '')} ref={wall}>
+      <div className="mwall-par" data-speed="-0.35" data-ptrigger=".moments-sec"><div className={'mwall' + (open !== null ? ' dim' : '')} ref={wall}>
         {tiles.map((t, i) => (
           <button key={i} type="button" className="mtile2" style={{ ['--d' as string]: `${((i * 37) % 11) / 10}`, animationDelay: `${(i % COLS) * .04 + Math.floor(i / COLS) * .08}s` }} onClick={() => setOpen(i)} aria-label={`Open moment: ${t.cap}`} tabIndex={i < 12 ? 0 : -1}>
             <img src={t.src} alt="" loading="lazy" />
           </button>
         ))}
-      </div>
+      </div></div>
       <p className="mhint" aria-hidden="true">Click a moment</p>
       {open !== null && (
         <div className="mfocus" role="dialog" aria-modal="true" aria-label={tiles[open].cap} onClick={() => setOpen(null)}>

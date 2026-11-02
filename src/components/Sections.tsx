@@ -28,9 +28,9 @@ export function Glance() {
 /* Suites as tall cards: the facts rise in a glass panel on hover */
 export function SuiteTall() {
   return (
-    <div className="tall" data-stagger>
-      {suites.map(s => (
-        <Link className="tall-card" key={s.slug} href={`/suites/#${s.slug}`}>
+    <div className="tall">
+      {suites.map((s, i) => (
+        <div className="tall-par" key={s.slug} data-speed={[0.05, 0.15, 0.09][i]} data-ptrigger=".tall"><Link className="tall-card" href={`/suites/#${s.slug}`}>
           <div className="img" data-gl="photo"><img src={s.photos[0].src} alt={s.photos[0].alt} loading="lazy" />{s.todo && <span className="stand">Photo to confirm</span>}</div>
           <span className="tall-shade" />
           <span className="tall-top"><span className="tall-no">{s.no}</span><span className="tall-go"><Icon id="i-arrow" /></span></span>
@@ -41,7 +41,7 @@ export function SuiteTall() {
               <span className="tall-best"><small>Best for</small>{s.bestFor}</span>
             </span></span>
           </span>
-        </Link>
+        </Link></div>
       ))}
     </div>
   );

@@ -879,3 +879,13 @@ html.shift [data-bg="dusk"] { background-image: radial-gradient(120% 70% at 80% 
 .statement em { color: var(--c-em) }
 .head h2, .faq-side h2 { color: var(--c-text) }
 .dl-head h2, .phero h1 { color: var(--c-text) }
+
+/* ===== Parallax wrappers ===== */
+.pil-par, .tall-par { will-change: transform }
+.pil-par:nth-child(2) { margin-top: clamp(30px, 5vw, 80px) } .pil-par:nth-child(3) { margin-top: clamp(60px, 10vw, 160px) }
+.pil:nth-child(n) { margin-top: 0 }
+.tall-par { display: grid }
+.mwall-par { position: absolute; inset: -8% 0; will-change: transform }
+.badges-in { display: grid; gap: 10px; justify-items: end }
+@media (max-width: 900px) { .pil-par:nth-child(n) { margin-top: 0 } }
+@media (max-width: 900px) { .badges-in { display: flex; flex-wrap: wrap; gap: 10px; justify-items: start } }

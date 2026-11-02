@@ -25,12 +25,12 @@ export default function Home() {
       </section>
 
       <section className="sec" data-bg="mint" aria-labelledby="intro-h">
-        <Shade />
+        <Shade speed={-0.3} />
         <div className="wrap">
           <h2 id="intro-h" className="sr">About Palm Regal</h2>
           <div className="statement-row">
             <p className="statement" data-words>Serviced suites with their own living room, kitchenette and balcony, set among <em>palms and lawns,</em> five minutes&apos; walk from Gopalpur beach. And your pets are welcome too.</p>
-            <div className="badges" data-stagger><span className="chip">Pet friendly</span><span className="chip">5 min walk to the beach</span><span className="chip">Doctor on call</span><span className="chip">EV charging on request</span></div>
+            <div className="badges"><div className="badges-in" data-speed=".22" data-ptrigger=".statement-row"><span className="chip">Pet friendly</span><span className="chip">5 min walk to the beach</span><span className="chip">Doctor on call</span><span className="chip">EV charging on request</span></div></div>
           </div>
           <figure className="para" data-gl="photo" data-depth="-150" data-par>
             <img src="/img/exterior-1.webp" alt="Palm Regal building with landscaped lawns and palms" loading="lazy" />
@@ -40,12 +40,12 @@ export default function Home() {
       </section>
 
       <section className="sec" data-bg="mint" aria-labelledby="pil-h">
-        <Shade left />
+        <Shade left speed={-0.3} />
         <div className="wrap">
           <div className="head center"><p className="eyebrow">What Palm Regal is about</p><h2 id="pil-h" data-split data-drop>Green, sea <em>and home.</em></h2></div>
-          <div className="pillars2" data-stagger>
+          <div className="pillars2">
             {pillars.map((p, i) => (
-              <article className="pil" key={p.key}>
+              <div className="pil-par" key={p.key} data-speed={[0.04, 0.14, 0.24][i]} data-ptrigger=".pillars2"><article className="pil" data-reveal>
                 <div className="img" data-gl="photo"><img src={p.img} alt="" loading="lazy" /></div>
                 <span className="pil-shade" />
                 <span className="pil-n">0{i + 1}</span>
@@ -54,7 +54,7 @@ export default function Home() {
                   <h3>{p.title}</h3>
                   <p>{p.text}</p>
                 </div>
-              </article>
+              </article></div>
             ))}
           </div>
         </div>
@@ -65,7 +65,7 @@ export default function Home() {
           <div className="host">
             <div className="host-media">
               <div className="img main" data-gl="photo"><img src="/img/view-2.webp" alt="Balcony looking over the gardens" loading="lazy" /><span className="stand">Host photo to come</span></div>
-              <div className="sig"><b>Welcome home</b><small>Your hosts at Palm Regal</small></div>
+              <div className="sig" data-speed=".32" data-ptrigger=".host"><b>Welcome home</b><small>Your hosts at Palm Regal</small></div>
             </div>
             <div>
               <p className="eyebrow">Our story</p>
@@ -100,7 +100,7 @@ export default function Home() {
 
       <section className="sec" data-bg="teal" id="facilities" aria-labelledby="dl-h">
         <div className="wrap">
-          <div className="dl-head"><div className="head" style={{ margin: 0 }}><p className="eyebrow">Resort delights</p><h2 id="dl-h" data-split data-drop>Reasons to <em>stay in.</em></h2></div><span className="dl-count num" aria-hidden="true">{facilities.length}</span></div>
+          <div className="dl-head"><div className="head" style={{ margin: 0 }}><p className="eyebrow">Resort delights</p><h2 id="dl-h" data-split data-drop>Reasons to <em>stay in.</em></h2></div><span className="dl-count num" aria-hidden="true" data-speed=".35">{facilities.length}</span></div>
           <Delights />
         </div>
       </section>

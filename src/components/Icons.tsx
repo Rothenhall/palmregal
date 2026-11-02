@@ -49,9 +49,9 @@ function fronds() {
 }
 const FRONDS = fronds();
 
-export function Shade({ left }: { left?: boolean }) {
+export function Shade({ left, speed }: { left?: boolean; speed?: number }) {
   return (
-    <div className={left ? 'shade left' : 'shade'} aria-hidden="true">
+    <div className={left ? 'shade left' : 'shade'} aria-hidden="true" data-speed={speed} data-ptrigger="[data-bg]">
       <svg viewBox="0 0 600 600" dangerouslySetInnerHTML={{ __html: FRONDS }} />
     </div>
   );

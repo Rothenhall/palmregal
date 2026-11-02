@@ -58,6 +58,13 @@ export function Motion() {
         if (!html.classList.contains('gl-on')) gsap.utils.toArray<HTMLElement>('[data-par] img').forEach(img => gsap.fromTo(img, { yPercent: -6, scale: 1.12 }, { yPercent: 6, scale: 1.12, ease: 'none', scrollTrigger: { trigger: img.parentElement!, start: 'top bottom', end: 'bottom top', scrub: true } }));
         document.querySelectorAll<SVGPathElement>('.map .route').forEach((r, i) => { const len = r.getTotalLength(); gsap.fromTo(r, { strokeDasharray: len, strokeDashoffset: len }, { strokeDashoffset: 0, duration: 1.8, delay: i * .15, ease: 'power2.inOut', scrollTrigger: { trigger: '.map', start: 'top 75%', once: true }, onComplete: () => { if (!r.classList.contains('accent')) r.style.strokeDasharray = '5 7'; } }); });
         const cnt = document.querySelector('.dl-count'); if (cnt) gsap.from(cnt, { textContent: 0, duration: 1.6, ease: 'power2.out', snap: { textContent: 1 }, scrollTrigger: { trigger: cnt, start: 'top 88%', once: true } });
+        /* parallax: [data-speed] moves against the scroll; positive is faster than the page, negative slower */
+        const mob = innerWidth < 760 ? .5 : 1;
+        gsap.utils.toArray<HTMLElement>('[data-speed]').forEach(el => {
+          const sp = parseFloat(el.dataset.speed || '0') * mob; if (!sp) return;
+          const trig = (el.dataset.ptrigger && el.closest(el.dataset.ptrigger)) || el;
+          gsap.fromTo(el, { y: sp * 110 }, { y: -sp * 110, ease: 'none', scrollTrigger: { trigger: trig, start: 'top bottom', end: 'bottom top', scrub: .4 } });
+        });
         gsap.utils.toArray<HTMLElement>('[data-stagger]').forEach(g => gsap.from(g.children, { y: 36, opacity: 0, duration: 1, stagger: .07, ease, clearProps: 'transform,opacity', scrollTrigger: { trigger: g, start: 'top 85%', once: true } }));
         /* page colour follows the section in the middle of the screen */
         const secs = gsap.utils.toArray<HTMLElement>('main [data-bg]');

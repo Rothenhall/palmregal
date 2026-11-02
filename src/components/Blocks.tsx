@@ -45,7 +45,7 @@ export function PageHero({ eyebrow, title, em, lede, crumb }: { eyebrow: string;
     <section className="phero" data-bg="mint">
       <div className="wrap">
         <nav className="crumbs" aria-label="Breadcrumb"><Link href="/">Home</Link><span aria-hidden="true">/</span><span aria-current="page">{crumb}</span></nav>
-        <div className="phero-row">
+        <div className="phero-row" data-speed=".18" data-ptrigger=".phero">
           <div>
             <h1 data-split data-now data-drop>{title} <em>{em}</em></h1>
             <p className="lede" data-reveal>{lede}</p>
