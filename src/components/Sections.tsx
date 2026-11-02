@@ -62,12 +62,6 @@ export function Story() {
           </li>
         ))}
       </ol>
-      <div className="story-people">
-        {['Founder', 'Founder', 'Host', 'Kitchen', 'Reception'].map((r, i) => (
-          <figure key={i}><span className="ph" /><figcaption><b>Name to come</b><small>{r}</small></figcaption></figure>
-        ))}
-        <p className="story-note"><Todo>Family and team photos from Jahnavi</Todo></p>
-      </div>
     </div>
   );
 }

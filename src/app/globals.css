@@ -579,11 +579,6 @@ html.motion.js:not(.ready) [data-split] { visibility: hidden }
 .story-steps time { font-size: .7rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--sky-ink) }
 .story-steps h3 { font-size: var(--h-card) }
 .story-steps p { color: var(--ink-2); font-size: .95rem }
-.story-people { margin-top: 50px; display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end }
-.story-people figure { margin: 0; width: 120px; display: grid; gap: 8px }
-.story-people .ph { aspect-ratio: 4/5; border-radius: var(--r-sm); background: linear-gradient(160deg, var(--mint-2), #cfe1da); border: 1px dashed rgba(19, 47, 55, .25) }
-.story-people figcaption b { display: block; font: 400 .95rem var(--display) } .story-people figcaption small { font-size: .74rem; color: var(--ink-2) }
-.story-note { flex-basis: 100% }
 @media (max-width: 900px) { .story-steps { grid-template-columns: 1fr 1fr; row-gap: 50px } }
 
 /* Tall suite cards with a glass panel that rises on hover */
@@ -783,7 +778,5 @@ html.shift .moments-sec::before { background: linear-gradient(180deg, rgba(12, 3
 .story.in .story-steps:hover li { opacity: .4; transition-delay: 0s }
 .story.in .story-steps li:hover { opacity: 1 }
 .story-steps li:hover .story-dot { transform: scale(1.6); background: var(--teal) }
-.story-people figure { transition: transform .5s var(--ease) } .story-people figure:hover { transform: translateY(-4px) }
 .tall-card .stand { left: auto; right: 72px; top: 24px }
 .mwall { align-content: start; top: -14% }
-@media (max-width: 640px) { .story-people { gap: 10px } .story-people figure { width: calc(33% - 8px) } }
