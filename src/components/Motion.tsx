@@ -53,7 +53,12 @@ export function Motion() {
           });
           if (!st.querySelector('.w')) wrap(st);
           const ws = st.querySelectorAll('.w'); gsap.set(ws, { opacity: .16 });
-          gsap.to(ws, { opacity: 1, stagger: .1, ease: 'none', scrollTrigger: { trigger: st, start: 'top 82%', end: 'bottom 45%', scrub: true } });
+          /* fills in as you read down, then stays filled: it never fades again on the way back up (NN/g) */
+          let most = 0;
+          ScrollTrigger.create({ trigger: st, start: 'top 82%', end: 'bottom 45%', onUpdate: self => {
+            if (self.progress <= most) return; most = self.progress;
+            const n = Math.round(most * ws.length); ws.forEach((w, i) => gsap.to(w, { opacity: i < n ? 1 : .16, duration: .3, overwrite: true }));
+          } });
         });
         if (!html.classList.contains('gl-on')) gsap.utils.toArray<HTMLElement>('[data-par] img').forEach(img => gsap.fromTo(img, { yPercent: -6, scale: 1.12 }, { yPercent: 6, scale: 1.12, ease: 'none', scrollTrigger: { trigger: img.parentElement!, start: 'top bottom', end: 'bottom top', scrub: true } }));
         document.querySelectorAll<SVGPathElement>('.map .route').forEach((r, i) => { const len = r.getTotalLength(); gsap.fromTo(r, { strokeDasharray: len, strokeDashoffset: len }, { strokeDashoffset: 0, duration: 1.8, delay: i * .15, ease: 'power2.inOut', scrollTrigger: { trigger: '.map', start: 'top 75%', once: true }, onComplete: () => { if (!r.classList.contains('accent')) r.style.strokeDasharray = '5 7'; } }); });
