@@ -946,3 +946,50 @@ html.shift .phero2 { background: var(--teal-900) }
 .fcard-copy p { max-width: 42ch; font-size: .95rem; color: rgba(238, 245, 242, .85) }
 @media (max-width: 900px) { .fcards { grid-template-columns: 1fr 1fr } .fcard:nth-child(n), .fcards.n4 .fcard:nth-child(n), .fcards.n5 .fcard:nth-child(n) { grid-column: span 1 } .fcards.n1 .fcard { grid-column: 1 / -1 } }
 @media (max-width: 600px) { .fcards { grid-template-columns: 1fr } .fcard { min-height: 340px } }
+
+/* ===== Coast map (real geography) ===== */
+.cmap { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: var(--gap); align-items: stretch }
+.cmap-stage { position: relative; aspect-ratio: 1200 / 760; border-radius: var(--r-lg); overflow: hidden; background: #0a1e25; isolation: isolate;
+  -webkit-mask-image: radial-gradient(140% 140% at 50% 50%, #000 62%, transparent 100%); mask-image: radial-gradient(140% 140% at 50% 50%, #000 62%, transparent 100%) }
+.cmap-stage > svg { position: absolute; inset: 0; width: 100%; height: 100% }
+.cmap-lean { transition: transform .95s var(--ease-io) }
+.cm-land { fill: #12313a } .cm-depth path { fill: none; stroke: rgba(180, 228, 228, .35); stroke-width: 1; stroke-dasharray: 2 6 }
+.cm-coast { fill: none; stroke: var(--teal-200); stroke-width: 1.8; stroke-linejoin: round }
+.cm-coast-glow { fill: none; stroke: var(--teal-200); stroke-width: 9; opacity: .4; animation: shore 6s ease-in-out infinite alternate }
+.cm-border { fill: none; stroke: rgba(238, 245, 242, .28); stroke-width: 1.2; stroke-dasharray: 6 5 }
+.cm-road { fill: none; stroke: rgba(238, 245, 242, .3); stroke-width: 2.2; stroke-linecap: round }
+.cm-road-flow { fill: none; stroke: var(--sky-500); stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 2 30; animation: flow 4s linear infinite; opacity: .8 }
+.cm-region { font: 600 13px var(--body); letter-spacing: .32em; fill: rgba(238, 245, 242, .26) }
+.cm-sea-label { font: italic 300 30px var(--display); fill: rgba(238, 245, 242, .34) }
+.cm-lake { font: italic 300 20px var(--display); fill: rgba(180, 228, 228, .6) }
+.cm-shield rect { fill: #0a1e25; stroke: rgba(238, 245, 242, .45) } .cm-shield text { font: 700 10px var(--body); letter-spacing: .08em; fill: rgba(238, 245, 242, .8); text-anchor: middle }
+.cm-home-halo { animation: halo 3.2s ease-in-out infinite }
+.cm-arc path { fill: none; stroke: var(--teal-200); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 1 7; opacity: .9 }
+.cm-arc path.flow { stroke: var(--white); stroke-dasharray: 3 60; animation: flow 1.8s linear infinite; filter: drop-shadow(0 0 4px rgba(180, 228, 228, .9)) }
+.cm-arc { animation: fadeIn .5s var(--ease) }
+.cm-dist rect { fill: rgba(11, 34, 40, .9); stroke: var(--glass-edge) } .cm-dist text { font: 600 12px var(--body); fill: var(--on-dark); text-anchor: middle; letter-spacing: .04em }
+.cmap-pins { position: absolute; inset: 0; transition: transform .95s var(--ease-io); pointer-events: none }
+.cpin { position: absolute; transform: translate(-50%, -100%); display: grid; justify-items: center; gap: 6px; padding: 0 0 0; border: 0; background: none; cursor: pointer; pointer-events: auto; color: var(--on-dark) }
+.cpin i { position: relative; width: 14px; height: 14px; margin-bottom: -7px; border-radius: 50%; background: var(--on-dark); box-shadow: 0 0 0 3px rgba(10, 30, 37, .9); transition: transform .32s var(--ease-pop), background .3s }
+.cpin-tag { padding: 5px 11px; border-radius: var(--r-pill); background: rgba(10, 30, 37, .78); border: 1px solid rgba(238, 245, 242, .14); font-size: .78rem; font-weight: 500; white-space: nowrap; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); transition: background .3s, border-color .3s, transform .3s var(--ease) }
+.cpin:hover i, .cpin.lit i { transform: scale(1.4); background: var(--teal-200) }
+.cpin:hover .cpin-tag, .cpin.lit .cpin-tag { background: var(--teal-800); border-color: var(--glass-edge); transform: translateY(-2px) }
+.cpin.home i { width: 30px; height: 30px; margin-bottom: -15px; display: grid; place-items: center; background: var(--white); color: var(--teal-900); box-shadow: 0 0 0 3px var(--teal-200), 0 0 24px 6px rgba(180, 228, 228, .5) }
+.cpin.home i svg { width: 16px; height: 16px }
+.cpin.home .cpin-tag { font-weight: 600 }
+.cpin.home:hover i, .cpin.home.lit i { transform: scale(1.1); background: var(--white) }
+.cmap-spot { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .5s; mix-blend-mode: screen; background: radial-gradient(circle 220px at var(--sx, 50%) var(--sy, 50%), rgba(244, 248, 243, .1), transparent 70%) }
+.cmap-stage[data-pointer] .cmap-spot { opacity: 1 }
+.cmap-hint { position: absolute; left: 22px; bottom: 20px; margin: 0; padding: 7px 13px; border-radius: var(--r-pill); font-size: .74rem; color: rgba(238, 245, 242, .75); background: rgba(10, 30, 37, .6); border: 1px solid rgba(238, 245, 242, .12) }
+.cmap-list { display: grid; align-content: start; gap: 18px; padding: 24px; border-radius: var(--r-lg); background: var(--c-surface); border: 1px solid var(--c-line) }
+.cmap-cur { display: grid; gap: 6px; padding-bottom: 18px; border-bottom: 1px solid var(--c-line); animation: card-in .45s var(--ease) }
+.cmap-cur small { font-size: .64rem; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--c-eyebrow) }
+.cmap-cur b { font: 300 1.8rem/1.1 var(--display) } .cmap-cur > span { font-size: .9rem; color: var(--c-muted) }
+.cmap-list ul { list-style: none; margin: 0; padding: 0; display: grid }
+.cmap-list li button { width: 100%; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 12px 0; border: 0; border-bottom: 1px solid var(--c-line); background: none; cursor: pointer; text-align: left; color: var(--c-text); transition: color .3s, padding .4s var(--ease) }
+.cmap-list li button em { font-style: normal; font-size: .82rem; font-weight: 600; color: var(--c-link); white-space: nowrap }
+.cmap-list li button.lit, .cmap-list li button[aria-pressed="true"] { padding-left: 8px; color: var(--c-em) }
+.cmap-list .tlink { justify-self: start }
+@media (max-width: 1000px) { .cmap { grid-template-columns: 1fr } .cpin-tag { font-size: .66rem; padding: 3px 8px } .cpin:not(.home):not(.lit) .cpin-tag { display: none } .cmap-hint { display: none } }
+.cmap-hint { top: 18px; bottom: auto }
+.cpin.home i svg { width: 18px; height: 18px }
