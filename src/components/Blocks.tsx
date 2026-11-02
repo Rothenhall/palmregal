@@ -40,18 +40,17 @@ export function Cta({ bg = 'canopy' }: { bg?: string }) {
   );
 }
 
-export function PageHero({ eyebrow, title, em, lede, crumb }: { eyebrow: string; title: string; em: string; lede: string; crumb: string }) {
+/* Inner page hero: a full photo with the title over it; the photo settles as you scroll */
+export function PageHero({ eyebrow, title, em, lede, crumb, img, alt = '' }: { eyebrow: string; title: string; em: string; lede: string; crumb: string; img: string; alt?: string }) {
   return (
-    <section className="phero" data-bg="mint">
-      <div className="wrap">
+    <section className="phero2" data-bg="night">
+      <div className="ph-media" data-gl="photo" data-depth="-140"><img src={img} alt={alt} fetchPriority="high" /></div>
+      <div className="ph-shade" aria-hidden="true" />
+      <div className="wrap ph-in">
         <nav className="crumbs" aria-label="Breadcrumb"><Link href="/">Home</Link><span aria-hidden="true">/</span><span aria-current="page">{crumb}</span></nav>
-        <div className="phero-row" data-speed=".18" data-ptrigger=".phero">
-          <div>
-            <h1 data-split data-now data-drop>{title} <em>{em}</em></h1>
-            <p className="lede" data-reveal>{lede}</p>
-          </div>
-          <p className="eyebrow">{eyebrow}</p>
-        </div>
+        <p className="eyebrow">{eyebrow}</p>
+        <h1 data-split data-now>{title} <em>{em}</em></h1>
+        <p className="lede" data-reveal>{lede}</p>
       </div>
     </section>
   );

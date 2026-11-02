@@ -30,14 +30,14 @@ export function SuiteTall() {
   return (
     <div className="tall">
       {suites.map((s, i) => (
-        <div className="tall-par" key={s.slug} data-speed={[0.05, 0.15, 0.09][i]} data-ptrigger=".tall"><Link className="tall-card" href={`/suites/#${s.slug}`}>
-          <div className="img" data-gl="photo"><img src={s.photos[0].src} alt={s.photos[0].alt} loading="lazy" />{s.todo && <span className="stand">Photo to confirm</span>}</div>
+        <div className="tall-par" key={s.slug}><Link className="tall-card" href={`/suites/#${s.slug}`}>
+          <div className="img" data-gl="photo" data-depth="-130"><img src={s.photos[0].src} alt={s.photos[0].alt} loading="lazy" />{s.todo && <span className="stand">Photo to confirm</span>}</div>
           <span className="tall-shade" />
           <span className="tall-top"><span className="tall-no">{s.no}</span><span className="tall-go"><Icon id="i-arrow" /></span></span>
           <span className="tall-panel">
             <b>{s.name}</b>
             <span className="tall-reveal"><span>
-              <span className="tall-facts"><span><Icon id="i-guests" />{s.guests}</span><span><Icon id="i-size" />{s.size}</span><span><Icon id="i-balcony" />{s.outdoor}</span></span>
+              <span className="tall-facts">{s.guests && <span><Icon id="i-guests" />{s.guests}</span>}{s.size && <span><Icon id="i-size" />{s.size}</span>}<span><Icon id="i-balcony" />{s.outdoor}</span></span>
               <span className="tall-best"><small>Best for</small>{s.bestFor}</span>
             </span></span>
           </span>

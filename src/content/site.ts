@@ -81,8 +81,8 @@ export const suites: Suite[] = [
     name: 'Two Bedroom Sea and Garden View',
     short: 'Two bedrooms looking out over the sea and the gardens.',
     long: 'Two bedrooms looking out over the sea and the gardens.',
-    guests: 'To confirm',
-    size: 'To confirm',
+    guests: '',
+    size: '',
     outdoor: 'Sea and garden view',
     bestFor: 'Waking up to the sea',
     photos: [{ src: '/img/view-2.webp', alt: 'Balcony looking over the gardens' }],
@@ -92,22 +92,22 @@ export const suites: Suite[] = [
 
 export const inEverySuite = ['Kitchenette', 'Private balcony', 'Living room', 'Air conditioning', 'Wi-Fi', 'Parking', 'Pets welcome'];
 
-export type Facility = { name: string; tag?: string; text: string; img?: string; standIn?: boolean };
+export type Facility = { name: string; tag?: string; text: string; img?: string; standIn?: boolean; group: string };
 
 export const facilities: Facility[] = [
-  { name: 'BayWATCH', tag: 'The Theatre', text: 'Watch your favourite shows and films on Amazon Prime, Netflix, Hotstar and more.' },
-  { name: 'MUSCLE', tag: 'The Gymnasium', text: 'A fully equipped gym for your morning routine.', img: '/img/gym.webp' },
-  { name: 'Acqua', tag: 'The Pool', text: 'The swimming pool, lit up as the evening comes in.', img: '/img/pool.webp' },
-  { name: 'SHACK', tag: 'The Restaurant', text: 'Homestyle meals from our kitchen. Pre-order, or have a parcel sent to your suite.' },
-  { name: 'GO PLAY', tag: 'The Gaming Lounge', text: 'Foosball, table tennis, pool, carrom, board games and a PS5.', img: '/img/game-room.webp' },
-  { name: 'Children Play Area', text: 'A large outdoor garden with swings, slides and room to run.', img: '/img/children-play.webp' },
-  { name: 'Amphitheatre', text: 'Enjoy or host a performance on the lawn, by day or under the stars.', img: '/img/amphitheatre.webp' },
-  { name: 'EAT AGE', tag: 'The Banquet', text: 'A banquet hall for celebrations and gatherings.', img: '/img/banquet.webp' },
-  { name: 'Yoga Lawn', text: 'An open lawn for morning yoga.', img: '/img/exterior-1.webp', standIn: true },
-  { name: 'Jogging Track', text: 'A jogging track within the property.', img: '/img/main-banner.webp', standIn: true },
-  { name: 'Pet Friendly', text: 'Bring your furry companions. The lawns are theirs too.', img: '/img/pet-friendly.webp' },
-  { name: 'Sea View Deck', text: 'A terrace deck looking out over the Bay of Bengal.', img: '/img/sea-view-deck.webp' },
-  { name: 'Temple', text: 'A temple within the property, framed by flowering trees.', img: '/img/temple.webp' },
+  { group: 'play', name: 'BayWATCH', tag: 'The Theatre', text: 'Watch your favourite shows and films on Amazon Prime, Netflix, Hotstar and more.' },
+  { group: 'move', name: 'MUSCLE', tag: 'The Gymnasium', text: 'A fully equipped gym for your morning routine.', img: '/img/gym.webp' },
+  { group: 'play', name: 'Acqua', tag: 'The Pool', text: 'The swimming pool, lit up as the evening comes in.', img: '/img/pool.webp' },
+  { group: 'eat', name: 'SHACK', tag: 'The Restaurant', text: 'Homestyle meals from our kitchen. Pre-order, or have a parcel sent to your suite.' },
+  { group: 'play', name: 'GO PLAY', tag: 'The Gaming Lounge', text: 'Foosball, table tennis, pool, carrom, board games and a PS5.', img: '/img/game-room.webp' },
+  { group: 'play', name: 'Children Play Area', text: 'A large outdoor garden with swings, slides and room to run.', img: '/img/children-play.webp' },
+  { group: 'eat', name: 'Amphitheatre', text: 'Enjoy or host a performance on the lawn, by day or under the stars.', img: '/img/amphitheatre.webp' },
+  { group: 'eat', name: 'EAT AGE', tag: 'The Banquet', text: 'A banquet hall for celebrations and gatherings.', img: '/img/banquet.webp' },
+  { group: 'move', name: 'Yoga Lawn', text: 'An open lawn for morning yoga.', img: '/img/exterior-1.webp', standIn: true },
+  { group: 'move', name: 'Jogging Track', text: 'A jogging track within the property.', img: '/img/main-banner.webp', standIn: true },
+  { group: 'grounds', name: 'Pet Friendly', text: 'Bring your furry companions. The lawns are theirs too.', img: '/img/pet-friendly.webp' },
+  { group: 'grounds', name: 'Sea View Deck', text: 'A terrace deck looking out over the Bay of Bengal.', img: '/img/sea-view-deck.webp' },
+  { group: 'grounds', name: 'Temple', text: 'A temple within the property, framed by flowering trees.', img: '/img/temple.webp' },
 ];
 
 export const pillars = [
@@ -211,4 +211,11 @@ export const quickStarts = [
   { label: 'Plan a weekend', note: 'We are planning a weekend away.' },
   { label: 'Bring my pet', note: 'We will be bringing our pet.' },
   { label: 'Family stay', note: 'We are a family, with children.' },
+];
+
+export const facilityGroups = [
+  { id: 'play', title: 'Play and', em: 'unwind.', text: 'A pool, a private theatre, a gaming lounge and a garden for the children.' },
+  { id: 'eat', title: 'Eat and', em: 'gather.', text: 'Homestyle meals from The Shack, a banquet hall and an amphitheatre on the lawn.' },
+  { id: 'move', title: 'Move and', em: 'breathe.', text: 'A gym, a yoga lawn and a jogging track inside the property.' },
+  { id: 'grounds', title: 'The grounds', em: 'and the sea.', text: 'Lawns for your pets, a sea view deck over the Bay of Bengal and a temple among the trees.' },
 ];

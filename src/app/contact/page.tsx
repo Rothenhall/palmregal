@@ -12,8 +12,8 @@ export const metadata: Metadata = { title: 'Contact and booking', description: '
 export default function Contact() {
   return (
     <>
-      <PageHero crumb="Contact" eyebrow="We usually reply the same day" title="Book direct with" em="the resort." lede="Call, message or send your dates below. You deal with the people who run Palm Regal, not a booking site." />
-      <section className="sec" data-bg="mint" style={{ paddingTop: 0 }} aria-label="Ways to reach us">
+      <PageHero img="/img/main-banner.webp" alt="Palm Regal garden walkway lit at night" crumb="Contact" eyebrow="We usually reply the same day" title="Book direct with" em="the resort." lede="Call, message or send your dates below. You deal with the people who run Palm Regal, not a booking site." />
+      <section className="sec" data-bg="mint" style={{ paddingTop: 'clamp(60px,7vw,100px)' }} aria-label="Ways to reach us">
         <div className="wrap contact-grid">
           <div>
             <div className="ways" data-stagger>

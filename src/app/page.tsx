@@ -30,7 +30,7 @@ export default function Home() {
           <h2 id="intro-h" className="sr">About Palm Regal</h2>
           <div className="statement-row">
             <p className="statement" data-words>Serviced suites with their own living room, kitchenette and balcony, set among <em>palms and lawns,</em> five minutes&apos; walk from Gopalpur beach. And your pets are welcome too.</p>
-            <div className="badges"><div className="badges-in" data-speed=".22" data-ptrigger=".statement-row"><span className="chip">Pet friendly</span><span className="chip">5 min walk to the beach</span><span className="chip">Doctor on call</span><span className="chip">EV charging on request</span></div></div>
+            <div className="badges"><div className="badges-in"><span className="chip">Pet friendly</span><span className="chip">5 min walk to the beach</span><span className="chip">Doctor on call</span><span className="chip">EV charging on request</span></div></div>
           </div>
           <figure className="para" data-gl="photo" data-depth="-150" data-par>
             <img src="/img/exterior-1.webp" alt="Palm Regal building with landscaped lawns and palms" loading="lazy" />
@@ -45,8 +45,8 @@ export default function Home() {
           <div className="head center"><p className="eyebrow">What Palm Regal is about</p><h2 id="pil-h" data-split data-drop>Green, sea <em>and home.</em></h2></div>
           <div className="pillars2">
             {pillars.map((p, i) => (
-              <div className="pil-par" key={p.key} data-speed={[0.04, 0.14, 0.24][i]} data-ptrigger=".pillars2"><article className="pil" data-reveal>
-                <div className="img" data-gl="photo"><img src={p.img} alt="" loading="lazy" /></div>
+              <div className="pil-par" key={p.key}><article className="pil" data-reveal>
+                <div className="img" data-gl="photo" data-depth="-130"><img src={p.img} alt="" loading="lazy" /></div>
                 <span className="pil-shade" />
                 <span className="pil-n">0{i + 1}</span>
                 <div className="pil-copy">
@@ -64,8 +64,8 @@ export default function Home() {
         <div className="wrap">
           <div className="host">
             <div className="host-media">
-              <div className="img main" data-gl="photo"><img src="/img/view-2.webp" alt="Balcony looking over the gardens" loading="lazy" /><span className="stand">Host photo to come</span></div>
-              <div className="sig" data-speed=".32" data-ptrigger=".host"><b>Welcome home</b><small>Your hosts at Palm Regal</small></div>
+              <div className="img main" data-gl="photo" data-depth="-120"><img src="/img/view-2.webp" alt="Balcony looking over the gardens" loading="lazy" /><span className="stand">Host photo to come</span></div>
+              <div className="sig"><b>Welcome home</b><small>Your hosts at Palm Regal</small></div>
             </div>
             <div>
               <p className="eyebrow">Our story</p>
