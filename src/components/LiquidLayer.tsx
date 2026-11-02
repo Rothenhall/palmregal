@@ -58,10 +58,10 @@ export function LiquidLayer() {
           u.uA.value = u.uB.value; u.uAspA.value = u.uAspB.value; u.uHasA.value = u.uA.value ? 1 : 0; u.uZoomA.value = u.uZoomB.value;
           u.uB.value = t; u.uAspB.value = t.image.width / t.image.height; u.uHasB.value = 1; u.uP.value = 0; setOrigin(it);
           if (it.kind === 'hero') { gsap.killTweensOf(u.uZoomB); u.uZoomB.value = 1.08; gsap.to(u.uZoomB, { value: 1, duration: 8, ease: 'none' }); } else u.uZoomB.value = it.zoom;
-          gsap.to(u.uP, { value: 1, duration: 1.5, ease: 'power2.inOut', onComplete: () => { it.cur = src; it.busy = false; if (it.want !== it.cur) wipe(it, it.want); } });
+          gsap.to(u.uP, { value: 1, duration: .9, ease: 'power1.inOut', onComplete: () => { it.cur = src; it.busy = false; if (it.want !== it.cur) wipe(it, it.want); } });
         });
       }
-      function reveal(it: Item) { if (!it.ready) { it.pending = true; return; } it.pending = false; it.revealed = true; it.u.uHasA.value = 0; setOrigin(it); gsap.fromTo(it.u.uP, { value: 0 }, { value: 1, duration: 1.6, ease: 'power2.out' }); }
+      function reveal(it: Item) { if (!it.ready) { it.pending = true; return; } it.pending = false; it.revealed = true; it.u.uHasA.value = 0; setOrigin(it); gsap.fromTo(it.u.uP, { value: 0 }, { value: 1, duration: .8, ease: 'power1.out' }); }
       function srcOf(el: HTMLElement) {
         if (el.dataset.src) return el.dataset.src;
         const im = (el.querySelector('img.on') || el.querySelector('img')) as HTMLImageElement | null;
@@ -69,7 +69,6 @@ export function LiquidLayer() {
       }
       function makePhoto(el: HTMLElement) {
         const kind = el.dataset.gl!; if (kind === 'water') return;
-        if (kind === 'scene') { makeScene(el); return; }
         if (!fine && kind !== 'hero') return;
         const isHero = kind === 'hero', depth = +(el.dataset.depth || 0), zoom = depth ? 1 + Math.abs(depth) / 1200 + .02 : 1, rr = radii(el);
         const u = Object.assign(base(), { uA: { value: null }, uB: { value: null }, uHasA: { value: 0 }, uHasB: { value: 1 }, uP: { value: isHero ? 1 : 0 }, uZoomA: { value: zoom }, uZoomB: { value: zoom }, uAspA: { value: 1.5 }, uAspB: { value: 1.5 }, uShift: { value: 0 }, uRadT: { value: rr[0] }, uRadB: { value: rr[1] }, uDropAmt: { value: 0 }, uLife: { value: isHero ? 1 : 0 }, uOrigin: { value: new THREE.Vector2() }, uDrop: { value: new THREE.Vector3() } });
@@ -85,13 +84,7 @@ export function LiquidLayer() {
         on(el, 'gl:src', (e: CustomEvent) => { if (!it.ready) return; e.preventDefault(); wipe(it, e.detail.src); });
         items.push(it);
       }
-      let beads: Any[] = [], water: Any = null, sceneIt: Any = null;
-      function makeScene(el: HTMLElement) {
-        const u = Object.assign(base(), { uP: { value: 0 }, uM: { value: new THREE.Vector2() }, uDrop: { value: new THREE.Vector3() }, uDropAmt: { value: 0 }, uCam: { value: new THREE.Vector4(1, 0, 0, 0) } });
-        sceneIt = { el, u, mesh: addMesh(S.SCENE, u, 0), m: new THREE.Vector2(), mt: new THREE.Vector2() };
-        el.classList.add('gl-ready');
-        if (fine) on(window, 'pointermove', (e: PointerEvent) => sceneIt && sceneIt.mt.set(e.clientX / innerWidth - .5, e.clientY / innerHeight - .5));
-      }
+      let beads: Any[] = [], water: Any = null;
       const range = document.createRange();
       const BG: Record<string, number[]> = { dawn: [.957, .973, .953], dusk: [.047, .145, .173], mint: [.933, .961, .949], sage: [.863, .922, .894], teal: [.098, .247, .278], canopy: [.18, .369, .263], night: [.063, .18, .216] };
       const bgOf = (el: Element) => { const s = el.closest('[data-bg]') as HTMLElement | null; return new THREE.Vector3(...(BG[s?.dataset.bg || 'mint'] || BG.mint)); };
@@ -99,7 +92,7 @@ export function LiquidLayer() {
       let io: IntersectionObserver, bio: IntersectionObserver;
 
       function scan() {
-        items.splice(0).forEach(i => scene.remove(i.mesh)); beads.splice(0).forEach(b => scene.remove(b.mesh)); if (water) { scene.remove(water.mesh); water = null; } if (sceneIt) { scene.remove(sceneIt.mesh); sceneIt = null; }
+        items.splice(0).forEach(i => scene.remove(i.mesh)); beads.splice(0).forEach(b => scene.remove(b.mesh)); if (water) { scene.remove(water.mesh); water = null; }
         offs.splice(0).forEach(f => f()); io?.disconnect(); bio?.disconnect();
         document.querySelectorAll<HTMLElement>('[data-gl]').forEach(makePhoto);
         io = new IntersectionObserver(es => es.forEach(en => { const it = items.find(i => i.el === en.target); if (it && en.isIntersecting && !it.revealed) { reveal(it); io.unobserve(it.el); } }), { threshold: .08, rootMargin: '0px 0px -6% 0px' });
@@ -151,22 +144,6 @@ export function LiquidLayer() {
           const R = Math.max(7, b.fs * .16), Sz = R * 4.4;
           const cx = rr.right + R * 1.3, cy = rr.top + rr.height * .42 + Math.sin(t * 1.2 + b.i) * 1.6;
           place(b.mesh, cx - Sz / 2, cy - Sz / 2, Sz, Sz, W, H); b.u.uSize.value.set(Sz, Sz); b.u.uR.value = R; b.u.uTime.value = t;
-        }
-        if (sceneIt) {
-          const r = sceneIt.el.getBoundingClientRect(), u = sceneIt.u; const vis = r.bottom > 0 && r.top < H; sceneIt.mesh.visible = vis;
-          if (vis) {
-            place(sceneIt.mesh, r.left, r.top, r.width, r.height, W, H); u.uSize.value.set(r.width, r.height); u.uTime.value = t;
-            u.uP.value += (parseFloat(sceneIt.el.dataset.p || '0') - u.uP.value) * .08;
-            sceneIt.m.lerp(sceneIt.mt, .04); u.uM.value.copy(sceneIt.m);
-            /* the metal drop drifts slowly over the sea */
-            /* camera from scroll: push in, tilt up, slight roll and pan toward the sun */
-            const pp = u.uP.value, ease = (x: number) => x * x * (3 - 2 * x), k = ease(Math.min(1, pp / .9));
-            u.uCam.value.set(1 + .38 * k, -.07 * Math.sin(Math.PI * Math.min(1, pp * 1.1)) - .02 * k, -.026 * Math.sin(Math.PI * pp), .05 * k);
-            /* a small, quiet metal drop resting over the sea */
-            const R = Math.max(26, Math.min(52, r.width * .028));
-            u.uDrop.value.set(r.width * (.58 + .03 * Math.sin(t * .11)) - sceneIt.m.x * 10, r.height * (.30 + .015 * Math.sin(t * .19)), R);
-            const want = W < 760 && u.uP.value > .3 ? 0 : Math.min(1, t / 2.5); u.uDropAmt.value += (want - u.uDropAmt.value) * .05;
-          }
         }
         if (water) { const r = water.el.getBoundingClientRect(), u = water.u; const vis = r.bottom > 0 && r.top < H; water.mesh.visible = vis; if (vis) { place(water.mesh, r.left, r.top, r.width, r.height, W, H); u.uSize.value.set(r.width, r.height); u.uTime.value = t; u.uRip.value += (water.ripT - u.uRip.value) * .05; } }
         renderer.render(scene, camera);

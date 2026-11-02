@@ -1055,3 +1055,23 @@ html.gl-photos .gtile button { background: transparent }
 .q button[aria-expanded="true"] i { transform: none }
 .q button i::after { transition: transform var(--dur-3) var(--ease) }
 .q button[aria-expanded="true"] i::after { transform: translate(-50%, -50%) rotate(90deg) scaleX(0) }
+
+/* ===== Hero: real photography only ===== */
+.realhero { height: 320svh; background: var(--teal-900) }
+.rh-stick { position: sticky; top: 0; z-index: 2; height: 100svh; overflow: hidden; color: var(--on-dark) }
+.rh-shot { position: absolute; inset: 0; overflow: hidden }
+.rh-shot img { width: 100%; height: 100%; object-fit: cover; transform-origin: 50% 60%; will-change: transform }
+.rh-shade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(11, 34, 40, .5) 0%, rgba(11, 34, 40, .08) 28%, rgba(11, 34, 40, .1) 55%, rgba(11, 34, 40, .78) 100%) }
+.rh-title { position: absolute; left: 0; right: 0; top: calc(var(--hdr) + clamp(30px, 8vh, 90px)); text-align: center; padding-inline: var(--gl); text-shadow: 0 2px 30px rgba(11, 34, 40, .35) }
+.rh-title p { font-size: .74rem; font-weight: 600; letter-spacing: .28em; text-transform: uppercase; margin-bottom: 18px }
+.rh-title h1 { font-size: var(--h-hero); line-height: .96; letter-spacing: -.03em; color: var(--white) }
+.rh-title h1 em { color: #fdf3e2 }
+.rh-title .mask { display: block; overflow: hidden; padding-bottom: .06em } .rh-title .ln { display: block }
+.rh-end { position: absolute; left: 0; right: 0; bottom: clamp(90px, 14vh, 140px); opacity: 0 }
+.rh-end h2 { font-size: var(--h-section); max-width: 15ch; margin: 16px 0 26px; color: var(--white) }
+.rh-end h2 em { color: var(--teal-200) } .rh-end .eyebrow { color: var(--teal-200) }
+.rh-meta { position: absolute; left: 0; right: 0; bottom: 30px; display: flex; justify-content: space-between; align-items: center; gap: 20px; z-index: 3 }
+.rh-cap { font-size: .74rem; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: rgba(238, 245, 242, .85); animation: card-in .6s var(--ease) }
+.rh-marks { display: flex; gap: 8px } .rh-marks i { width: 36px; height: 2px; background: rgba(238, 245, 242, .3); transition: background .5s var(--ease) } .rh-marks i.on { background: var(--on-dark) }
+html:not(.motion) .realhero { height: auto } html:not(.motion) .rh-stick { position: relative; height: max(640px, 100svh) } html:not(.motion) .rh-end { opacity: 1 } html:not(.motion) .rh-title { display: none }
+@media (max-width: 760px) { .realhero { height: 280svh } .rh-end { bottom: 80px } }

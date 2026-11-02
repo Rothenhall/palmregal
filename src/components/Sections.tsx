@@ -1,29 +1,8 @@
 import Link from 'next/link';
-import { gallery, glance, site, suites } from '@/content/site';
+import { gallery, site, suites } from '@/content/site';
 import { Icon } from './Icons';
 import { Todo } from './Todo';
 import { DRAFT, waHref } from '@/lib/book';
-
-/* Hero mood: a slow sun glow, light through the palms and low sea mist, all CSS */
-export function HeroAmbient() {
-  return (
-    <div className="amb" aria-hidden="true">
-      <i className="amb-sun" /><i className="amb-rays" /><i className="amb-mist a" /><i className="amb-mist b" />
-    </div>
-  );
-}
-
-export function Glance() {
-  return (
-    <div className="glance">
-      <p className="glance-h"><i />At a glance</p>
-      <dl>
-        {DRAFT && <div><dt>Google rating</dt><dd>★ 4.x <Todo>Live</Todo></dd></div>}
-        {glance.map(g => <div key={g.label}><dt>{g.label}</dt><dd className="num">{g.value}</dd></div>)}
-      </dl>
-    </div>
-  );
-}
 
 /* Suites as tall cards: the facts rise in a glass panel on hover */
 export function SuiteTall() {
