@@ -34,7 +34,7 @@ export function LiquidLayer() {
       const prep = (t: Any) => { t.colorSpace = THREE.NoColorSpace; t.minFilter = THREE.LinearFilter; t.generateMipmaps = false; return t; };
       const pc = document.createElement('canvas'); pc.width = 1000; pc.height = 1100; const pg = pc.getContext('2d')!;
       const placeholder = prep(new THREE.CanvasTexture(pc));
-      const drawPh = () => { const g = pg.createLinearGradient(0, 0, 0, 1100); g.addColorStop(0, '#21465E'); g.addColorStop(1, '#193F47'); pg.fillStyle = g; pg.fillRect(0, 0, 1000, 1100); pg.fillStyle = 'rgba(180,228,228,.8)'; pg.font = '300 64px Fraunces, Georgia, serif'; pg.textAlign = 'center'; pg.fillText('Photo to come', 500, 570); placeholder.needsUpdate = true; };
+      const drawPh = () => { const g = pg.createLinearGradient(0, 0, 0, 1100); g.addColorStop(0, '#21465E'); g.addColorStop(1, '#193F47'); pg.fillStyle = g; pg.fillRect(0, 0, 1000, 1100); placeholder.needsUpdate = true; };
       drawPh(); document.fonts?.ready.then(drawPh);
       const tex = (src: string): Promise<Any> => {
         if (src === 'placeholder') return Promise.resolve(placeholder);
@@ -68,7 +68,9 @@ export function LiquidLayer() {
         return im ? im.getAttribute('src')! : 'placeholder';
       }
       function makePhoto(el: HTMLElement) {
-        const kind = el.dataset.gl!; if (kind === 'water') return; if (!fine && kind !== 'hero') return;
+        const kind = el.dataset.gl!; if (kind === 'water') return;
+        if (kind === 'scene') { makeScene(el); return; }
+        if (!fine && kind !== 'hero') return;
         const isHero = kind === 'hero', depth = +(el.dataset.depth || 0), zoom = depth ? 1 + Math.abs(depth) / 1200 + .02 : 1, rr = radii(el);
         const u = Object.assign(base(), { uA: { value: null }, uB: { value: null }, uHasA: { value: 0 }, uHasB: { value: 1 }, uP: { value: isHero ? 1 : 0 }, uZoomA: { value: zoom }, uZoomB: { value: zoom }, uAspA: { value: 1.5 }, uAspB: { value: 1.5 }, uShift: { value: 0 }, uRadT: { value: rr[0] }, uRadB: { value: rr[1] }, uDropAmt: { value: 0 }, uLife: { value: isHero ? 1 : 0 }, uOrigin: { value: new THREE.Vector2() }, uDrop: { value: new THREE.Vector3() } });
         const it: Item = { el, kind, u, mesh: addMesh(S.PHOTO, u, 1), depth, zoom, lens: isHero || el.hasAttribute('data-lens'), over: false, ptr: new THREE.Vector2(), cur2: new THREE.Vector2(), pos: new THREE.Vector2(-1, -1), revealed: isHero, ready: false, pending: false, busy: false, cur: null, want: null };
@@ -83,7 +85,13 @@ export function LiquidLayer() {
         on(el, 'gl:src', (e: CustomEvent) => { if (!it.ready) return; e.preventDefault(); wipe(it, e.detail.src); });
         items.push(it);
       }
-      let beads: Any[] = [], water: Any = null;
+      let beads: Any[] = [], water: Any = null, sceneIt: Any = null;
+      function makeScene(el: HTMLElement) {
+        const u = Object.assign(base(), { uP: { value: 0 }, uM: { value: new THREE.Vector2() }, uDrop: { value: new THREE.Vector3() }, uDropAmt: { value: 0 }, uCam: { value: new THREE.Vector4(1, 0, 0, 0) } });
+        sceneIt = { el, u, mesh: addMesh(S.SCENE, u, 0), m: new THREE.Vector2(), mt: new THREE.Vector2() };
+        el.classList.add('gl-ready');
+        if (fine) on(window, 'pointermove', (e: PointerEvent) => sceneIt && sceneIt.mt.set(e.clientX / innerWidth - .5, e.clientY / innerHeight - .5));
+      }
       const range = document.createRange();
       const BG: Record<string, number[]> = { dawn: [.957, .973, .953], dusk: [.047, .145, .173], mint: [.933, .961, .949], sage: [.863, .922, .894], teal: [.098, .247, .278], canopy: [.18, .369, .263], night: [.063, .18, .216] };
       const bgOf = (el: Element) => { const s = el.closest('[data-bg]') as HTMLElement | null; return new THREE.Vector3(...(BG[s?.dataset.bg || 'mint'] || BG.mint)); };
@@ -91,12 +99,12 @@ export function LiquidLayer() {
       let io: IntersectionObserver, bio: IntersectionObserver;
 
       function scan() {
-        items.splice(0).forEach(i => scene.remove(i.mesh)); beads.splice(0).forEach(b => scene.remove(b.mesh)); if (water) { scene.remove(water.mesh); water = null; }
+        items.splice(0).forEach(i => scene.remove(i.mesh)); beads.splice(0).forEach(b => scene.remove(b.mesh)); if (water) { scene.remove(water.mesh); water = null; } if (sceneIt) { scene.remove(sceneIt.mesh); sceneIt = null; }
         offs.splice(0).forEach(f => f()); io?.disconnect(); bio?.disconnect();
         document.querySelectorAll<HTMLElement>('[data-gl]').forEach(makePhoto);
         io = new IntersectionObserver(es => es.forEach(en => { const it = items.find(i => i.el === en.target); if (it && en.isIntersecting && !it.revealed) { reveal(it); io.unobserve(it.el); } }), { threshold: .08, rootMargin: '0px 0px -6% 0px' });
         items.filter(i => !i.revealed).forEach(i => io.observe(i.el));
-        if (fine) document.querySelectorAll<HTMLElement>('h2[data-drop], h1[data-drop]').forEach((h, i) => { const u = Object.assign(base(), { uBg: { value: bgOf(h) }, uR: { value: 8 }, uAmt: { value: 0 }, uSeed: { value: i * 1.7 } }); beads.push({ h, u, mesh: addMesh(S.BEAD, u, 2), i, fs: parseFloat(getComputedStyle(h).fontSize) }); });
+        if (false) document.querySelectorAll<HTMLElement>('h2[data-drop], h1[data-drop]').forEach((h, i) => { const u = Object.assign(base(), { uBg: { value: bgOf(h) }, uR: { value: 8 }, uAmt: { value: 0 }, uSeed: { value: i * 1.7 } }); beads.push({ h, u, mesh: addMesh(S.BEAD, u, 2), i, fs: parseFloat(getComputedStyle(h).fontSize) }); });
         bio = new IntersectionObserver(es => es.forEach(en => { if (!en.isIntersecting) return; const b = beads.find(x => x.h === en.target); if (!b) return; bio.unobserve(b.h); gsap.to(b.u.uAmt, { value: 1, duration: 1.6, delay: .85, ease: 'elastic.out(1,.55)' }); }), { rootMargin: '0px 0px -12% 0px' });
         beads.forEach(b => bio.observe(b.h));
         const wEl = document.querySelector<HTMLElement>('[data-gl="water"]');
@@ -141,6 +149,22 @@ export function LiquidLayer() {
           const R = Math.max(7, b.fs * .16), Sz = R * 4.4;
           const cx = rr.right + R * 1.3, cy = rr.top + rr.height * .42 + Math.sin(t * 1.2 + b.i) * 1.6;
           place(b.mesh, cx - Sz / 2, cy - Sz / 2, Sz, Sz, W, H); b.u.uSize.value.set(Sz, Sz); b.u.uR.value = R; b.u.uTime.value = t;
+        }
+        if (sceneIt) {
+          const r = sceneIt.el.getBoundingClientRect(), u = sceneIt.u; const vis = r.bottom > 0 && r.top < H; sceneIt.mesh.visible = vis;
+          if (vis) {
+            place(sceneIt.mesh, r.left, r.top, r.width, r.height, W, H); u.uSize.value.set(r.width, r.height); u.uTime.value = t;
+            u.uP.value += (parseFloat(sceneIt.el.dataset.p || '0') - u.uP.value) * .08;
+            sceneIt.m.lerp(sceneIt.mt, .04); u.uM.value.copy(sceneIt.m);
+            /* the metal drop drifts slowly over the sea */
+            /* camera from scroll: push in, tilt up, slight roll and pan toward the sun */
+            const pp = u.uP.value, ease = (x: number) => x * x * (3 - 2 * x), k = ease(Math.min(1, pp / .9));
+            u.uCam.value.set(1 + .38 * k, -.07 * Math.sin(Math.PI * Math.min(1, pp * 1.1)) - .02 * k, -.026 * Math.sin(Math.PI * pp), .05 * k);
+            /* a small, quiet metal drop resting over the sea */
+            const R = Math.max(26, Math.min(52, r.width * .028));
+            u.uDrop.value.set(r.width * (.58 + .03 * Math.sin(t * .11)) - sceneIt.m.x * 10, r.height * (.30 + .015 * Math.sin(t * .19)), R);
+            const want = W < 760 && u.uP.value > .3 ? 0 : Math.min(1, t / 2.5); u.uDropAmt.value += (want - u.uDropAmt.value) * .05;
+          }
         }
         if (water) { const r = water.el.getBoundingClientRect(), u = water.u; const vis = r.bottom > 0 && r.top < H; water.mesh.visible = vis; if (vis) { place(water.mesh, r.left, r.top, r.width, r.height, W, H); u.uSize.value.set(r.width, r.height); u.uTime.value = t; u.uRip.value += (water.ripT - u.uRip.value) * .05; } }
         renderer.render(scene, camera);

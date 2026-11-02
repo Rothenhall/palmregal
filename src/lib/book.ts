@@ -1,6 +1,7 @@
 import { site } from '@/content/site';
 
-export const DRAFT = process.env.NEXT_PUBLIC_DRAFT !== 'false';
+/** Draft mode shows the orange "to confirm" tags and placeholder sections. Off unless NEXT_PUBLIC_DRAFT=true. */
+export const DRAFT = process.env.NEXT_PUBLIC_DRAFT === 'true';
 
 function fmt(d: string) {
   if (!d) return '';

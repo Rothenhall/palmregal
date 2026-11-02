@@ -759,3 +759,52 @@ html.shift .moments-sec::before { background: linear-gradient(180deg, rgba(12, 3
 @media (prefers-reduced-motion: reduce) { .coast-zoom { transform: none !important } }
 .tall-card .stand { left: auto; right: 72px; top: 24px }
 .mwall { align-content: start; top: -14% }
+
+/* ===== Hero scene ===== */
+.scenehero { height: 230svh; background: var(--teal-night) }
+.sh-stick { position: sticky; top: 0; z-index: 2; height: 100svh; overflow: hidden; color: var(--on-dark) }
+.sh-scene { position: absolute; inset: 0; background: #2b4f63 }
+.sh-scene img { width: 100%; height: 100%; object-fit: cover }
+html.gl-on .sh-scene.gl-ready { background: transparent } html.gl-on .sh-scene.gl-ready img { opacity: 0 }
+.sh-birds { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(16, 32, 36, .7); pointer-events: none; opacity: calc(1 - var(--night, 0)) }
+.bird { animation: bird linear infinite } .bird path { animation: flap .9s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: center }
+@keyframes bird { from { transform: translate(-80px, 30px) } to { transform: translate(1540px, -40px) } }
+@keyframes flap { from { scale: 1 1 } to { scale: 1 .35 } }
+.sh-front { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; pointer-events: none; color: #0b1c1f }
+.sh-sand { fill: #0d1f22 } .sh-bush { fill: #0a181b }
+.sh-palm { color: #0a1a1d } .sh-palm .crown { transform-box: view-box; animation: sway var(--dur, 8s) ease-in-out infinite alternate }
+@keyframes sway { from { rotate: -1.8deg } to { rotate: 2.4deg } }
+.sh-lamp .post { fill: #0a181b } .sh-lamp .bulb { fill: #ffe7bd; opacity: calc(.15 + var(--night, 0) * .85) }
+.sh-lamp .glow { opacity: var(--night, 0); transition: opacity .3s }
+.sh-flies { position: absolute; inset: 0; pointer-events: none; opacity: var(--night, 0) }
+.sh-flies i { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: #fbe3b6; box-shadow: 0 0 10px 3px var(--lamp); animation: fly 9s ease-in-out infinite }
+.sh-shade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(12, 37, 44, .38) 0%, rgba(12, 37, 44, 0) 22%, rgba(12, 37, 44, 0) 55%, rgba(12, 37, 44, .55) 100%) }
+.sh-title { position: absolute; left: 0; right: 0; top: calc(var(--hdr) + clamp(30px, 7vh, 80px)); text-align: center; padding-inline: var(--gl); text-shadow: 0 2px 30px rgba(12, 37, 44, .35) }
+.sh-title p { font-size: .74rem; font-weight: 600; letter-spacing: .28em; text-transform: uppercase; margin-bottom: 18px; opacity: .9 }
+.sh-title h1 { font-size: var(--h-hero); line-height: .96; letter-spacing: -.03em; color: var(--white) }
+.sh-title h1 em { color: #fdf3e2 }
+.sh-title .mask { display: block; overflow: hidden; padding-bottom: .06em } .sh-title .ln { display: block }
+.sh-in { position: absolute; left: 0; right: 0; bottom: 0; padding-bottom: clamp(36px, 8vh, 80px); opacity: 0 }
+.sh-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 30px; align-items: end }
+.sh-in h2 { font-size: var(--h-section); max-width: 15ch; margin: 16px 0 14px; color: var(--white) }
+.sh-in h2 em { color: var(--aqua) }
+.sh-cap { max-width: 46ch; color: rgba(238, 245, 242, .85); font-size: 1.05rem }
+.sh-cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 26px }
+.btn--glass { background: rgba(238, 245, 242, .12); color: var(--on-dark); box-shadow: inset 0 0 0 1px var(--glass-edge); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px) } .btn--glass::after { background: var(--mint) } .btn--glass:hover { color: var(--teal) }
+html:not(.motion) .scenehero { height: auto } html:not(.motion) .sh-stick { position: relative; min-height: max(680px, 100svh) } html:not(.motion) .sh-in { opacity: 1 } html:not(.motion) .sh-title { display: none }
+@media (max-width: 760px) { .sh-grid { grid-template-columns: 1fr } .sh-front { height: 70% } .sh-title { top: calc(var(--hdr) + 24px) } }
+
+/* ===== Professional pass ===== */
+.hdr:not(.solid) .btn--book { box-shadow: 0 10px 24px -12px rgba(0, 0, 0, .45) }
+.stand { display: none } .draft .stand { display: inline-block }
+.dl-panel .none { flex-direction: column; gap: 8px; display: flex; align-items: center; justify-content: center; font-size: clamp(1.8rem, 3vw, 2.6rem); color: var(--on-dark); background: radial-gradient(circle at 70% 20%, rgba(180, 228, 228, .18), transparent 60%), linear-gradient(160deg, var(--sea), var(--teal)) }
+.dl-panel .none small { font: italic 300 1.1rem var(--display); color: var(--aqua) }
+.sh-in .eyebrow { color: var(--aqua) }
+.sh-palms { position: absolute; bottom: 0; height: 100%; width: auto; max-width: 48%; pointer-events: none; color: #0a1a1d }
+.sh-palms.l { left: 0 } .sh-palms.r { right: 0 }
+@media (max-width: 760px) { .sh-palms { height: 74%; max-width: 62% } .sh-palms.l { left: -16% } .sh-palms.r { right: -18% } }
+/* camera walk: palms slide past and grow as the view pushes toward the sea */
+.sh-palms.l { transform-origin: 0% 100%; transform: translate(calc(var(--cam, 0) * -22%), calc(var(--cam, 0) * 10%)) scale(calc(1 + var(--cam, 0) * .7)) rotate(calc(var(--cam, 0) * -2deg)) }
+.sh-palms.r { transform-origin: 100% 100%; transform: translate(calc(var(--cam, 0) * 22%), calc(var(--cam, 0) * 10%)) scale(calc(1 + var(--cam, 0) * .7)) rotate(calc(var(--cam, 0) * 2deg)) }
+.sh-front { transform-origin: 50% 100%; transform: translateY(calc(var(--cam, 0) * 14%)) scale(calc(1 + var(--cam, 0) * .35)) }
+.sh-birds { transform: scale(calc(1 + var(--cam, 0) * .2)) }

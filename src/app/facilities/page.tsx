@@ -14,7 +14,7 @@ export default function Facilities() {
           {facilities.map((f, i) => (
             <article key={f.name} data-reveal>
               <div className="img" data-gl={f.img ? 'photo' : undefined}>
-                {f.img ? <img src={f.img} alt={f.name} loading="lazy" /> : <div className="none">Photo to come</div>}
+                {f.img ? <img src={f.img} alt={f.name} loading="lazy" /> : <div className="none">{f.name}</div>}
                 {f.standIn && <span className="stand">Stand-in photo</span>}
               </div>
               <span className="n">{String(i + 1).padStart(2, '0')}</span>

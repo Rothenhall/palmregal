@@ -5,7 +5,7 @@ import { Faq } from '@/components/Faq';
 import { Icon } from '@/components/Icons';
 import { Todo } from '@/components/Todo';
 import { site } from '@/content/site';
-import { waHref } from '@/lib/book';
+import { DRAFT, waHref } from '@/lib/book';
 
 export const metadata: Metadata = { title: 'Contact and booking', description: 'Book direct with Palm Regal, Gopalpur: call +91 72059 70222, email palmregalresort@gmail.com or send an enquiry.' };
 
@@ -22,7 +22,7 @@ export default function Contact() {
               <a className="way" href={`mailto:${site.email}`}><Icon id="i-mail" /><span><b>Email</b><span>{site.email}</span></span></a>
               <a className="way" href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(site.mapsQuery)}`} target="_blank" rel="noopener"><Icon id="i-map" /><span><b>Visit</b><span>{site.address}</span></span></a>
             </div>
-            <div className="offer"><p className="eyebrow">Book direct offer</p><h3>Your Book Direct perk here.</h3><p style={{ color: 'var(--ink-2)' }}>A discount or a welcome extra for guests who book with us. <Todo>Offer from the resort</Todo></p></div>
+            {DRAFT && (            <div className="offer"><p className="eyebrow">Book direct offer</p><h3>Your Book Direct perk here.</h3><p style={{ color: 'var(--ink-2)' }}>A discount or a welcome extra for guests who book with us. <Todo>Offer from the resort</Todo></p></div>)}
           </div>
           <EnquiryForm />
         </div>

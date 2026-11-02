@@ -8,7 +8,7 @@ float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<4;i++){v+=a*vnoise(p);p*=2.03;a*
 /* a liquid drop: soft wobbling rim, dome normal, normalised distance from centre */
 float dropShape(vec2 q,float R,float t,out vec3 n,out float d){
   float ang=atan(q.y,q.x);
-  float Rw=R*(1.+.045*sin(3.*ang+t*.9)+.025*sin(5.*ang-t*.7)+.012*sin(8.*ang+t*1.3));
+  float Rw=R*(1.+.028*sin(3.*ang+t*.7)+.014*sin(5.*ang-t*.5));
   float l=length(q);d=l/max(Rw,1e-3);
   float h=sqrt(max(1.-d*d,0.));
   n=normalize(vec3(q/max(Rw,1e-3)*.9,h+.05));
@@ -25,10 +25,10 @@ vec3 chrome(vec3 n,float t){
 }
 vec3 metalLight(vec3 base,vec3 n,float d,float t){
   vec3 g=base;
-  g+=vec3(1.)*pow(max(dot(n,normalize(LDIR)),0.),90.)*1.3;
+  g+=vec3(1.)*pow(max(dot(n,normalize(LDIR)),0.),120.)*.85;
   g+=vec3(.85,1.,1.)*pow(max(dot(n,normalize(vec3(.55,-.35,.75))),0.),36.)*.28;
-  g*=1.-.5*smoothstep(.78,.99,d);
-  g+=vec3(.75,.92,.92)*smoothstep(.955,.99,d)*(1.-smoothstep(.99,1.,d))*.5;
+  g*=1.-.28*smoothstep(.8,.99,d);
+  g+=vec3(.75,.92,.92)*smoothstep(.96,.99,d)*(1.-smoothstep(.99,1.,d))*.3;
   return g;
 }
 /* teal tint, fresnel rim, highlight, caustic and rim line */
@@ -147,4 +147,86 @@ void main(){
   float ssd=sdCap(q-vec2(0.,-9.),vec2(hw,r));
   float sh=smoothstep(22.,-8.,ssd)*.32*grow;
   gl_FragColor=mix(vec4(NIGHT*.6,sh),vec4(g,.95),cov);
+}`;
+
+/* The hero scene: Gopalpur at golden hour, drawn in code. uP runs the time of day:
+   0 golden hour, .5 sunset, 1 night. A liquid metal drop floats over the sea. */
+export const SCENE = COMMON + `
+uniform float uP;uniform vec2 uM;uniform vec3 uDrop;uniform float uDropAmt;uniform vec4 uCam;
+float hor(){return .40+uCam.y+uM.y*.012;}
+vec3 sky(vec2 uv,float p,vec2 sun){
+  float h=hor();float y=clamp((uv.y-h)/(1.-h),0.,1.);
+  vec3 top=mix(vec3(.30,.55,.76),vec3(.17,.26,.45),smoothstep(.15,.6,p));top=mix(top,vec3(.02,.05,.09),smoothstep(.55,.95,p));
+  vec3 mid=mix(vec3(.96,.82,.62),vec3(.93,.52,.42),smoothstep(.1,.55,p));mid=mix(mid,vec3(.10,.15,.24),smoothstep(.6,.95,p));
+  vec3 low=mix(vec3(1.,.88,.62),vec3(.99,.58,.34),smoothstep(.1,.5,p));low=mix(low,vec3(.16,.20,.28),smoothstep(.62,.98,p));
+  vec3 c=mix(low,mid,smoothstep(0.,.25,y));c=mix(c,top,smoothstep(.2,.95,y));
+  float asp=uSize.x/uSize.y;vec2 d=(uv-sun)*vec2(asp,1.);float r=length(d);
+  vec3 sunc=mix(vec3(1.,.95,.78),vec3(1.,.62,.36),smoothstep(.1,.6,p));
+  float vis=1.-smoothstep(.62,.8,p);
+  c+=sunc*(exp(-r*7.)*.55+exp(-r*2.2)*.22)*vis;
+  c=mix(c,vec3(1.,.97,.88),smoothstep(.045,.04,r)*vis);
+  /* clouds lit from below */
+  vec2 cp=vec2(uv.x*asp*1.6+uTime*.006,uv.y*5.);
+  float cl=fbm(cp+vec2(0.,uTime*.002))*.9+fbm(cp*2.3-uTime*.004)*.35;
+  float band=smoothstep(.55,.85,uv.y)*(1.-smoothstep(.85,1.,uv.y))+smoothstep(.45,.55,uv.y)*.5*(1.-smoothstep(.55,.62,uv.y));
+  float cm=smoothstep(.62,.9,cl)*band;
+  vec3 cc=mix(mix(vec3(1.,.92,.82),vec3(.98,.62,.50),smoothstep(.2,.6,p)),vec3(.10,.13,.20),smoothstep(.6,.95,p));
+  c=mix(c,cc*(.85+.3*(1.-y)),cm*.75);
+  /* stars */
+  vec2 sg=floor(uv*vec2(asp,1.)*180.);float st=step(.996,hash(sg))*smoothstep(.62,1.,p)*smoothstep(.1,.5,y);
+  c+=vec3(st)*(.6+.4*sin(uTime*2.+hash(sg+3.)*30.));
+  return c;
+}
+vec3 sea(vec2 uv,float p,vec2 sun){
+  float h=hor();float dy=max(h-uv.y,.0005);float z=1./(dy+.035);
+  float asp=uSize.x/uSize.y;
+  vec2 w=vec2((uv.x-.5)*asp*z*.55,z*1.2);
+  float t=uTime;
+  float e=.04;float h0=fbm(w*vec2(1.,2.2)+vec2(t*.05,-t*.35))+.5*fbm(w*vec2(2.6,5.)+vec2(-t*.08,-t*.5));
+  float hx=fbm((w+vec2(e,0.))*vec2(1.,2.2)+vec2(t*.05,-t*.35));float hy=fbm((w+vec2(0.,e))*vec2(1.,2.2)+vec2(t*.05,-t*.35));
+  vec3 n=normalize(vec3(-(hx-h0)/e*.18,-(hy-h0)/e*.18,1.));
+  vec3 r=reflect(normalize(vec3(0.,-.18,-1.)),n);
+  vec2 ruv=vec2(uv.x+r.x*.05,h+(h-uv.y)*.6+r.y*.12);
+  vec3 refl=sky(clamp(ruv,0.,1.),p,sun);
+  vec3 deep=mix(vec3(.06,.24,.28),vec3(.04,.14,.19),smoothstep(.3,.9,p));deep=mix(deep,vec3(.015,.05,.07),smoothstep(.65,1.,p));
+  float fres=.25+.6*pow(1.-clamp(n.z,0.,1.),2.)+.35*smoothstep(.0,.12,1.-dy*8.);
+  vec3 c=mix(deep,refl,clamp(fres,0.,1.));
+  /* the sun's glitter path */
+  float vis=1.-smoothstep(.62,.8,p);
+  float col=exp(-pow((uv.x-sun.x)*asp/(.05+dy*1.4),2.));
+  float gl=pow(max(dot(r,normalize(vec3((sun.x-.5)*.6,.35,.9))),0.),60.);
+  c+=mix(vec3(1.,.93,.75),vec3(1.,.6,.35),smoothstep(.1,.6,p))*(col*.35+gl*col*2.2)*vis;
+  /* surf lines near the shore */
+  float surf=smoothstep(.8,1.,sin(z*.9-t*1.6+fbm(vec2(uv.x*6.,t*.2))*3.))*smoothstep(.2,.05,uv.y)*.35;
+  c+=vec3(.9,.97,.97)*surf*(1.-smoothstep(.7,1.,p)*.7);
+  c=mix(c,sky(vec2(uv.x,h+.002),p,sun),smoothstep(.012,0.,dy)*.8);
+  return c;
+}
+vec3 env(vec2 uv,float p,vec2 sun){return uv.y>hor()?sky(uv,p,sun):sea(uv,p,sun);}
+void main(){
+  /* camera: push in, tilt and a slight roll, set by scroll */
+  float asp0=uSize.x/uSize.y;
+  vec2 q0=(vUv-.5)*vec2(asp0,1.);
+  float cr=cos(uCam.z),sr=sin(uCam.z);
+  q0=mat2(cr,-sr,sr,cr)*q0/uCam.x;
+  vec2 uv=q0/vec2(asp0,1.)+.5+vec2(uCam.w,0.);float p=uP;
+  vec2 sun=vec2(.74+uM.x*.01,hor()+.2-.28*smoothstep(0.,.8,p));
+  vec3 c=env(uv,p,sun);
+  /* liquid metal drop */
+  float R=uDrop.z*uDropAmt;
+  if(R>1.){
+    vec2 px=uv*uSize;vec2 q=px-uDrop.xy;
+    float sd=length(q-vec2(.05,-.18)*R)/R;c*=1.-.25*smoothstep(1.3,.9,sd)*step(uv.y,hor()+.05);
+    vec3 n;float d;float cov=dropShape(q,R,uTime,n,d);
+    if(cov>0.){
+      vec3 rr=reflect(vec3(0.,0.,-1.),normalize(vec3(n.xy*1.35,n.z)));
+      vec3 e2=env(clamp(uDrop.xy/uSize+vec2(-rr.x*.25,rr.y*.35+.12),0.,1.),p,sun);
+      vec3 g=mix(chrome(n,uTime),e2*1.15,.5);
+      g=metalLight(g,n,d,uTime);
+      c=mix(c,g,cov);
+    }
+  }
+  /* soft vignette */
+  vec2 v=uv-.5;c*=1.-.28*dot(v,v)*1.6;
+  gl_FragColor=vec4(c,1.);
 }`;

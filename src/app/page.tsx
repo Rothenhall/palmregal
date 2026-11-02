@@ -3,13 +3,13 @@ import { Hero } from '@/components/Hero';
 import { BookBar } from '@/components/BookForm';
 import { Delights } from '@/components/Delights';
 import { DayStory } from '@/components/DayStory';
-import { Faq } from '@/components/Faq';
 import { Icon, Shade } from '@/components/Icons';
 import { Todo } from '@/components/Todo';
 import { CoastMap } from '@/components/CoastMap';
 import { MomentsWall } from '@/components/MomentsWall';
 import { BookingSteps, ReviewBelt, SuiteTall, ThreeWays } from '@/components/Sections';
 import { facilities, pillars } from '@/content/site';
+import { DRAFT } from '@/lib/book';
 
 /* "A day by the Bay": the page runs from morning at the top to night at the footer */
 export default function Home() {
@@ -92,12 +92,6 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="sec" data-bg="mint" id="faq" aria-labelledby="faq-h">
-        <div className="wrap faq-grid">
-          <div className="faq-side"><p className="eyebrow">Good to know</p><h2 id="faq-h" data-split data-drop>Questions guests <em>often ask.</em></h2><Link className="btn btn--teal" href="/contact/">Ask us anything</Link></div>
-          <Faq limit={6} />
-        </div>
-      </section>
 
       <section className="sec" data-bg="teal" id="facilities" aria-labelledby="dl-h">
         <div className="wrap">
@@ -135,6 +129,7 @@ export default function Home() {
         </div>
       </section>
 
+      {DRAFT && (
       <section className="sec" data-bg="dusk" id="reviews" aria-labelledby="rev-h">
         <div className="wrap">
           <div className="rev-top">
@@ -146,6 +141,7 @@ export default function Home() {
         </div>
         <ReviewBelt />
       </section>
+      )}
 
       <section className="sec lux" data-bg="night" aria-labelledby="ready-h">
         <div className="wrap">

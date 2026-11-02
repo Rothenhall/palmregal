@@ -7,7 +7,7 @@ import { BookPill } from '@/components/BookPill';
 import { LiquidLayer } from '@/components/LiquidLayer';
 import { Motion } from '@/components/Motion';
 import { site } from '@/content/site';
-import { waHref } from '@/lib/book';
+import { DRAFT, waHref } from '@/lib/book';
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
@@ -36,7 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: "(function(){var d=document.documentElement;d.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches)d.classList.add('motion');})();" }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
-      <body>
+      <body className={DRAFT ? 'draft' : undefined}>
         <a className="skip" href="#main">Skip to content</a>
         <IconSprite />
         <LiquidLayer />

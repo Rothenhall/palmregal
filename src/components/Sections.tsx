@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { gallery, glance, site, suites } from '@/content/site';
 import { Icon } from './Icons';
 import { Todo } from './Todo';
-import { waHref } from '@/lib/book';
+import { DRAFT, waHref } from '@/lib/book';
 
 /* Hero mood: a slow sun glow, light through the palms and low sea mist, all CSS */
 export function HeroAmbient() {
@@ -18,7 +18,7 @@ export function Glance() {
     <div className="glance">
       <p className="glance-h"><i />At a glance</p>
       <dl>
-        <div><dt>Google rating</dt><dd>★ 4.x <Todo>Live</Todo></dd></div>
+        {DRAFT && <div><dt>Google rating</dt><dd>★ 4.x <Todo>Live</Todo></dd></div>}
         {glance.map(g => <div key={g.label}><dt>{g.label}</dt><dd className="num">{g.value}</dd></div>)}
       </dl>
     </div>

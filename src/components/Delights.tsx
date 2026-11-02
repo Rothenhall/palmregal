@@ -19,7 +19,7 @@ export function Delights() {
       <div className="dl-side">
         <div className="dl-panel" ref={panel} data-gl="panel" data-src={facilities[2].img}>
           {imgs.map(src => <img key={src} src={src} alt="" loading="lazy" className={f.img === src ? 'on' : ''} />)}
-          {!f.img && <div className="none">Photo to come</div>}
+          {!f.img && <div className="none">{f.name}{f.tag && <small>{f.tag}</small>}</div>}
           {f.standIn && <span className="stand">Stand-in photo</span>}
         </div>
         <div className="dl-now" aria-live="polite"><small>{f.name}{f.tag ? `, ${f.tag}` : ''}</small><p>{f.text}</p></div>
