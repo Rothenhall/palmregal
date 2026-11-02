@@ -1241,3 +1241,43 @@ html:not(.motion) .suites-stack .suite { position: relative; top: 0 }
   .dj-left { height: auto } .dj-num { font-size: 19vw; margin: 1vh 0 } .dj-steps { min-height: 250px }
   .dj-step h3 { font-size: 2.3rem; margin: 8px 0 12px }
 }
+
+/* ===== Reasons to stay in: four stacking group cards ===== */
+.dsec-head { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr); gap: clamp(20px, 3vw, 48px); align-items: end; margin-bottom: var(--head-gap); padding-bottom: 28px; border-bottom: 1px solid var(--c-line) }
+.dsec-count { font: 300 clamp(5rem, 11vw, 10rem)/.78 var(--display); color: transparent; -webkit-text-stroke: 1px var(--teal-600) }
+.dsec-head h2 { font-size: var(--h-section); margin-top: 14px }
+.dsec-head .lede { padding-bottom: .3em }
+.dstack { display: grid; gap: 34px }
+.dcard { position: sticky; top: calc(var(--hdr) + 28px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); min-height: min(76svh, 640px); padding: clamp(24px, 4vw, 56px); border-radius: var(--r-lg); overflow: hidden; transform-origin: 50% 0; will-change: transform; box-shadow: 0 30px 60px -36px rgba(11, 34, 40, .55) }
+.dcard--teal { background: var(--teal-800); color: var(--on-dark) }
+.dcard--paper { background: var(--mint-50); color: var(--ink-900); border: 1px solid var(--line) }
+.dcard--canopy { background: var(--canopy-800); color: var(--on-dark) }
+.dcard--dusk { background: var(--teal-950); color: var(--on-dark) }
+.dcard-body { display: flex; flex-direction: column; gap: 14px }
+.dcard-no { font: 300 1.1rem var(--display); letter-spacing: .1em; opacity: .7 }
+.dcard h3 { font-size: clamp(2.4rem, 4.4vw, 4.2rem); line-height: 1 }
+.dcard h3 em { font-style: italic }
+.dcard--teal h3 em, .dcard--dusk h3 em { color: var(--teal-200) } .dcard--canopy h3 em { color: #cfe6c4 } .dcard--paper h3 em { color: var(--canopy-800) }
+.dcard-lede { max-width: 42ch; opacity: .8; font-size: 1.02rem }
+.dcard ul { list-style: none; margin: auto 0 0; padding: 0; border-top: 1px solid currentColor; border-color: color-mix(in srgb, currentColor 18%, transparent) }
+.dcard li { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 16px; padding: 13px 0; border-bottom: 1px solid color-mix(in srgb, currentColor 14%, transparent) }
+.dcard li b { font: 400 1.15rem/1.25 var(--display) }
+.dcard li b i { font-style: italic; opacity: .75 }
+.dcard li span { font-size: .88rem; opacity: .72 }
+.dcard-media { position: relative; min-height: 340px }
+.dcard-main, .dcard-small { position: absolute; overflow: hidden; border-radius: var(--r-md) }
+.dcard-main { inset: 0 0 12% 10% }
+.dcard-small { left: 0; bottom: 0; width: 42%; aspect-ratio: 4/3; box-shadow: 0 24px 40px -20px rgba(0, 0, 0, .55); outline: 6px solid; outline-color: inherit }
+.dcard--teal .dcard-small { outline-color: var(--teal-800) } .dcard--paper .dcard-small { outline-color: var(--mint-50) } .dcard--canopy .dcard-small { outline-color: var(--canopy-800) } .dcard--dusk .dcard-small { outline-color: var(--teal-950) }
+.dcard-main img, .dcard-small img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.6s var(--ease) }
+.dcard:hover .dcard-main img { transform: scale(1.03) }
+@supports (animation-timeline: view()) {
+  html.motion .dcard-main, html.motion .dcard-small { animation: frame-open linear both; animation-timeline: view(); animation-range: entry 0% entry 60% }
+}
+.dstack-all { margin-top: 40px }
+html:not(.motion) .dcard { position: relative; top: 0 }
+@media (max-width: 900px) {
+  .dsec-head { grid-template-columns: 1fr; gap: 12px }
+  .dcard { grid-template-columns: 1fr; top: calc(var(--hdr) + 12px); min-height: 0 }
+  .dcard-media { order: -1; min-height: 220px } .dcard li { grid-template-columns: 1fr; gap: 2px }
+}

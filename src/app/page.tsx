@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Hero } from '@/components/Hero';
 import { BookBar } from '@/components/BookForm';
-import { Delights } from '@/components/Delights';
+import { DelightsStack } from '@/components/DelightsStack';
 import { DayJourney } from '@/components/DayJourney';
 import { Icon, Shade } from '@/components/Icons';
 import { Todo } from '@/components/Todo';
@@ -102,10 +102,14 @@ export default function Home() {
       </section>
 
 
-      <section className="sec" data-bg="teal" id="facilities" aria-labelledby="dl-h">
+      <section className="sec dsec" data-bg="mint" id="facilities" aria-labelledby="dl-h">
         <div className="wrap">
-          <div className="dl-head"><div className="head" style={{ margin: 0 }}><p className="eyebrow">Resort delights</p><h2 id="dl-h" data-split data-drop>Reasons to <em>stay in.</em></h2></div><span className="dl-count num" aria-hidden="true" data-speed=".35">{facilities.length}</span></div>
-          <Delights />
+          <div className="dsec-head">
+            <span className="dsec-count num" aria-hidden="true">{facilities.length}</span>
+            <div><p className="eyebrow">Resort delights</p><h2 id="dl-h" data-split>Reasons to <em>stay in.</em></h2></div>
+            <p className="lede">Everything is inside the property, a few steps from your suite: a pool, a private theatre, a gym, lawns to wander and the Bay of Bengal from the deck.</p>
+          </div>
+          <DelightsStack />
         </div>
       </section>
 
