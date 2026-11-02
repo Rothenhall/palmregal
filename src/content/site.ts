@@ -213,11 +213,12 @@ export const quickStarts = [
   { label: 'Family stay', note: 'We are a family, with children.' },
 ];
 
+/* Order: what sets Palm Regal apart first (Baymard / h2c: lead with differentiators), standard facilities last */
 export const facilityGroups = [
   { id: 'play', title: 'Play and', em: 'unwind.', text: 'A pool, a private theatre, a gaming lounge and a garden for the children.' },
+  { id: 'grounds', title: 'The grounds', em: 'and the sea.', text: 'Lawns for your pets, a sea view deck over the Bay of Bengal and a temple among the trees.' },
   { id: 'eat', title: 'Eat and', em: 'gather.', text: 'Homestyle meals from The Shack, a banquet hall and an amphitheatre on the lawn.' },
   { id: 'move', title: 'Move and', em: 'breathe.', text: 'A gym, a yoga lawn and a jogging track inside the property.' },
-  { id: 'grounds', title: 'The grounds', em: 'and the sea.', text: 'Lawns for your pets, a sea view deck over the Bay of Bengal and a temple among the trees.' },
 ];
 
 /** Gallery chapters: each groups photos by their `group` */

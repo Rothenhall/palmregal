@@ -1201,7 +1201,7 @@ html:not(.motion) .fill > .statement:not(.fill-top) { color: var(--teal-800) } h
 
 /* ===== Suites as stacking cards: each sticks, the one before recedes as the next arrives ===== */
 .suites-stack { display: grid; gap: 40px; padding-bottom: 20px }
-.suites-stack .suite { position: sticky; top: calc(var(--hdr) + 76px); border-top: 0; padding: clamp(20px, 3vw, 40px); background: var(--c-surface); border: 1px solid var(--c-line); border-radius: var(--r-lg); box-shadow: var(--shadow-card); transform-origin: 50% 0; will-change: transform }
+.suites-stack .suite { position: relative; border-top: 0; padding: clamp(20px, 3vw, 40px); background: var(--c-surface); border: 1px solid var(--c-line); border-radius: var(--r-lg); box-shadow: var(--shadow-card); transform-origin: 50% 0; will-change: transform }
 html:not(.motion) .suites-stack .suite { position: relative; top: 0 }
 @media (max-width: 900px) { .suites-stack .suite { top: calc(var(--hdr) + 64px) } }
 
@@ -1248,7 +1248,7 @@ html:not(.motion) .suites-stack .suite { position: relative; top: 0 }
 .dsec-head h2 { font-size: var(--h-section); margin-top: 14px }
 .dsec-head .lede { padding-bottom: .3em }
 .dstack { display: grid; gap: 34px }
-.dcard { position: sticky; top: calc(var(--hdr) + 28px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); min-height: min(76svh, 640px); padding: clamp(24px, 4vw, 56px); border-radius: var(--r-lg); overflow: hidden; transform-origin: 50% 0; will-change: transform; box-shadow: 0 30px 60px -36px rgba(11, 34, 40, .55) }
+.dcard { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); min-height: min(76svh, 640px); padding: clamp(24px, 4vw, 56px); border-radius: var(--r-lg); overflow: hidden; transform-origin: 50% 0; will-change: transform; box-shadow: 0 30px 60px -36px rgba(11, 34, 40, .55) }
 .dcard--teal { background: var(--teal-800); color: var(--on-dark) }
 .dcard--paper { background: var(--mint-50); color: var(--ink-900); border: 1px solid var(--line) }
 .dcard--canopy { background: var(--canopy-800); color: var(--on-dark) }
@@ -1281,3 +1281,11 @@ html:not(.motion) .dcard { position: relative; top: 0 }
   .dcard { grid-template-columns: 1fr; top: calc(var(--hdr) + 12px); min-height: 0 }
   .dcard-media { order: -1; min-height: 220px } .dcard li { grid-template-columns: 1fr; gap: 2px }
 }
+
+/* Stacking only where a whole card fits on screen; elsewhere the cards are a plain list,
+   so nothing is ever covered before it can be read (sticky-card guidance: test with the pin off) */
+@media (min-width: 901px) and (min-height: 760px) {
+  html.motion .dcard { position: sticky; top: calc(var(--hdr) + 28px) }
+  html.motion .suites-stack .suite { position: sticky; top: calc(var(--hdr) + 76px) }
+}
+@media (max-width: 900px), (max-height: 759px) { .dcard, .suites-stack .suite { transform: none !important; filter: none !important } }

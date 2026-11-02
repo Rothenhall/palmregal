@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { facilities, facilityGroups } from '@/content/site';
 import { Icon } from './Icons';
 
-const TONES = ['teal', 'paper', 'canopy', 'dusk'];
+const TONES = ['teal', 'dusk', 'paper', 'canopy'];
 const NUM = ['I', 'II', 'III', 'IV'];
 
 export function DelightsStack() {

@@ -71,6 +71,14 @@ These need more iterations and a proper development pass later. Leave them exact
 - **Horizontal pinned track**: not adopted (NN/g: horizontal scrolling on desktop tests poorly).
 - Also: a thin page-progress bar, magnetic buttons, masked word headings, counters, a slow three.js gold double helix in the lab section.
 
+
+### Research: facilities presentation and stacking cards
+
+- Baymard (travel accommodations, 317+ test sessions): visitors to an unfamiliar boutique property look for the gallery and amenities list, then special features and the neighbourhood. Our homepage order follows this.
+- h2c benchmark: lead with what sets the hotel apart; move standard features into details. Facility groups now run play, grounds and sea, eat, move (standard last). eHotelier: overstated amenity copy reads as too good to be true; keep copy factual.
+- Real photos build more trust than stock (several hotel UX guides).
+- Sticky stacking cards: every card must stay fully readable, offer a static layout for reduced motion, and be tested with the pin off on phones. Cards now stack only on screens at least 901px wide and 760px tall; elsewhere they are a plain list so nothing is covered before it is read.
+
 ### Sources
 
 - NN/g, What Parallax Lacks: https://www.nngroup.com/articles/parallax-usability/
@@ -83,5 +91,10 @@ These need more iterations and a proper development pass later. Leave them exact
 - Codrops, Elastic Grid Scroll: https://tympanus.net/codrops/2025/06/03/elastic-grid-scroll-creating-lag-based-layout-animations-with-gsap-scrollsmoother/
 - Codrops, Staggered (3D) Grid Animations: https://tympanus.net/codrops/2024/10/16/staggered-3d-grid-animations-with-scroll-triggered-effects
 - UXPin, scrolling patterns: https://www.uxpin.com/studio/blog/4-types-creative-website-scrolling-patterns/
+- Baymard, travel accommodations research: https://baymard.com/blog/new-research-travel-accommodations
+- Baymard, travel site UX best practices: https://baymard.com/blog/travel-site-ux-best-practices
+- Inviqa, hotel website pain points: https://inviqa.com/blog/common-hotel-website-pain-points-and-how-fix-them
+- eHotelier, content that converts: https://insights.ehotelier.com/insights/2016/09/14/six-tips-to-help-hoteliers-craft-content-that-converts/
+- Red Hat UX, sticky card: https://ux.redhat.com/patterns/sticky-card/
 - Shrey IVF (reference site): https://shrey-ivf.vercel.app/
 - Salient, sticky content sections: https://themenectar.com/docs/salient/sticky-content-sections/
