@@ -1,36 +1,58 @@
-/* Palm Regal v0.6, "Liquid Regal"
+/* Palm Regal v0.7, "A day by the Bay"
    Aqua-mint ground, Jahnavi's deep teal leads, canopy green and the logo's sky blue and navy support,
    amber only on Book Direct. Fraunces (soft) and Figtree. Calm motion; WebGL only on capable devices. */
 
 :root {
-  --teal: #193f47; --teal-night: #102e37; --canopy: #2e5e43; --fern: #6e9a62; --leaf: #b9d3a3;
-  --sage: #dcebe4; --mint: #eef5f2; --mint-2: #e2eeea; --aqua: #b4e4e4; --sky: #84ccfc; --sky-ink: #2f6e93; --navy: #3c3c84; --sea: #21465e;
-  --sun: #d08a3c; --sun-2: #e09a4e; --white: #fff; --ink: #132f37; --ink-2: #46605f;
-  --line: rgba(19, 47, 55, .13); --line-d: rgba(238, 245, 242, .2); --on-dark: #eef5f2;
+  /* ---------- Palette: Jahnavi's colours as scales ----------
+     Teal leads (Jahnavi's #193F47 = teal-800). Canopy green and the logo's sky blue and navy support.
+     Amber is reserved for Book Direct. Mint is the light ground. */
+  --teal-950: #0b2228; --teal-900: #102e37; --teal-800: #193f47; --teal-700: #24525c; --teal-600: #2f6873;
+  --teal-300: #8fc4c8; --teal-200: #b4e4e4; --teal-100: #d9f1f0;
+  --canopy-800: #2e5e43; --canopy-600: #4b7a5c; --canopy-400: #6e9a62; --canopy-200: #b9d3a3;
+  --sky-500: #84ccfc; --sky-700: #2f6e93;              /* logo sky: light accent and link ink */
+  --navy-800: #2b2d63; --navy-600: #3c3c84;            /* logo navy: night sky and dusk depth */
+  --amber-500: #d08a3c; --amber-400: #e09a4e;          /* Book Direct only */
+  --mint-50: #f4f8f3; --mint-100: #eef5f2; --mint-200: #e2eeea; --mint-300: #dcebe4;
+  --ink-900: #132f37; --ink-600: #46605f; --ink-400: #6f8584;
+  --white: #fff;
+
+  /* Legacy names, kept so every component reads the same palette */
+  --teal: var(--teal-800); --teal-night: var(--teal-900); --dusk: var(--teal-950); --sea: #21465e;
+  --canopy: var(--canopy-800); --fern: var(--canopy-400); --leaf: var(--canopy-200);
+  --mint: var(--mint-100); --mint-2: var(--mint-200); --sage: var(--mint-300); --dawn: var(--mint-50);
+  --aqua: var(--teal-200); --sky: var(--sky-500); --sky-ink: var(--sky-700); --navy: var(--navy-600);
+  --sun: var(--amber-500); --sun-2: var(--amber-400); --ink: var(--ink-900); --ink-2: var(--ink-600);
+  --line: rgba(19, 47, 55, .12); --line-d: rgba(238, 245, 242, .16); --on-dark: #eef5f2;
+  --lamp: rgba(242, 199, 147, .5);                     /* light effects only, never UI */
+  --glass-fill: rgba(238, 245, 242, .06); --glass-edge: rgba(180, 228, 228, .22);
+
+  /* ---------- Semantic roles (light by default; dark sections swap them) ---------- */
+  --c-bg: var(--mint-100); --c-surface: var(--white); --c-surface-2: var(--mint-200);
+  --c-text: var(--ink-900); --c-muted: var(--ink-600); --c-line: var(--line);
+  --c-em: var(--canopy-800); --c-eyebrow: var(--canopy-800); --c-link: var(--teal-800);
+  --c-cta: var(--amber-500); --c-cta-ink: var(--teal-900);
+
+  /* ---------- Type ---------- */
   --display: "Fraunces", "Iowan Old Style", Georgia, serif;
   --body: "Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --ease: cubic-bezier(.22, 1, .36, 1);
-  --gl: max(20px, env(safe-area-inset-left, 0px)); --gr: max(20px, env(safe-area-inset-right, 0px));
-  --maxw: 1320px; --hdr: 76px;
-  --page-bg: var(--mint);
-  color-scheme: light;
-
-  /* v0.7 tokens: "A day by the Bay", morning at the top, night at the footer */
-  --dawn: #f4f8f3; --dusk: #0c252c;
-  --lamp: rgba(242, 199, 147, .5);          /* light only: fireflies and lamps, never UI */
-  --glass-fill: rgba(238, 245, 242, .06); --glass-edge: rgba(180, 228, 228, .22);
   --h-hero: clamp(2.8rem, 7.4vw, 7.4rem);
-  --h-section: clamp(2.3rem, 4.7vw, 4.2rem);
-  --h-card: clamp(1.6rem, 2.4vw, 2.2rem);
-  --eyebrow-size: .74rem; --eyebrow-tracking: .24em; --eyebrow-rule: 24px;
-  --sec-y: clamp(4.5rem, 9vw, 7.5rem); --sec-y-lux: clamp(5.5rem, 11vw, 10rem);
-  --head-gap: clamp(2.5rem, 5vw, 4.5rem);
-  --r-xs: 8px; --r-sm: 14px; --r-md: 22px; --r-lg: 30px; --r-pill: 999px; --r-arch: 999px 999px 28px 28px;
-  --ease-io: cubic-bezier(.65, 0, .25, 1); --ease-pop: cubic-bezier(.34, 1.56, .64, 1);
-  --dur-1: .2s; --dur-2: .4s; --dur-3: .6s; --dur-4: .9s; --dur-5: 1.4s;
+  --h-section: clamp(2.3rem, 4.6vw, 4.1rem);
+  --h-card: clamp(1.55rem, 2.3vw, 2.1rem);
+  --t-lede: clamp(1.05rem, 1.3vw, 1.2rem); --t-body: 1rem; --t-small: .86rem;
+  --eyebrow-size: .72rem; --eyebrow-tracking: .26em; --eyebrow-rule: 24px;
+
+  /* ---------- Space, shape, depth, motion ---------- */
+  --gl: max(20px, env(safe-area-inset-left, 0px)); --gr: max(20px, env(safe-area-inset-right, 0px));
+  --maxw: 1320px; --hdr: 76px; --page-bg: var(--c-bg);
+  --sec-y: clamp(5rem, 9vw, 8rem); --sec-y-lux: clamp(6rem, 12vw, 10.5rem);
+  --head-gap: clamp(2.5rem, 5vw, 4.5rem); --gap: clamp(14px, 1.6vw, 22px);
+  --r-xs: 8px; --r-sm: 14px; --r-md: 22px; --r-lg: 28px; --r-pill: 999px; --r-arch: 999px 999px 28px 28px;
   --shadow-header: 0 10px 30px -18px rgba(16, 46, 55, .45), inset 0 1px 0 rgba(255, 255, 255, .12);
-  --shadow-card: 0 24px 50px -30px rgba(16, 46, 55, .5);
+  --shadow-card: 0 24px 50px -30px rgba(16, 46, 55, .45);
   --shadow-float: 0 18px 40px -16px rgba(16, 46, 55, .6);
+  --ease: cubic-bezier(.22, 1, .36, 1); --ease-io: cubic-bezier(.65, 0, .25, 1); --ease-pop: cubic-bezier(.34, 1.56, .64, 1);
+  --dur-1: .2s; --dur-2: .4s; --dur-3: .6s; --dur-4: .9s; --dur-5: 1.4s;
+  color-scheme: light;
 }
 *, *::before, *::after { box-sizing: border-box }
 html.lenis, html.lenis body { height: auto }
@@ -57,7 +79,13 @@ p { margin: 0 }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap }
 
 /* Themes: each section owns a background; with motion, the page background shifts between them */
-[data-bg] { position: relative; background: var(--sec-bg); color: var(--sec-ink) }
+[data-bg] { position: relative; background: var(--sec-bg); color: var(--c-text) }
+[data-bg="teal"], [data-bg="canopy"], [data-bg="night"], [data-bg="dusk"] {
+  --c-text: var(--on-dark); --c-muted: rgba(238, 245, 242, .74); --c-line: var(--line-d);
+  --c-surface: rgba(238, 245, 242, .05); --c-surface-2: rgba(238, 245, 242, .09);
+  --c-em: var(--teal-200); --c-eyebrow: var(--teal-200); --c-link: var(--teal-200);
+}
+[data-bg="canopy"] { --c-em: #cfe6c4; --c-eyebrow: #cfe6c4 }
 [data-bg="mint"] { --sec-bg: var(--mint); --sec-ink: var(--ink) }
 [data-bg="sage"] { --sec-bg: var(--sage); --sec-ink: var(--ink) }
 [data-bg="teal"] { --sec-bg: var(--teal); --sec-ink: var(--on-dark) }
@@ -808,3 +836,46 @@ html:not(.motion) .scenehero { height: auto } html:not(.motion) .sh-stick { posi
 .sh-palms.r { transform-origin: 100% 100%; transform: translate(calc(var(--cam, 0) * 22%), calc(var(--cam, 0) * 10%)) scale(calc(1 + var(--cam, 0) * .7)) rotate(calc(var(--cam, 0) * 2deg)) }
 .sh-front { transform-origin: 50% 100%; transform: translateY(calc(var(--cam, 0) * 14%)) scale(calc(1 + var(--cam, 0) * .35)) }
 .sh-birds { transform: scale(calc(1 + var(--cam, 0) * .2)) }
+
+/* ===== Semantic base: every section reads its roles ===== */
+h1 em, h2 em, h3 em { color: var(--c-em) }
+.eyebrow { color: var(--c-eyebrow) }
+.lede { color: var(--c-muted); font-size: var(--t-lede) }
+.tlink { color: var(--c-link) }
+[data-bg="dusk"] { background-image: radial-gradient(120% 70% at 80% 0%, rgba(60, 60, 132, .22), transparent 60%) }
+html.shift [data-bg="dusk"] { background-image: radial-gradient(120% 70% at 80% 0%, rgba(60, 60, 132, .22), transparent 60%) }
+
+/* ===== Pillars as photo cards ===== */
+.pillars2 { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: var(--gap) }
+.pil { position: relative; min-height: clamp(420px, 44vw, 600px); border-radius: var(--r-lg); overflow: hidden; color: var(--on-dark); isolation: isolate; box-shadow: var(--shadow-card) }
+.pil:nth-child(2) { margin-top: clamp(30px, 5vw, 80px) } .pil:nth-child(3) { margin-top: clamp(60px, 10vw, 160px) }
+.pil .img { position: absolute; inset: 0; border-radius: inherit }
+.pil .img img { transition: transform 1.6s var(--ease) }
+.pil:hover .img img { transform: scale(1.04) }
+.pil-shade { position: absolute; inset: 0; z-index: 2; pointer-events: none; background: linear-gradient(180deg, rgba(11, 34, 40, .25) 0%, rgba(11, 34, 40, 0) 30%, rgba(11, 34, 40, .15) 55%, rgba(11, 34, 40, .85) 100%) }
+.pil-n { position: absolute; z-index: 3; left: 24px; top: 22px; font-size: .72rem; font-weight: 600; letter-spacing: .22em; color: rgba(238, 245, 242, .85) }
+.pil-copy { position: absolute; z-index: 3; left: 24px; right: 24px; bottom: 24px; display: grid; gap: 10px }
+.pil-copy svg { width: 40px; height: 40px; color: var(--teal-200) }
+.pil-copy h3 { font-size: clamp(2.4rem, 4vw, 3.6rem); line-height: 1 }
+.pil-copy p { max-width: 34ch; color: rgba(238, 245, 242, .82); display: grid; grid-template-rows: 0fr; opacity: 0; transform: translateY(8px); transition: opacity var(--dur-3) var(--ease), transform var(--dur-3) var(--ease) }
+.pil:hover .pil-copy p, .pil:focus-within .pil-copy p { opacity: 1; transform: none }
+@media (hover: none) { .pil-copy p { opacity: 1; transform: none } }
+@media (max-width: 900px) { .pillars2 { grid-template-columns: 1fr } .pil:nth-child(n) { margin-top: 0; min-height: 420px } }
+
+/* Cinematic push for photos where WebGL is off (phones): CSS scroll-driven */
+@supports (animation-timeline: view()) {
+  html.motion:not(.gl-photos) .img img, html.motion:not(.gl-photos) .para img { animation: cine linear both; animation-timeline: view(); animation-range: entry 0% exit 100% }
+  @keyframes cine { from { scale: 1.12 } to { scale: 1 } }
+}
+
+/* ===== One card family, read from the section's roles ===== */
+.stp, .attr article, .review, .w3, .belt-card, .way { background: var(--c-surface); border: 1px solid var(--c-line); border-radius: var(--r-lg) }
+.stp p, .attr span, .way span span, .pillar p { color: var(--c-muted) }
+.stp-scene { background: var(--c-surface-2) }
+.stp { padding: clamp(18px, 2vw, 26px); gap: 12px }
+.stp h3, .attr b { color: var(--c-text) }
+.chip { background: var(--c-surface); border-color: var(--c-line); color: var(--c-text) }
+.statement { color: var(--teal-800) }
+.statement em { color: var(--c-em) }
+.head h2, .faq-side h2 { color: var(--c-text) }
+.dl-head h2, .phero h1 { color: var(--c-text) }

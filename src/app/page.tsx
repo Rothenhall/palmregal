@@ -43,12 +43,17 @@ export default function Home() {
         <Shade left />
         <div className="wrap">
           <div className="head center"><p className="eyebrow">What Palm Regal is about</p><h2 id="pil-h" data-split data-drop>Green, sea <em>and home.</em></h2></div>
-          <div className="pillars" data-stagger>
+          <div className="pillars2" data-stagger>
             {pillars.map((p, i) => (
-              <article className="pillar" key={p.key}>
-                <span className="n">0{i + 1}</span>
-                <Icon id={`p-${p.key}`} />
-                <div><h3>{p.title}</h3><p>{p.text}</p></div>
+              <article className="pil" key={p.key}>
+                <div className="img" data-gl="photo"><img src={p.img} alt="" loading="lazy" /></div>
+                <span className="pil-shade" />
+                <span className="pil-n">0{i + 1}</span>
+                <div className="pil-copy">
+                  <Icon id={`p-${p.key}`} />
+                  <h3>{p.title}</h3>
+                  <p>{p.text}</p>
+                </div>
               </article>
             ))}
           </div>

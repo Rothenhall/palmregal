@@ -23,7 +23,7 @@ export function LiquidLayer() {
       const canvas = document.getElementById('gl') as HTMLCanvasElement;
       let renderer: Any;
       try { renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false, powerPreference: 'high-performance' }); } catch { return; }
-      html.classList.add('gl-on');
+      html.classList.add('gl-on'); if (fine) html.classList.add('gl-photos');
       renderer.setPixelRatio(Math.min(devicePixelRatio, fine ? 1.75 : 1.25));
       const scene = new THREE.Scene();
       const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, -10, 10);
@@ -124,6 +124,8 @@ export function LiquidLayer() {
           const r = it.el.getBoundingClientRect(), u = it.u; const vis = r.bottom > -50 && r.top < H + 50 && r.width > 0; it.mesh.visible = vis; if (!vis) continue;
           place(it.mesh, r.left, r.top, r.width, r.height, W, H); u.uSize.value.set(r.width, r.height); u.uTime.value = t;
           if (it.kind === 'hero') { const rr = radii(it.el); u.uRadT.value = rr[0]; u.uRadB.value = rr[1]; }
+          /* cinematic push: every photo settles from slightly close to its framing as it scrolls through */
+          if (it.kind !== 'hero' && !it.busy) { const c = Math.max(0, Math.min(1, (H - r.top) / (H + r.height))); u.uZoomB.value = it.zoom * (1.1 - .1 * c); }
           if (it.depth) { const c = (r.top + r.height / 2 - H / 2) / H; u.uShift.value = Math.max(-1, Math.min(1, c)) * Math.sign(it.depth) * (it.zoom - 1) * .45; }
           if (it.lens) {
             let R: number, target: number;
@@ -170,7 +172,7 @@ export function LiquidLayer() {
         renderer.render(scene, camera);
       };
       gsap.ticker.add(frame);
-      cleanup = () => { gsap.ticker.remove(frame); removeEventListener('resize', resize); offs.forEach(f => f()); io?.disconnect(); bio?.disconnect(); renderer.dispose(); html.classList.remove('gl-on'); delete (window as Any).__glScan; };
+      cleanup = () => { gsap.ticker.remove(frame); removeEventListener('resize', resize); offs.forEach(f => f()); io?.disconnect(); bio?.disconnect(); renderer.dispose(); html.classList.remove('gl-on', 'gl-photos'); delete (window as Any).__glScan; };
     })();
     return () => { alive = false; cleanup(); };
   }, []);

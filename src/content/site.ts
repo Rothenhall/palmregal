@@ -111,9 +111,9 @@ export const facilities: Facility[] = [
 ];
 
 export const pillars = [
-  { key: 'green', title: 'Green', text: 'Palms, lawns and gardens all around your suite. Mornings start on the yoga lawn.' },
-  { key: 'sea', title: 'Sea', text: "Gopalpur's beach is five minutes away on foot, and the Bay of Bengal is in view from the deck." },
-  { key: 'home', title: 'Home', text: 'A living room, a kitchenette and a balcony in every suite, and your pets are welcome too.' },
+  { key: 'green', img: '/img/exterior-2.webp', title: 'Green', text: 'Palms, lawns and gardens all around your suite. Mornings start on the yoga lawn.' },
+  { key: 'sea', img: '/img/sea-view-deck.webp', title: 'Sea', text: "Gopalpur's beach is five minutes away on foot, and the Bay of Bengal is in view from the deck." },
+  { key: 'home', img: '/img/living-room.webp', title: 'Home', text: 'A living room, a kitchenette and a balcony in every suite, and your pets are welcome too.' },
 ];
 
 export const day = [
