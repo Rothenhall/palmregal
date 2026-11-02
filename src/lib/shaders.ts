@@ -25,10 +25,15 @@ vec3 glassLight(vec3 g,vec3 n,float d,vec2 dir,float tint){
 }`;
 export const VS = `varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`;
 export const PHOTO = COMMON+`
-uniform sampler2D uA,uB;uniform float uHasA,uHasB,uP,uZoomA,uZoomB,uAspA,uAspB,uShift,uRadT,uRadB,uDropAmt;uniform vec2 uOrigin;uniform vec3 uDrop;
+uniform sampler2D uA,uB;uniform float uHasA,uHasB,uP,uZoomA,uZoomB,uAspA,uAspB,uShift,uRadT,uRadB,uDropAmt,uLife;uniform vec2 uOrigin;uniform vec3 uDrop;
 vec2 cover(vec2 uv,float a){float b=uSize.x/uSize.y;vec2 s=b>a?vec2(1.,a/b):vec2(b/a,1.);return (uv-.5)*s+.5;}
-vec3 tA(vec2 p){vec2 uv=p/uSize;uv.y+=uShift;vec2 c=.5+(cover(uv,uAspA)-.5)/uZoomA;return texture2D(uA,clamp(c,.001,.999)).rgb;}
-vec3 tB(vec2 p){vec2 uv=p/uSize;uv.y+=uShift;vec2 c=.5+(cover(uv,uAspB)-.5)/uZoomB;return texture2D(uB,clamp(c,.001,.999)).rgb;}
+vec2 life(vec2 uv){if(uLife<.001)return uv;float t=uTime;float top=smoothstep(.35,1.,uv.y);
+  float w=(fbm(vec2(uv.x*2.2-t*.18,uv.y*1.6+t*.05))-.5);
+  vec2 o=vec2(w*.010+sin(t*.7+uv.y*5.)*.0025,w*.004)*top;
+  o+=vec2(0.,(fbm(vec2(uv.x*14.,uv.y*30.-t*.6))-.5)*.0016)*(1.-top);
+  return uv+o*uLife;}
+vec3 tA(vec2 p){vec2 uv=life(p/uSize);uv.y+=uShift;vec2 c=.5+(cover(uv,uAspA)-.5)/uZoomA;return texture2D(uA,clamp(c,.001,.999)).rgb;}
+vec3 tB(vec2 p){vec2 uv=life(p/uSize);uv.y+=uShift;vec2 c=.5+(cover(uv,uAspB)-.5)/uZoomB;return texture2D(uB,clamp(c,.001,.999)).rgb;}
 vec4 scene(vec2 p){
   if(uP>=.999)return vec4(tB(p),uHasB);
   float maxD=length(max(uOrigin,uSize-uOrigin));

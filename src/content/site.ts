@@ -37,6 +37,7 @@ export type Suite = {
   guests: string;
   size: string;
   outdoor: string;
+  bestFor: string;
   photos: { src: string; alt: string }[];
   todo?: boolean;
 };
@@ -51,6 +52,7 @@ export const suites: Suite[] = [
     guests: 'Up to 3',
     size: '627 sq ft',
     outdoor: '1 private balcony',
+    bestFor: 'Couples and small families',
     photos: [
       { src: '/img/bedroom-1.webp', alt: 'One Bedroom Suite bedroom' },
       { src: '/img/kitchen.webp', alt: 'Suite kitchenette' },
@@ -66,6 +68,7 @@ export const suites: Suite[] = [
     guests: 'Up to 5',
     size: '1042 sq ft',
     outdoor: '2 private balconies',
+    bestFor: 'Families and friends travelling together',
     photos: [
       { src: '/img/living-room.webp', alt: 'Two Bedroom Suite living room' },
       { src: '/img/bedroom-2.webp', alt: 'Suite bedroom' },
@@ -81,6 +84,7 @@ export const suites: Suite[] = [
     guests: 'To confirm',
     size: 'To confirm',
     outdoor: 'Sea and garden view',
+    bestFor: 'Waking up to the sea',
     photos: [{ src: '/img/view-2.webp', alt: 'Balcony looking over the gardens' }],
     todo: true,
   },
@@ -181,4 +185,38 @@ export const heroSlides = [
   { src: '/img/exterior-2.webp', alt: 'Palm-lined garden path at Palm Regal', cap: 'Palms, lawns and gardens all around your suite.' },
   { src: '/img/beach-evening.webp', alt: 'Waves on Gopalpur beach under an evening sky', cap: "Sea breeze, five minutes' walk from Gopalpur beach." },
   { src: '/img/main-banner.webp', alt: 'Lit garden walkway at Palm Regal at night', cap: 'Evenings in the garden, lit softly after dark.' },
+];
+
+/** The "at a glance" glass card in the hero. Only facts the resort has given us. */
+export const glance = [
+  { label: 'Gopalpur beach', value: '5 min walk' },
+  { label: 'Resort facilities', value: '13' },
+  { label: 'Suite sizes', value: '627–1042 sq ft' },
+  { label: 'Pets', value: 'Welcome' },
+];
+
+/** Our story timeline. Years and words to come from Jahnavi. */
+export const story = [
+  { when: 'Year to confirm', title: 'The land', text: 'A green plot a short walk from Gopalpur beach.', todo: true },
+  { when: 'Year to confirm', title: 'Palm Regal opens', text: 'Serviced suites among palms and lawns welcome their first guests.', todo: true },
+  { when: 'Year to confirm', title: 'Resort delights', text: 'The pool, the theatre, the gaming lounge and the sea view deck join the suites.', todo: true },
+  { when: 'Today', title: 'A home by the sea', text: 'Three suite types, thirteen facilities and pets welcome.' },
+];
+
+/** Places on the coast map. x/y are positions on a 1000 x 640 sketch, not to scale. */
+export const coast = [
+  { id: 'pr', name: 'Palm Regal', x: 470, y: 400, detail: 'Your suite, among palms and lawns.', home: true },
+  { id: 'beach', name: 'Gopalpur beach', x: 532, y: 462, detail: '5 min walk' },
+  { id: 'bam', name: 'Berhampur', x: 330, y: 330, detail: '14 km · about 25 min · nearest railway station' },
+  { id: 'tt', name: 'Tara Tarini Temple', x: 520, y: 150, detail: '35 km · hilltop temple with wide views' },
+  { id: 'chilika', name: 'Chilika Lake', x: 820, y: 236, detail: "46 km · Asia's largest coastal lagoon" },
+  { id: 'sonpur', name: 'Sonpur Blue Flag Beach', x: 236, y: 596, detail: '41 km · a certified clean beach', todo: true },
+  { id: 'jirang', name: 'Jirang Monastery', x: 70, y: 210, detail: '113 km · the "Mini Tibet of Odisha"', far: true },
+];
+
+/** Quick starts for the Book Direct pill: each fills the message for you. */
+export const quickStarts = [
+  { label: 'Plan a weekend', note: 'We are planning a weekend away.' },
+  { label: 'Bring my pet', note: 'We will be bringing our pet.' },
+  { label: 'Family stay', note: 'We are a family, with children.' },
 ];

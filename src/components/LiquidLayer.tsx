@@ -70,7 +70,7 @@ export function LiquidLayer() {
       function makePhoto(el: HTMLElement) {
         const kind = el.dataset.gl!; if (kind === 'water') return; if (!fine && kind !== 'hero') return;
         const isHero = kind === 'hero', depth = +(el.dataset.depth || 0), zoom = depth ? 1 + Math.abs(depth) / 1200 + .02 : 1, rr = radii(el);
-        const u = Object.assign(base(), { uA: { value: null }, uB: { value: null }, uHasA: { value: 0 }, uHasB: { value: 1 }, uP: { value: isHero ? 1 : 0 }, uZoomA: { value: zoom }, uZoomB: { value: zoom }, uAspA: { value: 1.5 }, uAspB: { value: 1.5 }, uShift: { value: 0 }, uRadT: { value: rr[0] }, uRadB: { value: rr[1] }, uDropAmt: { value: 0 }, uOrigin: { value: new THREE.Vector2() }, uDrop: { value: new THREE.Vector3() } });
+        const u = Object.assign(base(), { uA: { value: null }, uB: { value: null }, uHasA: { value: 0 }, uHasB: { value: 1 }, uP: { value: isHero ? 1 : 0 }, uZoomA: { value: zoom }, uZoomB: { value: zoom }, uAspA: { value: 1.5 }, uAspB: { value: 1.5 }, uShift: { value: 0 }, uRadT: { value: rr[0] }, uRadB: { value: rr[1] }, uDropAmt: { value: 0 }, uLife: { value: isHero ? 1 : 0 }, uOrigin: { value: new THREE.Vector2() }, uDrop: { value: new THREE.Vector3() } });
         const it: Item = { el, kind, u, mesh: addMesh(S.PHOTO, u, 1), depth, zoom, lens: isHero || el.hasAttribute('data-lens'), over: false, ptr: new THREE.Vector2(), pos: new THREE.Vector2(-1, -1), revealed: isHero, ready: false, pending: false, busy: false, cur: null, want: null };
         const src = srcOf(el); it.cur = it.want = src;
         tex(src).then(t => { if (!t || !alive) return; u.uB.value = t; u.uAspB.value = t.image.width / t.image.height; it.ready = true; el.classList.add('gl-ready'); if (isHero) gsap.fromTo(u.uZoomB, { value: 1.1 }, { value: 1, duration: 8, ease: 'none' }); if (it.pending) reveal(it); });
@@ -85,7 +85,7 @@ export function LiquidLayer() {
       }
       let beads: Any[] = [], water: Any = null;
       const range = document.createRange();
-      const BG: Record<string, number[]> = { mint: [.933, .961, .949], sage: [.863, .922, .894], teal: [.098, .247, .278], canopy: [.18, .369, .263], night: [.063, .18, .216] };
+      const BG: Record<string, number[]> = { dawn: [.957, .973, .953], dusk: [.047, .145, .173], mint: [.933, .961, .949], sage: [.863, .922, .894], teal: [.098, .247, .278], canopy: [.18, .369, .263], night: [.063, .18, .216] };
       const bgOf = (el: Element) => { const s = el.closest('[data-bg]') as HTMLElement | null; return new THREE.Vector3(...(BG[s?.dataset.bg || 'mint'] || BG.mint)); };
       const lastText = (el: Element) => { const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT); let last: Text | null = null, n: Node | null; while ((n = w.nextNode())) if (n.textContent!.trim()) last = n as Text; return last; };
       let io: IntersectionObserver, bio: IntersectionObserver;

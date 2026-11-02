@@ -9,7 +9,7 @@ import Lenis from 'lenis';
 import { hasMotion, isFine } from '@/lib/env';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
-const COLORS: Record<string, string> = { mint: '#EEF5F2', sage: '#DCEBE4', teal: '#193F47', canopy: '#2E5E43', night: '#102E37' };
+const COLORS: Record<string, string> = { dawn: '#F4F8F3', dusk: '#0C252C', mint: '#EEF5F2', sage: '#DCEBE4', teal: '#193F47', canopy: '#2E5E43', night: '#102E37' };
 
 export function Motion() {
   const path = usePathname();
@@ -65,7 +65,14 @@ export function Motion() {
           html.classList.add('shift');
           const setBg = (k: string) => { document.body.style.backgroundColor = COLORS[k] || COLORS.mint; };
           setBg(secs[0].dataset.bg!);
-          secs.forEach((s, i) => ScrollTrigger.create({ trigger: s, start: 'top 55%', end: 'bottom 55%', onToggle: self => { if (self.isActive) setBg(s.dataset.bg!); else if (i === 0 && self.direction < 0) setBg(s.dataset.bg!); } }));
+          /* whichever section crosses 55% of the screen sets the colour; works after jumps too */
+          let last = '';
+          const pick = () => {
+            const line = innerHeight * .55; let k = secs[0].dataset.bg!;
+            for (const s of secs) { const r = s.getBoundingClientRect(); if (r.top <= line) k = s.dataset.bg!; else break; }
+            if (k !== last) { last = k; setBg(k); }
+          };
+          ScrollTrigger.create({ start: 0, end: 'max', onUpdate: pick, onRefresh: pick });
         }
       });
       requestAnimationFrame(() => ScrollTrigger.refresh());

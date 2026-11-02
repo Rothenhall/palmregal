@@ -6,7 +6,7 @@ import { nav, site } from '@/content/site';
 import { Icon } from './Icons';
 import { waHref } from '@/lib/book';
 
-const DARK = ['teal', 'canopy', 'night'];
+const DARK = ['teal', 'canopy', 'night', 'dusk'];
 
 export function Header() {
   const path = usePathname();
@@ -26,7 +26,7 @@ export function Header() {
       if (y > 300 && y > lastY + 4) hdr.classList.add('hide'); else if (y < lastY - 4 || y < 300) hdr.classList.remove('hide');
       lastY = y;
       let dark = false;
-      if (!solid) {
+      {
         const probe = 38;
         if (hero && hero.dataset.dark === '1') { const r = hero.getBoundingClientRect(); dark = r.top <= probe && r.bottom >= probe; }
         if (!dark) document.querySelectorAll<HTMLElement>('main [data-bg]').forEach(s => { const r = s.getBoundingClientRect(); if (r.top <= probe && r.bottom >= probe && DARK.includes(s.dataset.bg || '')) dark = true; });

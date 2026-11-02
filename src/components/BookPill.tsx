@@ -4,12 +4,13 @@ import { usePathname } from 'next/navigation';
 import { Icon } from './Icons';
 import { GUESTS, send, useDates } from './BookForm';
 import { bookingMessage } from '@/lib/book';
+import { quickStarts } from '@/content/site';
 import { canLiquid, isFine } from '@/lib/env';
 
 export function BookPill() {
   const path = usePathname();
   const [show, setShow] = useState(false); const [open, setOpen] = useState(false);
-  const d = useDates(); const [guests, setGuests] = useState('2 guests'); const [note, setNote] = useState('Your dates go straight to the resort.');
+  const d = useDates(); const [guests, setGuests] = useState('2 guests'); const [quick, setQuick] = useState(''); const [note, setNote] = useState('Your dates go straight to the resort.');
   const cv = useRef<HTMLCanvasElement>(null); const btn = useRef<HTMLButtonElement>(null); const pill = useRef<HTMLDivElement>(null);
   const morph = useRef<((s: boolean) => void) | null>(null);
   const [delayed, setDelayed] = useState(false);
@@ -65,9 +66,10 @@ export function BookPill() {
         <form className="lpanel" noValidate onSubmit={e => {
           e.preventDefault();
           if (!d.checkIn || !d.checkOut) { setNote('Choose your dates first.'); return; }
-          const via = send(bookingMessage({ checkIn: d.checkIn, checkOut: d.checkOut, guests }));
+          const via = send(bookingMessage({ checkIn: d.checkIn, checkOut: d.checkOut, guests, note: quick }));
           setNote(`Ready to send to the resort by ${via}.`);
         }}>
+          <div className="quick full" role="group" aria-label="What brings you">{quickStarts.map(q => <button key={q.label} type="button" aria-pressed={quick === q.note} onClick={() => setQuick(quick === q.note ? '' : q.note)}>{q.label}</button>)}</div>
           <div className="fld"><label htmlFor="p-in">Check-in</label><input id="p-in" type="date" min={d.min} value={d.checkIn} onChange={e => d.onIn(e.target.value)} autoFocus /></div>
           <div className="fld"><label htmlFor="p-out">Check-out</label><input id="p-out" type="date" min={d.checkIn || d.min} value={d.checkOut} onChange={e => d.setOut(e.target.value)} /></div>
           <div className="fld full"><label htmlFor="p-g">Guests</label><select id="p-g" value={guests} onChange={e => setGuests(e.target.value)}>{GUESTS.map(g => <option key={g}>{g}</option>)}</select></div>

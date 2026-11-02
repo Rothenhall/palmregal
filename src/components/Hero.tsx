@@ -5,6 +5,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { heroSlides, site } from '@/content/site';
 import { hasMotion } from '@/lib/env';
+import { Glance, HeroAmbient } from './Sections';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -67,6 +68,7 @@ export function Hero() {
               <img src={s.src} alt={s.alt} fetchPriority={i === 0 ? 'high' : 'auto'} loading={i === 0 ? 'eager' : 'lazy'} />
             </div>
           ))}
+          <HeroAmbient />
         </div>
         <div className="hero-veil" />
         <div className="hero-in">
@@ -74,15 +76,16 @@ export function Hero() {
             <div>
               <h2>A home by the sea, <em>wrapped in green.</em></h2>
               <p className="cap" aria-live="polite">{heroSlides[cur].cap}</p>
-            </div>
-            <div className="counter" aria-label="Photos">
+              <div className="counter" aria-label="Photos">
               <span className="num"><b>0{cur + 1}</b> / 0{heroSlides.length}</span>
               <div className="bars">
                 {heroSlides.map((s, i) => (
                   <button key={s.src + cycle} type="button" className={(i === cur ? 'on' : '') + (cur !== 0 && i < cur ? ' done' : '')} aria-label={`Show photo ${i + 1}`} aria-current={i === cur} onClick={() => go(i)}><span><i /></span></button>
                 ))}
               </div>
+              </div>
             </div>
+            <Glance />
           </div>
         </div>
         <div className="hero-hint" aria-hidden="true">Scroll<i /></div>
