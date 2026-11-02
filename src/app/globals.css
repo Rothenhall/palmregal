@@ -566,21 +566,6 @@ html.motion.js:not(.ready) [data-split] { visibility: hidden }
 .hero-in .counter { justify-items: start; margin-top: 22px }
 @media (max-width: 760px) { .glance { display: none } }
 
-/* Our story timeline */
-.story { margin-top: var(--sec-y); position: relative }
-.story-line { position: relative; height: 1px; background: var(--line); margin-bottom: 30px }
-.story-line i { position: absolute; inset: 0; background: var(--teal); transform: scaleX(0); transform-origin: left; transition: transform 2.4s var(--ease-io) .2s }
-.story.in .story-line i, html:not(.motion) .story-line i { transform: scaleX(1) }
-.story-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px }
-.story-steps li { position: relative; display: grid; gap: 8px; align-content: start; opacity: .2; transition: opacity .8s var(--ease) }
-.story.in .story-steps li, html:not(.motion) .story-steps li { opacity: 1 }
-.story.in .story-steps li:nth-child(2) { transition-delay: .6s } .story.in .story-steps li:nth-child(3) { transition-delay: 1.1s } .story.in .story-steps li:nth-child(4) { transition-delay: 1.6s }
-.story-dot { position: absolute; top: -36px; left: 0; width: 11px; height: 11px; border-radius: 50%; background: var(--sage); border: 2px solid var(--teal) }
-.story-steps time { font-size: .7rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--sky-ink) }
-.story-steps h3 { font-size: var(--h-card) }
-.story-steps p { color: var(--ink-2); font-size: .95rem }
-@media (max-width: 900px) { .story-steps { grid-template-columns: 1fr 1fr; row-gap: 50px } }
-
 /* Tall suite cards with a glass panel that rises on hover */
 .tall { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px }
 .tall-card { position: relative; display: block; aspect-ratio: 3/4.3; border-radius: var(--r-lg); overflow: hidden; text-decoration: none; color: var(--on-dark); isolation: isolate; box-shadow: var(--shadow-card) }
@@ -772,11 +757,5 @@ html.shift .moments-sec::before { background: linear-gradient(180deg, rgba(12, 3
 .coast-card-in { display: grid; gap: 6px; animation: card-in .5s var(--ease) }
 @keyframes card-in { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: none } }
 @media (prefers-reduced-motion: reduce) { .coast-zoom { transform: none !important } }
-/* Story: hovering a milestone makes it the active one */
-.story-dot { transition: transform .45s var(--ease-pop), background .3s }
-.story-steps li { cursor: default }
-.story.in .story-steps:hover li { opacity: .4; transition-delay: 0s }
-.story.in .story-steps li:hover { opacity: 1 }
-.story-steps li:hover .story-dot { transform: scale(1.6); background: var(--teal) }
 .tall-card .stand { left: auto; right: 72px; top: 24px }
 .mwall { align-content: start; top: -14% }

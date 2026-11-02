@@ -8,7 +8,7 @@ import { Icon, Shade } from '@/components/Icons';
 import { Todo } from '@/components/Todo';
 import { CoastMap } from '@/components/CoastMap';
 import { MomentsWall } from '@/components/MomentsWall';
-import { BookingSteps, ReviewBelt, Story, SuiteTall, ThreeWays } from '@/components/Sections';
+import { BookingSteps, ReviewBelt, SuiteTall, ThreeWays } from '@/components/Sections';
 import { facilities, pillars } from '@/content/site';
 
 /* "A day by the Bay": the page runs from morning at the top to night at the footer */
@@ -72,7 +72,6 @@ export default function Home() {
               <Link className="btn btn--teal" href="/contact/">Say hello <Icon id="i-arrow" /></Link>
             </div>
           </div>
-          <Story />
         </div>
       </section>
 

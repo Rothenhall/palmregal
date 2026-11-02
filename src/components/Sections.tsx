@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { gallery, glance, site, story, suites } from '@/content/site';
+import { gallery, glance, site, suites } from '@/content/site';
 import { Icon } from './Icons';
 import { Todo } from './Todo';
 import { waHref } from '@/lib/book';
@@ -43,25 +43,6 @@ export function SuiteTall() {
           </span>
         </Link>
       ))}
-    </div>
-  );
-}
-
-/* Our story: the line draws itself across the milestones */
-export function Story() {
-  return (
-    <div className="story" data-reveal>
-      <div className="story-line"><i /></div>
-      <ol className="story-steps">
-        {story.map(m => (
-          <li key={m.title}>
-            <span className="story-dot" />
-            <time>{m.when}{m.todo && <Todo>Jahnavi</Todo>}</time>
-            <h3>{m.title}</h3>
-            <p>{m.text}</p>
-          </li>
-        ))}
-      </ol>
     </div>
   );
 }

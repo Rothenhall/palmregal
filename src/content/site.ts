@@ -195,14 +195,6 @@ export const glance = [
   { label: 'Pets', value: 'Welcome' },
 ];
 
-/** Our story timeline. Years and words to come from Jahnavi. */
-export const story = [
-  { when: 'Year to confirm', title: 'The land', text: 'A green plot a short walk from Gopalpur beach.', todo: true },
-  { when: 'Year to confirm', title: 'Palm Regal opens', text: 'Serviced suites among palms and lawns welcome their first guests.', todo: true },
-  { when: 'Year to confirm', title: 'Resort delights', text: 'The pool, the theatre, the gaming lounge and the sea view deck join the suites.', todo: true },
-  { when: 'Today', title: 'A home by the sea', text: 'Three suite types, thirteen facilities and pets welcome.' },
-];
-
 /** Places on the coast map. x/y are positions on a 1000 x 640 sketch, not to scale. */
 export const coast = [
   { id: 'pr', name: 'Palm Regal', x: 470, y: 400, detail: 'Your suite, among palms and lawns.', home: true },
