@@ -25,6 +25,7 @@ export default function Suites() {
             <div className="cmp-row"><span>Best for</span>{suites.map(x => <b key={x.slug}>{x.bestFor}</b>)}</div>
           </div>
           <div className="every" data-stagger style={{ margin: '28px 0 40px' }}>{inEverySuite.map(x => <span className="chip" key={x}>{x}</span>)}</div>
+          <div className="suites-stack" data-stack>
           {suites.map(s => (
             <article className={'suite' + (s.todo ? ' suite--tbc' : '')} id={s.slug} key={s.slug}>
               <SuiteGallery photos={s.photos} todo={s.todo} />
@@ -45,6 +46,7 @@ export default function Suites() {
               </div>
             </article>
           ))}
+          </div>
         </div>
       </section>
       <section className="sec" data-bg="teal" id="good-to-know" aria-labelledby="pol-h">

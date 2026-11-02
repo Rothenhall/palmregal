@@ -46,19 +46,27 @@ export function Motion() {
           const now = h.hasAttribute('data-now');
           gsap.from(lines(h), { yPercent: 105, duration: 1.15, stagger: .08, ease, delay: now ? .2 : 0, scrollTrigger: now ? undefined : { trigger: h, start: 'top 88%', once: true } });
         });
-        document.querySelectorAll('[data-words]').forEach(st => {
-          const wrap = (node: Node) => Array.from(node.childNodes).forEach(c => {
-            if (c.nodeType === 3) { const f = document.createDocumentFragment(); c.textContent!.split(/(\s+)/).forEach(w => { if (!w) return; if (/^\s+$/.test(w)) { f.appendChild(document.createTextNode(w)); return; } const s = document.createElement('span'); s.className = 'w'; s.textContent = w; f.appendChild(s); }); node.replaceChild(f, c); }
-            else if (c.nodeType === 1) wrap(c);
-          });
-          if (!st.querySelector('.w')) wrap(st);
-          const ws = st.querySelectorAll('.w'); gsap.set(ws, { opacity: .16 });
-          /* fills in as you read down, then stays filled: it never fades again on the way back up (NN/g) */
-          let most = 0;
-          ScrollTrigger.create({ trigger: st, start: 'top 82%', end: 'bottom 45%', onUpdate: self => {
-            if (self.progress <= most) return; most = self.progress;
-            const n = Math.round(most * ws.length); ws.forEach((w, i) => gsap.to(w, { opacity: i < n ? 1 : .16, duration: .3, overwrite: true }));
+        /* stacking cards: as each card arrives, the one before it recedes (scale to .93, up 10px,
+           a touch darker). The cards themselves stay readable; only the one being covered changes. */
+        document.querySelectorAll<HTMLElement>('[data-stack]').forEach(stack => {
+          const cards = Array.from(stack.children) as HTMLElement[];
+          ScrollTrigger.create({ trigger: stack, start: 'top bottom', end: 'bottom top', onUpdate: () => {
+            const vh = innerHeight;
+            cards.forEach((c, i) => {
+              const next = cards[i + 1]; if (!next) return;
+              const t = Math.max(0, Math.min(1, (vh * .9 - next.getBoundingClientRect().top) / (vh * .75)));
+              c.style.transform = `scale(${1 - t * .07}) translateY(${-t * 10}px)`; c.style.filter = `brightness(${1 - t * .18})`;
+            });
           } });
+        });
+        /* colour fill: a full-colour copy is revealed over a faded one as you read down, edged by a
+           thin line. The words never move; once filled it stays filled (NN/g). */
+        document.querySelectorAll<HTMLElement>('[data-fill]').forEach(el => {
+          const top = el.querySelector<HTMLElement>('.fill-top')!, line = el.querySelector<HTMLElement>('.fill-line')!;
+          let most = 0;
+          const set = (p: number) => { top.style.clipPath = `inset(0 0 ${(1 - p) * 100}% 0)`; line.style.top = `${p * 100}%`; line.style.opacity = p > .005 && p < .995 ? '1' : '0'; };
+          set(0);
+          ScrollTrigger.create({ trigger: el, start: 'top 78%', end: 'bottom 40%', onUpdate: self => { const p = gsap.parseEase('power1.inOut')(self.progress); if (p > most) { most = p; set(p); } } });
         });
         if (!html.classList.contains('gl-on')) gsap.utils.toArray<HTMLElement>('[data-par] img').forEach(img => gsap.fromTo(img, { yPercent: -6, scale: 1.12 }, { yPercent: 6, scale: 1.12, ease: 'none', scrollTrigger: { trigger: img.parentElement!, start: 'top bottom', end: 'bottom top', scrub: true } }));
         document.querySelectorAll<SVGPathElement>('.map .route').forEach((r, i) => { const len = r.getTotalLength(); gsap.fromTo(r, { strokeDasharray: len, strokeDashoffset: len }, { strokeDashoffset: 0, duration: 1.8, delay: i * .15, ease: 'power2.inOut', scrollTrigger: { trigger: '.map', start: 'top 75%', once: true }, onComplete: () => { if (!r.classList.contains('accent')) r.style.strokeDasharray = '5 7'; } }); });

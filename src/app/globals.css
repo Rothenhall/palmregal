@@ -1164,3 +1164,43 @@ html:not(.motion) .realhero { height: auto } html:not(.motion) .rh-stick { posit
   .dayacc-copy h2 { margin: 10px 0 14px }
   .dayacc-strip { height: 54svh }
 }
+
+/* ===== Hero opener: "Palm [arch] Regal" opening into the real photos ===== */
+.realhero { height: 420svh; background: var(--mint-100) }
+.realhero .rh-stick { color: var(--teal-800) }
+.rh-shot.first { left: 50%; top: 50%; right: auto; bottom: auto; width: min(26vw, 360px); height: min(58svh, 520px); translate: -50% -50%; border-radius: 999px 999px 8px 8px; z-index: 1 }
+.rh-shot.s1, .rh-shot.s2 { opacity: 0; z-index: 1 }
+.rh-shade { opacity: 0; z-index: 2 }
+.rh-kicker { position: absolute; left: 0; right: 0; top: calc(var(--hdr) + 22px); margin: 0; text-align: center; font-size: .72rem; font-weight: 600; letter-spacing: .28em; text-transform: uppercase; color: var(--canopy-800); z-index: 3 }
+.rh-brand { position: absolute; inset: 0; margin: 0; pointer-events: none; z-index: 3; font-size: clamp(3.6rem, 11vw, 11rem); line-height: 1; letter-spacing: -.035em; color: var(--teal-800) }
+.rh-word { position: absolute; top: 50%; transform: translateY(-50%); white-space: nowrap }
+.rh-word.l { right: calc(50% + min(13vw, 180px) + 2.2vw) }
+.rh-word.r { left: calc(50% + min(13vw, 180px) + 2.2vw) }
+.rh-word em { color: var(--canopy-800) }
+.rh-head { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); text-align: center; z-index: 3; opacity: 0; padding-inline: var(--gl); text-shadow: 0 2px 30px rgba(11, 34, 40, .35) }
+.rh-head h2 { font-size: var(--h-hero); line-height: .98; color: var(--white) }
+.rh-head h2 em { color: #fdf3e2 }
+.rh-end { z-index: 3 } .rh-meta { z-index: 3; opacity: 0 }
+.rh-end, .rh-meta { color: var(--on-dark) }
+@media (max-width: 760px) {
+  .realhero { height: 380svh }
+  .rh-shot.first { width: 62vw; height: 46svh }
+  .rh-word { left: 0 !important; right: 0 !important; text-align: center }
+  .rh-word.l { top: calc(50% - 23svh - .55em) } .rh-word.r { top: calc(50% + 23svh + .55em) }
+  .rh-brand { font-size: clamp(3.4rem, 17vw, 5rem) }
+}
+html:not(.motion) .rh-shot.first { inset: 0; width: auto; height: auto; translate: none; border-radius: 0 }
+html:not(.motion) .rh-brand, html:not(.motion) .rh-kicker { display: none } html:not(.motion) .rh-meta { opacity: 1 }
+
+/* ===== Intro colour fill ===== */
+.fill { position: relative; display: grid; width: fit-content; max-width: 100% }
+.fill > .statement { grid-area: 1 / 1; margin: 0 }
+.fill > .statement:not(.fill-top) { color: rgba(25, 63, 71, .2) } .fill > .statement:not(.fill-top) em { color: rgba(46, 94, 67, .25) }
+html:not(.motion) .fill > .statement:not(.fill-top) { color: var(--teal-800) } html:not(.motion) .fill-top, html:not(.motion) .fill-line { display: none }
+.fill-line { position: absolute; left: 0; width: 100%; height: 1px; background: var(--canopy-800); opacity: 0; pointer-events: none; transition: opacity .3s }
+
+/* ===== Suites as stacking cards: each sticks, the one before recedes as the next arrives ===== */
+.suites-stack { display: grid; gap: 40px; padding-bottom: 20px }
+.suites-stack .suite { position: sticky; top: calc(var(--hdr) + 76px); border-top: 0; padding: clamp(20px, 3vw, 40px); background: var(--c-surface); border: 1px solid var(--c-line); border-radius: var(--r-lg); box-shadow: var(--shadow-card); transform-origin: 50% 0; will-change: transform }
+html:not(.motion) .suites-stack .suite { position: relative; top: 0 }
+@media (max-width: 900px) { .suites-stack .suite { top: calc(var(--hdr) + 64px) } }

@@ -29,7 +29,11 @@ export default function Home() {
         <div className="wrap">
           <h2 id="intro-h" className="sr">About Palm Regal</h2>
           <div className="statement-row">
-            <p className="statement" data-words>Serviced suites with their own living room, kitchenette and balcony, set among <em>palms and lawns,</em> five minutes&apos; walk from Gopalpur beach. And your pets are welcome too.</p>
+            <div className="fill" data-fill>
+              <p className="statement">Serviced suites with their own living room, kitchenette and balcony, set among <em>palms and lawns,</em> five minutes&apos; walk from Gopalpur beach. And your pets are welcome too.</p>
+              <p className="statement fill-top" aria-hidden="true">Serviced suites with their own living room, kitchenette and balcony, set among <em>palms and lawns,</em> five minutes&apos; walk from Gopalpur beach. And your pets are welcome too.</p>
+              <i className="fill-line" aria-hidden="true" />
+            </div>
             <div className="badges"><div className="badges-in"><span className="chip">Pet friendly</span><span className="chip">5 min walk to the beach</span><span className="chip">Doctor on call</span><span className="chip">EV charging on request</span></div></div>
           </div>
           <figure className="para" data-gl="photo" data-depth="-150" data-par>

@@ -61,6 +61,16 @@ These need more iterations and a proper development pass later. Leave them exact
 | Gallery chapters | Static editorial grids | Candidate for the elastic-grid lag or a one-time formation on each chapter opener |
 | Horizontal sections | None on desktop | Keep it that way; swipe only on phones for small sets |
 
+
+### Reference studied: shrey-ivf.vercel.app (read from its own main.js)
+
+- **Hero arch that opens**: the arch grows to the full screen over the first ~68% of the hero, the photo inside counter-zooms 1.35 to 1.02, the brand words part sideways and fade, the headline arrives once the photo fills. Adopted as "Palm [arch] Regal" with real photos.
+- **Clip-path colour swap**: a full-colour copy of a statement revealed over a faded copy, edged by a thin line; the text never moves. Adopted for the homepage intro (one-way, stays filled).
+- **Stacking cards**: each card sticks; the previous one scales to .93, rises 10px and dims as the next arrives. Adopted on the Suites page.
+- **Pinned stepper**: number, text and arch photo change in place with progress dots. Our day story and the Gallery accordion already follow this; a candidate upgrade for the day story.
+- **Horizontal pinned track**: not adopted (NN/g: horizontal scrolling on desktop tests poorly).
+- Also: a thin page-progress bar, magnetic buttons, masked word headings, counters, a slow three.js gold double helix in the lab section.
+
 ### Sources
 
 - NN/g, What Parallax Lacks: https://www.nngroup.com/articles/parallax-usability/
@@ -73,4 +83,5 @@ These need more iterations and a proper development pass later. Leave them exact
 - Codrops, Elastic Grid Scroll: https://tympanus.net/codrops/2025/06/03/elastic-grid-scroll-creating-lag-based-layout-animations-with-gsap-scrollsmoother/
 - Codrops, Staggered (3D) Grid Animations: https://tympanus.net/codrops/2024/10/16/staggered-3d-grid-animations-with-scroll-triggered-effects
 - UXPin, scrolling patterns: https://www.uxpin.com/studio/blog/4-types-creative-website-scrolling-patterns/
+- Shrey IVF (reference site): https://shrey-ivf.vercel.app/
 - Salient, sticky content sections: https://themenectar.com/docs/salient/sticky-content-sections/

@@ -1,6 +1,7 @@
 'use client';
-/* The hero is real photography only: a day at Palm Regal in three photos. Scrolling slowly pushes
-   the camera into each photo and dissolves to the next. Nothing drawn or generated on top. */
+/* The hero is real photography only. It opens as "Palm [arch] Regal": scrolling grows the arch to
+   the full screen while the photo inside settles from a close crop (counter-zoom), the two words
+   part, and the headline arrives. Then the day carries on: dusk on the beach, the paths at night. */
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
@@ -22,38 +23,58 @@ export function Hero() {
   const [cur, setCur] = useState(0);
 
   useEffect(() => {
-    if (!hasMotion()) return;
+    if (!hasMotion()) { root.current!.dataset.dark = '1'; return; }
     const sec = root.current!;
+    const mob = innerWidth < 760;
     const ctx = gsap.context(() => {
-      const shots = gsap.utils.toArray<HTMLElement>('.rh-shot');
-      const tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: sec, start: 'top top', end: 'bottom bottom', scrub: .8,
-        onUpdate: self => { const n = Math.min(SHOTS.length - 1, Math.floor(self.progress * SHOTS.length * .999)); setCur(c => (c === n ? c : n)); } } });
-      /* each photo: a slow push-in across its third of the scroll, then a dissolve into the next */
-      shots.forEach((s, i) => {
-        tl.fromTo(s.querySelector('img'), { scale: 1.14 }, { scale: 1, duration: 1 }, i);
-        if (i > 0) tl.fromTo(s, { opacity: 0 }, { opacity: 1, duration: .35 }, i - .2);
-      });
-      tl.to('.rh-title', { opacity: 0, y: -40, duration: .4 }, .35)
-        .fromTo('.rh-end', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: .4 }, SHOTS.length - .75);
-      gsap.from('.rh-title .ln', { yPercent: 110, duration: 1.4, stagger: .12, ease: 'expo.out', delay: .2 });
-      gsap.from('.rh-title p, .rh-meta', { opacity: 0, y: 14, duration: 1.2, ease: 'expo.out', delay: .6 });
+      const arch = sec.querySelector<HTMLElement>('.rh-shot.first')!;
+      const r0 = () => arch.offsetWidth / 2;
+      const tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: sec, start: 'top top', end: 'bottom bottom', scrub: .8, invalidateOnRefresh: true,
+        onUpdate: self => {
+          const p = self.progress, n = p < .42 ? 0 : p < .72 ? 1 : 2; setCur(c => (c === n ? c : n));
+          const dark = p > .12 ? '1' : '0'; if (sec.dataset.dark !== dark) { sec.dataset.dark = dark; window.dispatchEvent(new Event('pr:hero')); }
+        } } });
+      /* 1 · the arch opens to the screen; the photo inside settles from 1.35 to 1.02 as it does */
+      tl.fromTo(arch, { width: () => arch.offsetWidth, height: () => arch.offsetHeight, borderTopLeftRadius: r0, borderTopRightRadius: r0, borderBottomLeftRadius: 8, borderBottomRightRadius: 8 },
+        { width: () => innerWidth, height: () => innerHeight, borderTopLeftRadius: 0, borderTopRightRadius: 0, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, duration: 1, ease: 'power2.inOut' }, 0)
+        .fromTo(arch.querySelector('img'), { scale: 1.35 }, { scale: 1.02, duration: 1, ease: 'power2.inOut' }, 0)
+        /* the two words part and fade */
+        .to('.rh-word.l', { x: mob ? 0 : '-62vw', y: mob ? '-30svh' : 0, opacity: 0, duration: .7 }, 0)
+        .to('.rh-word.r', { x: mob ? 0 : '62vw', y: mob ? '30svh' : 0, opacity: 0, duration: .7 }, 0)
+        .to('.rh-kicker', { opacity: 0, duration: .3 }, 0)
+        .to('.rh-shade', { opacity: 1, duration: .6 }, .35)
+        /* 2 · the headline once the photo fills the screen */
+        .fromTo('.rh-head', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: .35 }, .85)
+        .to('.rh-head', { opacity: 0, y: -30, duration: .3 }, 1.55)
+        /* 3 · the day carries on: dusk, then night, each with a slow push-in */
+        .fromTo('.rh-shot.s1', { opacity: 0 }, { opacity: 1, duration: .35 }, 1.6)
+        .fromTo('.rh-shot.s1 img', { scale: 1.12 }, { scale: 1, duration: 1.2 }, 1.6)
+        .fromTo('.rh-shot.s2', { opacity: 0 }, { opacity: 1, duration: .35 }, 2.55)
+        .fromTo('.rh-shot.s2 img', { scale: 1.12 }, { scale: 1, duration: 1.2 }, 2.55)
+        .fromTo('.rh-end', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: .35 }, 3.1)
+        .fromTo('.rh-meta', { opacity: 0 }, { opacity: 1, duration: .3 }, .9)
+        .to({}, { duration: .35 });
+      gsap.from('.rh-word', { yPercent: 40, opacity: 0, duration: 1.4, stagger: .1, ease: 'expo.out', delay: .15 });
+      gsap.from(arch, { yPercent: 6, opacity: 0, duration: 1.4, ease: 'expo.out', delay: .25, clearProps: 'opacity' });
     }, sec);
     return () => ctx.revert();
   }, []);
 
   return (
-    <section className="hero realhero" ref={root} aria-label="Welcome to Palm Regal" data-dark="1">
+    <section className="hero realhero" ref={root} aria-label="Welcome to Palm Regal" data-dark="0">
       <div className="rh-stick">
         {SHOTS.map((s, i) => (
-          <div className="rh-shot" key={s.src} style={i ? { opacity: 0 } : undefined}>
+          <div className={'rh-shot ' + (i === 0 ? 'first' : 's' + i)} key={s.src}>
             <img src={s.src} alt={s.alt} fetchPriority={i === 0 ? 'high' : 'auto'} loading={i === 0 ? 'eager' : 'lazy'} />
           </div>
         ))}
         <div className="rh-shade" aria-hidden="true" />
 
-        <div className="rh-title">
-          <p>Gopalpur on Sea · Odisha</p>
-          <h1><span className="mask"><span className="ln">Beachfront bliss,</span></span><span className="mask"><span className="ln"><em>just for you.</em></span></span></h1>
+        <p className="rh-kicker">Resort homestay · Gopalpur on Sea</p>
+        <h1 className="rh-brand"><span className="rh-word l">Palm</span><span className="sr"> </span><span className="rh-word r"><em>Regal</em></span></h1>
+
+        <div className="rh-head">
+          <h2>Beachfront bliss, <em>just for you.</em></h2>
         </div>
 
         <div className="rh-end">
