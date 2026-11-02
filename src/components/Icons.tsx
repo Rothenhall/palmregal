@@ -1,0 +1,58 @@
+export function IconSprite() {
+  return (
+    <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
+      <defs>
+        <symbol id="i-wa" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.2A9.7 9.7 0 0 0 3.6 16.8L2.3 21.7l5-1.3A9.7 9.7 0 1 0 12 2.2zm0 17.7a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 19.9zm4.4-6c-.2-.1-1.4-.7-1.7-.8s-.4-.1-.5.1-.6.8-.8.9-.3.2-.5.1a6.6 6.6 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3a.4.4 0 0 0 0-.4l-.8-1.8c-.2-.5-.4-.4-.5-.4h-.5a.9.9 0 0 0-.7.3 2.8 2.8 0 0 0-.9 2.1 4.9 4.9 0 0 0 1 2.6 11.2 11.2 0 0 0 4.3 3.8c1.6.7 2.2.7 3 .6a2.6 2.6 0 0 0 1.7-1.2 2.1 2.1 0 0 0 .2-1.2c-.1-.1-.2-.2-.5-.3z" /></symbol>
+        <symbol id="i-phone" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1z" /></symbol>
+        <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="currentColor" strokeWidth="1.7" /><path d="M3.5 6.5l8.5 6.5 8.5-6.5" fill="none" stroke="currentColor" strokeWidth="1.7" /></symbol>
+        <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5l13 7.5-13 7.5z" fill="currentColor" /></symbol>
+        <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></symbol>
+        <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="3" fill="none" stroke="currentColor" strokeWidth="1.7" /><path d="M3.5 10h17M8 3v4M16 3v4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" /></symbol>
+        <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 9h16M4 15h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></symbol>
+        <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /></symbol>
+        <symbol id="i-ig" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" strokeWidth="1.7" /><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" strokeWidth="1.7" /><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" /></symbol>
+        <symbol id="i-map" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" strokeWidth="1.7" d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z" /><circle cx="12" cy="9.5" r="2.5" fill="none" stroke="currentColor" strokeWidth="1.7" /></symbol>
+        <symbol id="i-guests" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M3 19c.6-3.3 3-5 6-5s5.4 1.7 6 5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /><circle cx="17" cy="9" r="2.4" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M16.5 14c2.4.1 4 1.5 4.5 4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></symbol>
+        <symbol id="i-size" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M8 16l8-8M12 8h4v4M8 12v4h4" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></symbol>
+        <symbol id="i-balcony" viewBox="0 0 24 24"><path d="M4 12h16M4 20h16M6 12v8M10 12v8M14 12v8M18 12v8M7 12V5h10v7" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></symbol>
+        <symbol id="p-green" viewBox="0 0 64 64"><path d="M32 60V30" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /><path d="M32 30C26 18 14 14 6 16c6 2 14 6 18 14M32 30c6-12 18-16 26-14-6 2-14 6-18 14M32 30c-2-10 2-20 10-26-2 8-4 16-6 22M32 30C30 22 24 14 16 10c4 6 8 12 10 18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></symbol>
+        <symbol id="p-sea" viewBox="0 0 64 64"><circle cx="44" cy="18" r="8" fill="none" stroke="currentColor" strokeWidth="2" /><path d="M4 38c6 0 6-4 12-4s6 4 12 4 6-4 12-4 6 4 12 4 6-4 8-4M4 48c6 0 6-4 12-4s6 4 12 4 6-4 12-4 6 4 12 4 6-4 8-4M4 58c6 0 6-4 12-4s6 4 12 4 6-4 12-4 6 4 12 4 6-4 8-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></symbol>
+        <symbol id="p-home" viewBox="0 0 64 64"><path d="M8 30L32 10l24 20M14 26v28h36V26" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M32 46s-9-5.4-9-11.6a4.6 4.6 0 0 1 9-1.6 4.6 4.6 0 0 1 9 1.6C41 40.6 32 46 32 46z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" /></symbol>
+      </defs>
+    </svg>
+  );
+}
+
+export function Icon({ id, className }: { id: string; className?: string }) {
+  return <svg className={className} aria-hidden="true"><use href={`#${id}`} /></svg>;
+}
+
+/* palm fronds for the quiet shade, generated once at build time */
+function fronds() {
+  let out = '';
+  const frond = (cx: number, cy: number, ang: number, len: number, bend: number) => {
+    const pts: [number, number, number][] = [];
+    for (let i = 0; i <= 24; i++) { const t = i / 24, a = ang + bend * t; pts.push([cx + Math.cos(a) * len * t, cy + Math.sin(a) * len * t, a]); }
+    out += `<path d="M${pts.map(p => p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' L')}" stroke="currentColor" stroke-width="5" fill="none"/>`;
+    pts.forEach((p, i) => {
+      if (i < 2 || i > 22) return;
+      const t = i / 24, l = len * .34 * Math.sin(Math.PI * Math.min(1, t * 1.15));
+      [1, -1].forEach(s => {
+        const a = p[2] + s * 1.05 + .25 * t * s, x2 = p[0] + Math.cos(a) * l, y2 = p[1] + Math.sin(a) * l;
+        const mx = (p[0] + x2) / 2 + Math.cos(a + s * 1.4) * l * .12, my = (p[1] + y2) / 2 + Math.sin(a + s * 1.4) * l * .12;
+        out += `<path d="M${p[0].toFixed(1)} ${p[1].toFixed(1)} Q${mx.toFixed(1)} ${my.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)} Q${((p[0] + x2) / 2).toFixed(1)} ${((p[1] + y2) / 2).toFixed(1)} ${p[0].toFixed(1)} ${p[1].toFixed(1)}" fill="currentColor"/>`;
+      });
+    });
+  };
+  frond(520, 40, 2.2, 520, .7); frond(560, 90, 2.75, 470, .55); frond(470, 10, 1.75, 430, .6); frond(600, 190, 3.05, 380, .4);
+  return out;
+}
+const FRONDS = fronds();
+
+export function Shade({ left }: { left?: boolean }) {
+  return (
+    <div className={left ? 'shade left' : 'shade'} aria-hidden="true">
+      <svg viewBox="0 0 600 600" dangerouslySetInnerHTML={{ __html: FRONDS }} />
+    </div>
+  );
+}

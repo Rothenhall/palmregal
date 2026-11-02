@@ -1,0 +1,25 @@
+{
+  "name": "palm-regal",
+  "version": "0.6.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "npx serve@14 out -l 3000"
+  },
+  "dependencies": {
+    "gsap": "3.13.0",
+    "lenis": "1.1.13",
+    "next": "15.5.28",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "three": "0.169.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.2",
+    "@types/react": "19.1.2",
+    "@types/react-dom": "19.1.2",
+    "@types/three": "0.169.0",
+    "typescript": "5.7.2"
+  }
+}
