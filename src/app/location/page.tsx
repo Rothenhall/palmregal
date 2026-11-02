@@ -22,13 +22,13 @@ export default function Location() {
           <CoastMap />
         </div>
       </section>
-      <section className="sec" data-bg="sage" aria-labelledby="near-h">
+      <section className="sec" data-bg="night" aria-labelledby="near-h">
         <div className="wrap loc">
           <div className="head" style={{ margin: 0 }}><p className="eyebrow">On foot and close by</p><h2 id="near-h" data-split data-drop>The beach is <em>five minutes away.</em></h2><p className="lede">Walk to Gopalpur&apos;s main beach, or cross the wooden bridge to the quieter one.</p></div>
           <div className="near" data-stagger>{nearby.map(n => <div key={n.name}><span>{n.name}</span><b>{n.dist}</b></div>)}</div>
         </div>
       </section>
-      <section className="sec" data-bg="mint" aria-labelledby="att-h">
+      <section className="sec" data-bg="dusk" aria-labelledby="att-h">
         <Shade />
         <div className="wrap">
           <div className="head"><p className="eyebrow">Day trips</p><h2 id="att-h" data-split data-drop>Worth the <em>drive.</em></h2></div>
@@ -43,7 +43,7 @@ export default function Location() {
           <div className="cities" data-stagger>{cities.map(c => <div key={c.name}><b>{c.time}</b><span>{c.name}</span></div>)}</div>
         </div>
       </section>
-      <section className="sec" data-bg="mint" aria-labelledby="dir-h">
+      <section className="sec" data-bg="dusk" aria-labelledby="dir-h">
         <div className="wrap">
           <div className="head"><p className="eyebrow">Directions</p><h2 id="dir-h" data-split>Find us on <em>the map.</em></h2><p className="lede">{site.address}</p></div>
           <div className="embed"><iframe title="Palm Regal on Google Maps" src={`https://www.google.com/maps?q=${q}&output=embed`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" /></div>

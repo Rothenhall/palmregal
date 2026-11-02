@@ -25,7 +25,7 @@ export function SketchMap() {
   );
 }
 
-export function Cta({ bg = 'canopy' }: { bg?: string }) {
+export function Cta({ bg = 'night' }: { bg?: string }) {
   return (
     <section className="sec" data-bg={bg} aria-labelledby="cta-h">
       <div className="wrap cta">

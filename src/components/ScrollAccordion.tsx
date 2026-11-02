@@ -37,7 +37,7 @@ export function ScrollAccordion() {
   }, [driven]);
 
   return (
-    <section ref={root} className={'dayacc' + (driven ? ' driven' : '')} data-bg="mint" aria-labelledby="dayacc-h">
+    <section ref={root} className={'dayacc' + (driven ? ' driven' : '')} data-bg="dusk" aria-labelledby="dayacc-h">
       <div className="dayacc-stick">
         <div className="wrap dayacc-grid">
           <div className="dayacc-copy">

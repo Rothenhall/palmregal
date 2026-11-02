@@ -15,7 +15,7 @@ export default function Suites() {
     <>
       <PageHero img="/img/living-room.webp" alt="A suite living room" crumb="Suites" eyebrow={`${suites.length} suite types`} title="Room to live," em="not just sleep." lede="Every suite has its own living room, a kitchenette and a private balcony over the gardens. Choose the size that fits your trip." />
       <SubNav label="Suites on this page" items={[...suites.map(x => ({ id: x.slug, label: x.name })), { id: 'good-to-know', label: 'Good to know' }]} />
-      <section className="sec" data-bg="mint" style={{ paddingTop: 'clamp(40px,5vw,70px)' }} aria-label="All suites">
+      <section className="sec" data-bg="dusk" style={{ paddingTop: 'clamp(40px,5vw,70px)' }} aria-label="All suites">
         <div className="wrap">
           <div className="compare" data-reveal>
             <div className="cmp-row cmp-head"><span /> {suites.map(x => <a key={x.slug} href={`#${x.slug}`}><small>{x.no}</small>{x.name}</a>)}</div>

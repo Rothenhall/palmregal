@@ -36,7 +36,7 @@ export function GalleryChapters() {
         const list = gallery.filter(g => g.group === c.group);
         const spans = LAYOUT[list.length] || list.map(() => [4, 1] as [number, number]);
         return (
-          <section key={c.id} id={c.id} className="sec gchap" data-bg={ci % 2 ? 'sage' : 'mint'} aria-labelledby={`${c.id}-h`}>
+          <section key={c.id} id={c.id} className="sec gchap" data-bg={ci % 2 ? 'night' : 'dusk'} aria-labelledby={`${c.id}-h`}>
             <div className="wrap">
               <header className="gchap-head">
                 <span className="gchap-n num">0{ci + 1}</span>

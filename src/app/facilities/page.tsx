@@ -14,7 +14,7 @@ export default function Facilities() {
       {facilityGroups.map((g, gi) => {
         const list = facilities.filter(f => f.group === g.id).sort((a, b) => Number(!!b.img) - Number(!!a.img));
         return (
-          <section key={g.id} id={g.id} className="sec" data-bg={gi % 2 ? 'sage' : 'mint'} aria-labelledby={`${g.id}-h`} style={gi === 0 ? { paddingTop: 'clamp(90px,10vw,140px)' } : undefined}>
+          <section key={g.id} id={g.id} className="sec" data-bg={gi % 2 ? 'night' : 'dusk'} aria-labelledby={`${g.id}-h`} style={gi === 0 ? { paddingTop: 'clamp(90px,10vw,140px)' } : undefined}>
             <div className="wrap">
               <div className="head-row" style={{ marginBottom: 'var(--head-gap)' }}>
                 <div className="head"><p className="eyebrow">0{gi + 1} · {list.length} {list.length === 1 ? 'place' : 'places'}</p><h2 id={`${g.id}-h`} data-split>{g.title} <em>{g.em}</em></h2></div>
@@ -39,7 +39,7 @@ export default function Facilities() {
           </section>
         );
       })}
-      <Cta bg="teal" />
+      <Cta />
     </>
   );
 }

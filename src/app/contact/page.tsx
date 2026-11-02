@@ -13,7 +13,7 @@ export default function Contact() {
   return (
     <>
       <PageHero img="/img/main-banner.webp" alt="Palm Regal garden walkway lit at night" crumb="Contact" eyebrow="We usually reply the same day" title="Book direct with" em="the resort." lede="Call, message or send your dates below. You deal with the people who run Palm Regal, not a booking site." />
-      <section className="sec" data-bg="mint" style={{ paddingTop: 'clamp(60px,7vw,100px)' }} aria-label="Ways to reach us">
+      <section className="sec" data-bg="dusk" style={{ paddingTop: 'clamp(60px,7vw,100px)' }} aria-label="Ways to reach us">
         <div className="wrap contact-grid">
           <div className="reach">
             <p className="eyebrow">Reach us</p>
@@ -30,7 +30,7 @@ export default function Contact() {
           <EnquiryForm />
         </div>
       </section>
-      <section className="sec" data-bg="sage" aria-labelledby="faq-h">
+      <section className="sec" data-bg="night" aria-labelledby="faq-h">
         <div className="wrap faq-grid">
           <div className="faq-side"><p className="eyebrow">Good to know</p><h2 id="faq-h" data-split>Before you <em>ask.</em></h2></div>
           <Faq />
