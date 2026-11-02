@@ -1,23 +1,10 @@
-import Link from "next/link";
-import { PageMotion } from "@/components/Motion";
-
+import Link from 'next/link';
 export default function NotFound() {
   return (
-    <>
-      <section className="sec page-top" aria-labelledby="nf-h">
-        <div className="wrap">
-          <div className="head">
-            <p className="eyebrow">Page not found</p>
-            <h1 id="nf-h">This path leads <em>off the lawn.</em></h1>
-            <p className="lede">The page you were looking for isn&apos;t here.</p>
-          </div>
-          <div className="suite-acts">
-            <Link className="btn btn--teal" href="/">Back to Palm Regal</Link>
-            <Link className="tlink" href="/suites">See the suites</Link>
-          </div>
-        </div>
-      </section>
-      <PageMotion />
-    </>
+    <section className="phero" data-bg="mint"><div className="wrap">
+      <h1>This path leads <em>to the sea.</em></h1>
+      <p className="lede" style={{ marginBottom: 30 }}>The page you were looking for isn&apos;t here.</p>
+      <Link className="btn btn--teal" href="/">Back to Palm Regal</Link>
+    </div></section>
   );
 }

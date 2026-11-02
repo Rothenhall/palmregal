@@ -1,120 +1,90 @@
-"use client";
+'use client';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import { nav, site } from '@/content/site';
+import { Icon } from './Icons';
+import { waHref } from '@/lib/book';
 
-import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { nav, site, whatsappHref } from "@/content/site";
-import { Close, Menu, Phone, WhatsApp } from "./icons";
+const DARK = ['teal', 'canopy', 'night'];
 
 export function Header() {
-  const pathname = usePathname();
-  const isHome = pathname === "/";
-  const [solid, setSolid] = useState(!isHome);
-  const [hidden, setHidden] = useState(false);
-  // The menu remembers the page it was opened on, so it closes itself when the route changes.
-  const [openPath, setOpenPath] = useState<string | null>(null);
-  const open = openPath === pathname;
-  const setOpen = (v: boolean) => setOpenPath(v ? pathname : null);
-  const lastY = useRef(0);
+  const path = usePathname();
+  const ref = useRef<HTMLElement>(null);
+  const [open, setOpen] = useState(false);
   const openBtn = useRef<HTMLButtonElement>(null);
   const closeBtn = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    function onScroll() {
-      const y = window.scrollY;
-      const h = window.innerHeight * 0.6;
-      setSolid(!isHome || y > h);
-      if (y > h && y > lastY.current + 4) setHidden(true);
-      else if (y < lastY.current - 4 || y < h) setHidden(false);
-      lastY.current = y;
-    }
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [isHome]);
-
-  useEffect(() => {
-    if (!open) return;
-    closeBtn.current?.focus();
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setOpenPath(null);
-        openBtn.current?.focus();
+    const hdr = ref.current!; let lastY = window.scrollY; let raf = 0;
+    const update = () => {
+      raf = 0;
+      const y = window.scrollY, hero = document.querySelector<HTMLElement>('.hero');
+      const solidAt = hero ? hero.offsetTop + hero.offsetHeight - 80 : 40;
+      const solid = y > solidAt;
+      hdr.classList.toggle('solid', solid);
+      if (y > 300 && y > lastY + 4) hdr.classList.add('hide'); else if (y < lastY - 4 || y < 300) hdr.classList.remove('hide');
+      lastY = y;
+      let dark = false;
+      if (!solid) {
+        const probe = 38;
+        if (hero && hero.dataset.dark === '1') { const r = hero.getBoundingClientRect(); dark = r.top <= probe && r.bottom >= probe; }
+        if (!dark) document.querySelectorAll<HTMLElement>('main [data-bg]').forEach(s => { const r = s.getBoundingClientRect(); if (r.top <= probe && r.bottom >= probe && DARK.includes(s.dataset.bg || '')) dark = true; });
       }
+      hdr.classList.toggle('over-dark', dark);
     };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [open]);
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('pr:hero', onScroll);
+    return () => { window.removeEventListener('scroll', onScroll); window.removeEventListener('pr:hero', onScroll); cancelAnimationFrame(raf); };
+  }, [path]);
 
-  const isCurrent = (href: string) => !href.includes("#") && pathname.startsWith(href);
+  useEffect(() => { setOpen(false); }, [path]);
+  useEffect(() => {
+    const lenis = (window as any).__lenis;
+    if (open) { lenis?.stop(); closeBtn.current?.focus(); } else lenis?.start();
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && open) { setOpen(false); openBtn.current?.focus(); } };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [open]);
 
   return (
     <>
-      <header className={`hdr${solid ? " solid" : ""}${hidden && !open ? " hide" : ""}`}>
+      <header className="hdr" ref={ref}>
         <div className="wrap">
           <Link className="logo" href="/" aria-label="Palm Regal, home">
-            <Image src="/images/emblem.png" alt="" width={40} height={44} />
-            <span>
-              <b>{site.name}</b>
-              <small>Resort Homestay · Gopalpur</small>
-            </span>
+            <img src="/img/emblem.png" alt="" width={40} height={40} />
+            <span><b>{site.name}</b><small>{site.tagline}</small></span>
           </Link>
           <nav className="nav" aria-label="Main">
-            {nav.map((n) => (
-              <Link key={n.href} href={n.href} data-t={n.label} aria-current={isCurrent(n.href) ? "page" : undefined}>
-                <span>{n.label}</span>
+            {nav.map(n => (
+              <Link key={n.href} href={n.href} aria-current={path === n.href ? 'page' : undefined}>
+                <span className="roll"><span>{n.label}</span><span aria-hidden="true">{n.label}</span></span>
               </Link>
             ))}
           </nav>
           <div className="acts">
-            <a className="ibtn opt" href={`tel:${site.phone.tel}`} aria-label="Call Palm Regal">
-              <Phone />
-            </a>
-            <a className="ibtn opt" href={whatsappHref()} aria-label="WhatsApp Palm Regal">
-              <WhatsApp />
-            </a>
-            <Link className="btn btn--book" href="/#book">
-              Book direct
-            </Link>
-            <button ref={openBtn} className="ibtn menu-btn" type="button" aria-label="Open menu" aria-expanded={open} aria-controls="mnav" onClick={() => setOpen(true)}>
-              <Menu />
-            </button>
+            <a className="ibtn opt" href={site.phoneHref} aria-label="Call Palm Regal"><Icon id="i-phone" /></a>
+            <a className="ibtn opt" href={waHref()} aria-label="WhatsApp Palm Regal"><Icon id="i-wa" /></a>
+            <Link className="btn btn--book" href="/#book">Book direct</Link>
+            <button ref={openBtn} className="ibtn menu-btn" type="button" aria-label="Open menu" aria-expanded={open} aria-controls="mnav" onClick={() => setOpen(true)}><Icon id="i-menu" /></button>
           </div>
         </div>
       </header>
-      <div id="mnav" className={`mnav${open ? " open" : ""}`} role="dialog" aria-modal="true" aria-label="Menu" hidden={!open}>
+      <div className={open ? 'mnav open' : 'mnav'} id="mnav" role="dialog" aria-modal="true" aria-label="Menu" hidden={!open}>
         <div className="mnav-top">
-          <Link className="logo" href="/">
-            <Image src="/images/emblem.png" alt="" width={40} height={44} />
-            <span>
-              <b>{site.name}</b>
-            </span>
-          </Link>
-          <button ref={closeBtn} className="ibtn" type="button" aria-label="Close menu" onClick={() => { setOpen(false); openBtn.current?.focus(); }}>
-            <Close />
-          </button>
+          <Link className="logo" href="/"><img src="/img/emblem.png" alt="" width={40} height={40} /><span><b>{site.name}</b></span></Link>
+          <button ref={closeBtn} className="ibtn" type="button" aria-label="Close menu" onClick={() => { setOpen(false); openBtn.current?.focus(); }}><Icon id="i-x" /></button>
         </div>
         <nav aria-label="Mobile">
-          {nav.map((n, i) => (
-            <Link key={n.href} href={n.href} onClick={() => setOpen(false)}>
-              <i>{String(i + 1).padStart(2, "0")}</i>
-              {n.label}
-            </Link>
-          ))}
+          <Link href="/"><i>00</i>Home</Link>
+          {nav.map((n, i) => <Link key={n.href} href={n.href}><i>0{i + 1}</i>{n.label}</Link>)}
         </nav>
         <div className="mnav-foot">
-          <Link className="btn btn--book" href="/#book" onClick={() => setOpen(false)}>
-            Book direct
-          </Link>
-          <a className="btn btn--line" href={`tel:${site.phone.tel}`}>
-            <Phone />
-            Call
-          </a>
-          <a className="btn btn--line" href={whatsappHref()}>
-            <WhatsApp />
-            WhatsApp
-          </a>
+          <Link className="btn btn--book" href="/#book">Book direct</Link>
+          <a className="btn btn--line" href={site.phoneHref}><Icon id="i-phone" />Call</a>
+          <a className="btn btn--line" href={waHref()}><Icon id="i-wa" />WhatsApp</a>
         </div>
       </div>
     </>

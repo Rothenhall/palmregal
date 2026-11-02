@@ -1,35 +1,25 @@
-import type { Metadata } from "next";
-import Image from "next/image";
-import { Tour } from "@/components/sections/Tour";
-import { gallery } from "@/content/place";
-import { PageMotion } from "@/components/Motion";
+import type { Metadata } from 'next';
+import { PageHero, Cta } from '@/components/Blocks';
+import { GalleryGrid } from '@/components/GalleryGrid';
+import { Icon } from '@/components/Icons';
+import { Todo } from '@/components/Todo';
 
-export const metadata: Metadata = {
-  title: "Gallery",
-  description: "Photos of the suites, gardens, pool and facilities at Palm Regal, Gopalpur on Sea.",
-};
+export const metadata: Metadata = { title: 'Gallery', description: 'Photos of the suites, gardens, pool and sea at Palm Regal, Gopalpur on Sea.' };
 
-export default function GalleryPage() {
+export default function Gallery() {
   return (
     <>
-      <section className="sec page-top" aria-labelledby="gal-h">
+      <PageHero crumb="Gallery" eyebrow="Photos and tour" title="See it before" em="you arrive." lede="The gardens, the suites, the pool and the sea, as our guests find them." />
+      <section className="sec" data-bg="mint" style={{ paddingTop: 0 }} aria-label="Photos">
         <div className="wrap">
-          <div className="head">
-            <p className="eyebrow">Gallery and tour</p>
-            <h1 id="gal-h" data-split>Around <em>the resort.</em></h1>
-          </div>
-          <div className="grid-gallery">
-            {gallery.map((g) => (
-              <figure key={g.src} data-reveal>
-                <div className="img" data-gl="photo"><Image src={g.src} alt={g.caption} fill sizes="(max-width: 600px) 92vw, (max-width: 1100px) 45vw, 30vw" /></div>
-                <figcaption>{g.caption}</figcaption>
-              </figure>
-            ))}
-          </div>
-          <div className="dark"><Tour /></div>
+          <figure className="para" style={{ marginTop: 0, marginBottom: 'clamp(50px,7vw,90px)' }} data-gl="photo" data-depth="-90">
+            <img src="/img/amphitheatre.webp" alt="Palm Regal lawns and amphitheatre" loading="lazy" />
+            <figcaption><Icon id="i-play" />Video tour <Todo>YouTube link to come</Todo></figcaption>
+          </figure>
+          <GalleryGrid />
         </div>
       </section>
-      <PageMotion />
+      <Cta />
     </>
   );
 }
