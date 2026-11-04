@@ -1,0 +1,6 @@
+# Vercel installs and builds the site itself; never upload local build output or dependencies
+node_modules
+.next
+out
+*.tsbuildinfo
+.vercel
