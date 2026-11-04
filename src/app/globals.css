@@ -1463,3 +1463,97 @@ html.gl-photos .gtile button { background: transparent }
 .btn--teal { background: var(--teal-200); color: var(--teal-950) } .btn--teal::after { background: var(--white) }
 .btn--line:hover { color: var(--teal-950) }
 .phero h1 { color: var(--c-text) }
+
+/* ===== Our suites: a sideways journey (SuiteJourney.tsx) =====
+   The section holds and the scroll carries the strip sideways, chapter by chapter. */
+.sj { --g: max(var(--gl), calc((100vw - var(--maxw)) / 2 + var(--gl))); position: relative; color: var(--on-dark) }
+.sj-stick { position: relative; padding-block: var(--sec-y) }
+.sj.held .sj-stick { position: sticky; top: 0; height: 100svh; padding: 0; overflow: hidden }
+.sj-track { position: relative; display: flex; align-items: stretch; gap: 8vw; width: max-content; padding-inline: var(--g) 10vw; will-change: transform }
+.sj.held .sj-track { height: 100%; padding-top: calc(var(--hdr) + 4vh); padding-bottom: max(104px, 12vh) }
+/* without motion: a strip you swipe sideways, one chapter at a time */
+.sj:not(.held) .sj-track { width: auto; height: min(84svh, 780px); padding-block: 0 18px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: thin }
+.sj:not(.held) .sj-track > * { scroll-snap-align: start }
+
+
+/* the opening */
+.sj-intro { flex: none; align-self: center; width: min(54vw, 780px); display: grid; gap: 22px }
+.sj-intro h2 { font-size: clamp(3rem, 6.4vw, 6.6rem); line-height: .98 }
+.sj-cue { display: inline-flex; align-items: center; gap: 14px; margin-top: 10px; font-size: .72rem; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--teal-200) }
+.sj-cue i { position: relative; width: 64px; height: 1px; background: var(--line-d); overflow: hidden }
+.sj-cue i::after { content: ""; position: absolute; inset: 0; background: var(--teal-200); animation: sj-cue 2.2s var(--ease) infinite }
+@keyframes sj-cue { from { transform: translateX(-100%) } to { transform: translateX(100%) } }
+
+/* a chapter: number, photograph, words, smaller photographs */
+.sj-ch { position: relative; flex: none; display: flex; align-items: stretch; gap: 3.6vw; height: 100% }
+.sj-num { position: relative; z-index: 2; flex: none; align-self: flex-end; overflow: hidden; margin-right: -7vw; padding-bottom: 2vh;
+  font: 300 clamp(130px, 30vh, 330px)/.82 var(--display); letter-spacing: -.04em; color: transparent; -webkit-text-stroke: 1px rgba(180, 228, 228, .6) }
+.sj-num span { display: block }
+.sj-hero { position: relative; flex: none; width: min(44vw, 84vh); height: 100%; margin: 0; overflow: hidden; border-radius: var(--r-lg); background: var(--teal-800) }
+.sj-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; will-change: transform }
+.sj-copy { flex: none; align-self: center; width: min(27vw, 400px); display: grid; gap: 14px; justify-items: start }
+.sj-kicker { margin: 0; font-size: .7rem; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; color: var(--teal-200) }
+.sj-kicker span { color: rgba(238, 245, 242, .45) }
+.sj-copy h3 { font-size: clamp(2.2rem, 3.4vw, 3.6rem); line-height: 1.02 }
+.sj-long { margin: 0; color: rgba(238, 245, 242, .8); font-size: 1rem }
+.sj-facts { list-style: none; margin: 4px 0 0; padding: 14px 0 0; display: flex; flex-wrap: wrap; gap: 8px 18px; border-top: 1px solid var(--line-d); font-size: .88rem; color: rgba(238, 245, 242, .86) }
+.sj-facts li { display: inline-flex; align-items: center; gap: 7px }
+.sj-facts svg { width: 16px; height: 16px; color: var(--teal-200) }
+.sj-best { margin: 0; display: grid; gap: 3px; font-size: .98rem }
+.sj-best small { font-size: .62rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--teal-200) }
+.sj-bits { position: relative; flex: none; width: 30vw; height: 100%; margin-right: 7vw }
+.sj-bit { position: absolute; margin: 0; display: grid; gap: 8px }
+.sj-bit-ph { display: block; overflow: hidden; border-radius: var(--r-md) }
+.sj-bit img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 1.4s var(--ease) }
+.sj-bit:hover img { transform: scale(1.05) }
+.sj-bit figcaption { font-size: .72rem; color: rgba(238, 245, 242, .55) }
+.sj-bit.b0 { top: 0; left: 0; width: 16vw }
+.sj-bit.b0 .sj-bit-ph { aspect-ratio: 4 / 5 }
+.sj-bit.b1 { bottom: 0; right: 0; width: 19vw }
+.sj-bit.b1 .sj-bit-ph { aspect-ratio: 4 / 3 }
+
+/* the close */
+.sj-outro { flex: none; align-self: center; width: min(46vw, 660px); display: grid; gap: 26px }
+.sj-every { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 0; font: 300 clamp(1.7rem, 2.8vw, 2.9rem)/1.15 var(--display) }
+.sj-every li:not(:last-child)::after { content: "·"; margin: 0 .45em; color: var(--teal-200) }
+.sj-outro-links { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 28px }
+
+@media (max-width: 900px) {
+  .sj-track { gap: 12vw; padding-right: 16vw }
+  .sj-intro { width: 84vw }
+  .sj-intro h2 { font-size: clamp(2.6rem, 12vw, 3.6rem) }
+  .sj-ch { gap: 8vw }
+  .sj-num { font-size: clamp(110px, 22vh, 200px); margin-right: -16vw }
+  .sj-hero { width: 78vw }
+  .sj-copy { width: 80vw; gap: 10px }
+  .sj-copy h3 { font-size: 2.1rem }
+  .sj-long { font-size: .94rem }
+  .sj-bits { width: 74vw }
+  .sj-bit.b0 { width: 44vw }
+  .sj-bit.b1 { width: 50vw }
+  .sj-outro { width: 84vw }
+}
+
+/* ===== Resort delights: full-screen cards =====
+   Each card fills the screen edge to edge: the words on one half (clear of the header and the
+   Book Direct pill), the photograph filling the other half to the screen's edge. They still stack. */
+.dstack-wrap { --g: max(var(--gl), calc((100vw - var(--maxw)) / 2 + var(--gl))) }
+.dstack { gap: 0 }
+.dcard { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0; min-height: 100svh; padding: 0; border: 0; border-radius: 0 }
+.dcard-body { justify-content: center; gap: 16px; padding: calc(var(--hdr) + 5vh) clamp(28px, 5vw, 88px) max(104px, 12vh) var(--g) }
+.dcard h3 { font-size: clamp(2.6rem, 5vw, 5rem) }
+.dcard ul { margin: 18px 0 0 }
+.dcard-media { min-height: 0 }
+.dcard-main { inset: 0; border-radius: 0 }
+/* the second photograph straddles the seam between words and picture */
+.dcard-small { left: -7%; top: auto; bottom: max(104px, 12vh); width: 32%; outline-width: 8px }
+@media (min-width: 901px) and (min-height: 760px) {
+  html.motion .dcard { top: 0 }
+}
+@media (max-width: 900px) {
+  .dcard { grid-template-columns: minmax(0, 1fr); min-height: 100svh }
+  .dcard-media { order: -1; min-height: 46svh }
+  .dcard-body { justify-content: flex-start; padding: 28px var(--gl) max(104px, 12vh) }
+  .dcard h3 { font-size: clamp(2.2rem, 10vw, 3rem) }
+  .dcard-small { left: auto; right: var(--gl); bottom: -24px; width: 40%; outline-width: 6px }
+}

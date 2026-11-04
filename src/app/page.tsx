@@ -7,7 +7,8 @@ import { Icon } from '@/components/Icons';
 import { Todo } from '@/components/Todo';
 import { CoastMap } from '@/components/CoastMap';
 import { MomentsWall } from '@/components/MomentsWall';
-import { ReviewBelt, SuiteTall, ThreeWays } from '@/components/Sections';
+import { ReviewBelt, ThreeWays } from '@/components/Sections';
+import { SuiteJourney } from '@/components/SuiteJourney';
 import { facilities } from '@/content/site';
 import { DRAFT } from '@/lib/book';
 
@@ -24,15 +25,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="sec" data-bg="night" id="suites" aria-labelledby="suites-h">
-        <div className="wrap">
-          <div className="head-row" style={{ marginBottom: 'var(--head-gap)' }}>
-            <div className="head"><p className="eyebrow">Our suites</p><h2 id="suites-h" data-split data-drop>Room to live, <em>not just sleep.</em></h2></div>
-            <Link className="tlink" href="/suites/">Compare the suites <Icon id="i-arrow" /></Link>
-          </div>
-          <SuiteTall />
-        </div>
-      </section>
+      <SuiteJourney />
 
 
       <section className="sec dsec" data-bg="dusk" id="facilities" aria-labelledby="dl-h">
@@ -42,8 +35,9 @@ export default function Home() {
             <div><p className="eyebrow">Resort delights</p><h2 id="dl-h" data-split>Reasons to <em>stay in.</em></h2></div>
             <p className="lede">Everything is inside the property, a few steps from your suite: a pool, a private theatre, a gym, lawns to wander and the Bay of Bengal from the deck.</p>
           </div>
-          <DelightsStack />
         </div>
+        {/* full screen: the cards run edge to edge, outside the page width */}
+        <DelightsStack />
       </section>
 
       <DaySun />
