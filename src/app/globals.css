@@ -947,55 +947,143 @@ html.shift .phero2 { background: var(--teal-900) }
 @media (max-width: 900px) { .fcards { grid-template-columns: 1fr 1fr } .fcard:nth-child(n), .fcards.n4 .fcard:nth-child(n), .fcards.n5 .fcard:nth-child(n) { grid-column: span 1 } .fcards.n1 .fcard { grid-column: 1 / -1 } }
 @media (max-width: 600px) { .fcards { grid-template-columns: 1fr } .fcard { min-height: 340px } }
 
-/* ===== Coast map (real geography) ===== */
-.cmap { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: var(--gap); align-items: stretch }
-.cmap-stage { position: relative; aspect-ratio: 1200 / 760; border-radius: var(--r-lg); overflow: hidden; background: #0a1e25; isolation: isolate;
-  -webkit-mask-image: radial-gradient(140% 140% at 50% 50%, #000 62%, transparent 100%); mask-image: radial-gradient(140% 140% at 50% 50%, #000 62%, transparent 100%) }
-.cmap-stage > svg { position: absolute; inset: 0; width: 100%; height: 100% }
-.cmap-lean { transition: transform .95s var(--ease-io) }
-.cm-land { fill: #12313a } .cm-depth path { fill: none; stroke: rgba(180, 228, 228, .35); stroke-width: 1; stroke-dasharray: 2 6 }
-.cm-coast { fill: none; stroke: var(--teal-200); stroke-width: 1.8; stroke-linejoin: round }
-.cm-coast-glow { fill: none; stroke: var(--teal-200); stroke-width: 9; opacity: .4; animation: shore 6s ease-in-out infinite alternate }
-.cm-border { fill: none; stroke: rgba(238, 245, 242, .28); stroke-width: 1.2; stroke-dasharray: 6 5 }
-.cm-road { fill: none; stroke: rgba(238, 245, 242, .3); stroke-width: 2.2; stroke-linecap: round }
-.cm-road-flow { fill: none; stroke: var(--sky-500); stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 2 30; animation: flow 4s linear infinite; opacity: .8 }
-.cm-region { font: 600 13px var(--body); letter-spacing: .32em; fill: rgba(238, 245, 242, .26) }
-.cm-sea-label { font: italic 300 30px var(--display); fill: rgba(238, 245, 242, .34) }
-.cm-lake { font: italic 300 20px var(--display); fill: rgba(180, 228, 228, .6) }
-.cm-shield rect { fill: #0a1e25; stroke: rgba(238, 245, 242, .45) } .cm-shield text { font: 700 10px var(--body); letter-spacing: .08em; fill: rgba(238, 245, 242, .8); text-anchor: middle }
-.cm-home-halo { animation: halo 3.2s ease-in-out infinite }
-.cm-arc path { fill: none; stroke: var(--teal-200); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 1 7; opacity: .9 }
-.cm-arc path.flow { stroke: var(--white); stroke-dasharray: 3 60; animation: flow 1.8s linear infinite; filter: drop-shadow(0 0 4px rgba(180, 228, 228, .9)) }
-.cm-arc { animation: fadeIn .5s var(--ease) }
-.cm-dist rect { fill: rgba(11, 34, 40, .9); stroke: var(--glass-edge) } .cm-dist text { font: 600 12px var(--body); fill: var(--on-dark); text-anchor: middle; letter-spacing: .04em }
-.cmap-pins { position: absolute; inset: 0; transition: transform .95s var(--ease-io); pointer-events: none }
-.cpin { position: absolute; transform: translate(-50%, -100%); display: grid; justify-items: center; gap: 6px; padding: 0 0 0; border: 0; background: none; cursor: pointer; pointer-events: auto; color: var(--on-dark) }
-.cpin i { position: relative; width: 14px; height: 14px; margin-bottom: -7px; border-radius: 50%; background: var(--on-dark); box-shadow: 0 0 0 3px rgba(10, 30, 37, .9); transition: transform .32s var(--ease-pop), background .3s }
-.cpin-tag { padding: 5px 11px; border-radius: var(--r-pill); background: rgba(10, 30, 37, .78); border: 1px solid rgba(238, 245, 242, .14); font-size: .78rem; font-weight: 500; white-space: nowrap; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); transition: background .3s, border-color .3s, transform .3s var(--ease) }
-.cpin:hover i, .cpin.lit i { transform: scale(1.4); background: var(--teal-200) }
-.cpin:hover .cpin-tag, .cpin.lit .cpin-tag { background: var(--teal-800); border-color: var(--glass-edge); transform: translateY(-2px) }
-.cpin.home i { width: 30px; height: 30px; margin-bottom: -15px; display: grid; place-items: center; background: var(--white); color: var(--teal-900); box-shadow: 0 0 0 3px var(--teal-200), 0 0 24px 6px rgba(180, 228, 228, .5) }
-.cpin.home i svg { width: 16px; height: 16px }
-.cpin.home .cpin-tag { font-weight: 600 }
-.cpin.home:hover i, .cpin.home.lit i { transform: scale(1.1); background: var(--white) }
-.cmap-spot { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .5s; mix-blend-mode: screen; background: radial-gradient(circle 220px at var(--sx, 50%) var(--sy, 50%), rgba(244, 248, 243, .1), transparent 70%) }
-.cmap-stage[data-pointer] .cmap-spot { opacity: 1 }
-.cmap-hint { position: absolute; left: 22px; bottom: 20px; margin: 0; padding: 7px 13px; border-radius: var(--r-pill); font-size: .74rem; color: rgba(238, 245, 242, .75); background: rgba(10, 30, 37, .6); border: 1px solid rgba(238, 245, 242, .12) }
-.cmap-list { display: grid; align-content: start; gap: 18px; padding: 24px; border-radius: var(--r-lg); background: var(--c-surface); border: 1px solid var(--c-line) }
-.cmap-cur { display: grid; gap: 6px; padding-bottom: 18px; border-bottom: 1px solid var(--c-line); animation: card-in .45s var(--ease) }
-.cmap-cur small { font-size: .64rem; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--c-eyebrow) }
-.cmap-cur b { font: 300 1.8rem/1.1 var(--display) } .cmap-cur > span { font-size: .9rem; color: var(--c-muted) }
-.cmap-list ul { list-style: none; margin: 0; padding: 0; display: grid }
-.cmap-list li button { width: 100%; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 12px 0; border: 0; border-bottom: 1px solid var(--c-line); background: none; cursor: pointer; text-align: left; color: var(--c-text); transition: color .3s, padding .4s var(--ease) }
-.cmap-list li button em { font-style: normal; font-size: .82rem; font-weight: 600; color: var(--c-link); white-space: nowrap }
-.cmap-list li button.lit, .cmap-list li button[aria-pressed="true"] { padding-left: 8px; color: var(--c-em) }
-.cmap-list .tlink { justify-self: start }
-@media (max-width: 1000px) { .cmap { grid-template-columns: 1fr } .cpin-tag { font-size: .66rem; padding: 3px 8px } .cpin:not(.home):not(.lit) .cpin-tag { display: none } .cmap-hint { display: none } }
-.cmap-hint { top: 18px; bottom: auto }
-.cpin.home i svg { width: 18px; height: 18px }
+/* ===== Coast map: a guided tour, nearest first (CoastMap.tsx) =====
+   The section holds while the scroll travels stop to stop. The coast is a shore (shallow water and
+   sand), never a bright line: the only bright line is the way to the place you are looking at. */
+.ctour { position: relative; color: var(--on-dark) }
+.ctour.held { height: calc(var(--n) * 62svh + 100svh) }
+.ctour-stick { position: relative }
+/* the bottom padding clears the floating Book Direct pill */
+.ctour.held .ctour-stick { position: sticky; top: 0; height: 100svh; padding-block: calc(var(--hdr) + 2.5vh) max(104px, 12vh) }
+.ctour-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: var(--gap); height: 100% }
+.ctour:not(.held) .ctour-grid { height: min(78svh, 720px) }
+
+.ctour-stage { position: relative; min-width: 0; min-height: 0; border-radius: var(--r-lg); overflow: hidden; isolation: isolate; border: 1px solid var(--line-d);
+  background: radial-gradient(120% 95% at 72% 82%, #18495b, #0d2731 58%, #0a1e25) }
+.ctour-stage::after { content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none; box-shadow: inset 0 0 110px rgba(5, 18, 23, .55) }
+/* back layer: a faint sea grid that moves at about half the land's rate */
+.ctour-back { position: absolute; inset: 0; pointer-events: none;
+  background-image: linear-gradient(rgba(180, 228, 228, .07) 1px, transparent 1px), linear-gradient(90deg, rgba(180, 228, 228, .07) 1px, transparent 1px) }
+.ctour-stage > svg { position: absolute; inset: 0; width: 100%; height: 100% }
+.ct-shallow-1 { fill: none; stroke: rgba(132, 204, 252, .07); stroke-width: 34; stroke-linejoin: round }
+.ct-shallow-2 { fill: none; stroke: rgba(180, 228, 228, .07); stroke-width: 18; stroke-linejoin: round }
+.ct-shallow-3 { fill: none; stroke: rgba(180, 228, 228, .09); stroke-width: 7; stroke-linejoin: round }
+.ct-depth path { fill: none; stroke: rgba(180, 228, 228, .45); stroke-width: .8 }
+.ct-sand { fill: none; stroke: rgba(226, 208, 170, .22); stroke-width: 5; stroke-linejoin: round }
+.ct-edge { fill: none; stroke: rgba(238, 245, 242, .16); stroke-width: 1 }
+.ct-border { fill: none; stroke: rgba(238, 245, 242, .36); stroke-width: 1.4; stroke-dasharray: .5 5; stroke-linecap: round }
+.ct-road-case { fill: none; stroke: #0b232b; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round }
+.ct-road { fill: none; stroke: rgba(238, 245, 242, .38); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round }
+/* the way: drawn in once the camera has nearly arrived, then a light travels along it */
+.ct-way-line { fill: none; stroke: var(--teal-200); stroke-width: calc(var(--u, 1) * 2.6px); stroke-linecap: round; stroke-dasharray: 1 1; stroke-dashoffset: 1; animation: ct-draw 1.3s var(--ease) .55s forwards }
+.ct-way.walk .ct-way-line { stroke-dasharray: .001 .045; stroke-width: calc(var(--u, 1) * 4px); stroke-dashoffset: 0; animation: fadeIn .6s var(--ease) .6s both }
+.ct-way-dot { fill: none; stroke: #fff; stroke-width: calc(var(--u, 1) * 7px); stroke-linecap: round; stroke-dasharray: 0 1; opacity: 0; animation: ct-travel 2.8s linear 1.9s infinite; filter: drop-shadow(0 0 4px rgba(180, 228, 228, .9)) }
+.ct-way.walk .ct-way-dot { display: none }
+@keyframes ct-draw { to { stroke-dashoffset: 0 } }
+@keyframes ct-travel { 0% { stroke-dashoffset: -.02; opacity: 0 } 12%, 88% { opacity: 1 } 100% { stroke-dashoffset: -.98; opacity: 0 } }
+
+/* labels and pins are HTML, placed by the camera, so they stay readable at any zoom */
+.ctour-labels, .ctour-pins { position: absolute; inset: 0; pointer-events: none }
+.ctour-pins { z-index: 2 }
+.ct-label { position: absolute; left: 0; top: 0; transition: opacity .5s var(--ease); will-change: transform }
+.ct-label > span { display: block; translate: -50% -50%; white-space: nowrap }
+.ct-label.sea > span { font: italic 300 clamp(1.25rem, 2.1vw, 1.9rem)/1 var(--display); color: rgba(238, 245, 242, .42) }
+.ct-label.region > span { font: 600 .66rem/1 var(--body); letter-spacing: .34em; text-transform: uppercase; color: rgba(238, 245, 242, .36) }
+.ct-label.lake > span { font: italic 300 1.05rem/1 var(--display); color: rgba(180, 228, 228, .72) }
+.ct-label.shield > span { font: 700 .6rem/1 var(--body); letter-spacing: .08em; padding: 4px 7px; border: 1px solid rgba(238, 245, 242, .4); border-radius: var(--r-sm); background: #0b232b; color: rgba(238, 245, 242, .85) }
+
+.cpin { --d: 30px; position: absolute; left: 0; top: 0; display: flex; align-items: center; gap: 8px; translate: calc(var(--d) / -2) -50%; padding: 0; border: 0; background: none; font: inherit; color: var(--on-dark); cursor: pointer; pointer-events: auto; will-change: transform }
+.cpin > i { position: relative; flex: none; display: grid; place-items: center; width: var(--d); height: var(--d); border-radius: 50%; background: rgba(10, 30, 37, .9); border: 1px solid rgba(180, 228, 228, .5); color: var(--teal-200);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .35); transition: transform .45s var(--ease-pop), background .35s, color .35s, border-color .35s }
+.cpin > i svg { width: 16px; height: 16px }
+.cpin-tag { display: grid; gap: 1px; padding: 5px 10px 6px; border-radius: var(--r-sm); background: rgba(10, 30, 37, .74); border: 1px solid rgba(238, 245, 242, .12); white-space: nowrap; line-height: 1.15; text-align: left;
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); transition: background .35s, border-color .35s }
+.cpin-tag b { font-size: .8rem; font-weight: 600 }
+.cpin-tag small { display: none; font-size: .68rem; font-weight: 500; color: var(--teal-200) }
+.cpin:hover .cpin-tag small, .cpin:focus-visible .cpin-tag small, .cpin.on .cpin-tag small { display: block }
+.cpin:hover > i, .cpin:focus-visible > i { transform: scale(1.12); border-color: var(--teal-200) }
+.cpin:hover .cpin-tag { border-color: var(--glass-edge) }
+.cpin.on { z-index: 2 }
+.cpin.on > i { transform: scale(1.22); background: var(--teal-200); color: var(--teal-900); border-color: var(--teal-200) }
+.cpin.on > i::after { content: ""; position: absolute; inset: -6px; border-radius: 50%; border: 1px solid var(--teal-200); animation: ct-ping 2.4s var(--ease) infinite }
+@keyframes ct-ping { from { transform: scale(.8); opacity: .9 } to { transform: scale(1.9); opacity: 0 } }
+.cpin.on .cpin-tag { background: var(--teal-800); border-color: var(--glass-edge) }
+.cpin.home { z-index: 1 }
+.cpin.home > i { background: var(--white); color: var(--teal-900); border-color: var(--white); box-shadow: 0 0 0 4px rgba(180, 228, 228, .22), 0 0 26px 6px rgba(180, 228, 228, .32) }
+.cpin.home .cpin-tag b { font-weight: 700 }
+/* the beach shares the resort's spot from far away, so it shows only once the camera is close,
+   and then the resort's label moves to the left so the two never overlap */
+.cpin.near { opacity: 0; pointer-events: none; transition: opacity .4s }
+.ctour-stage[data-near="1"] .cpin.near { opacity: 1; pointer-events: auto }
+.ctour-stage[data-near="1"] .cpin.home, .cpin[data-flip="1"] { flex-direction: row-reverse; translate: calc(-100% + var(--d) / 2) -50% }
+
+.ctour-chip { position: absolute; left: 0; top: 0; z-index: 1; pointer-events: none; will-change: transform }
+.ctour-chip > span { display: block; translate: -50% -50%; padding: 4px 10px; border-radius: var(--r-sm); background: rgba(10, 30, 37, .9); border: 1px solid var(--glass-edge); font-size: .74rem; font-weight: 600; white-space: nowrap; animation: fadeIn .5s var(--ease) 1.3s both }
+
+/* front layer: a thin haze that moves faster than the land and thickens mid-flight */
+.ctour-haze { position: absolute; inset: -20%; z-index: 2; pointer-events: none; opacity: .25; will-change: transform, opacity }
+.ctour-haze i { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(238, 245, 242, .11), transparent); filter: blur(10px) }
+.ctour-haze i:nth-child(1) { left: 6%; top: 16%; width: 46%; height: 30% }
+.ctour-haze i:nth-child(2) { left: 54%; top: 48%; width: 40%; height: 26% }
+.ctour-haze i:nth-child(3) { left: 28%; top: 72%; width: 34%; height: 22% }
+
+.ctour-legend { position: absolute; left: 14px; top: 12px; z-index: 4; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 6px 10px; border-radius: var(--r-sm); background: rgba(10, 30, 37, .74); font-size: .68rem; color: rgba(238, 245, 242, .72) }
+.ctour-legend i { width: 18px; height: 0; margin-left: 8px; border-top: 2px solid var(--teal-200) }
+.ctour-legend i:first-child { margin-left: 0 }
+.ctour-legend i.l-road { border-top: 3px solid rgba(238, 245, 242, .42) }
+.ctour-legend i.l-border { border-top: 2px dotted rgba(238, 245, 242, .55) }
+
+.ctour-panel { display: grid; grid-template-rows: auto auto minmax(0, 1fr); gap: 18px; min-height: 0; padding: 24px; border-radius: var(--r-lg); background: var(--glass-fill); border: 1px solid var(--line-d) }
+.ctour-count { display: flex; align-items: baseline; gap: 10px; font: 300 2.5rem/1 var(--display) }
+.ctour-count span { display: inline-block; animation: dsun-in .5s var(--ease) }
+.ctour-count b { font: 600 .72rem/1 var(--body); letter-spacing: .2em; color: var(--teal-200) }
+.ctour-count em { flex: 1; align-self: center; height: 2px; background: rgba(238, 245, 242, .14); overflow: hidden }
+.ctour-count em i { display: block; height: 100%; background: var(--teal-200); transform-origin: left; transition: transform .7s var(--ease) }
+.ctour-cards { position: relative; min-height: 196px }
+.ctour-card { position: absolute; inset: 0 0 auto 0; display: grid; gap: 8px; align-content: start; opacity: 0; transform: translateY(14px); pointer-events: none; transition: opacity .4s var(--ease), transform .5s var(--ease) }
+.ctour-card.on { opacity: 1; transform: none; pointer-events: auto; transition-delay: .18s }
+.ctour-eyebrow { margin: 0; font-size: .68rem; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--teal-200) }
+.ctour-card h3 { font-size: clamp(1.7rem, 2.4vw, 2.3rem); line-height: 1.05 }
+.ctour-card p:not(.ctour-eyebrow) { margin: 0; max-width: 34ch; font-size: .95rem; color: rgba(238, 245, 242, .78) }
+.ctour-card .tlink { justify-self: start; margin-top: 4px }
+.ctour-rail { list-style: none; margin: 0; padding: 0; display: grid; align-content: end; min-height: 0; overflow: auto }
+.ctour-rail button { width: 100%; display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; align-items: center; gap: 10px; padding: 7px 0; border: 0; border-top: 1px solid var(--line-d); background: none; font: inherit; font-size: .88rem; text-align: left; color: rgba(238, 245, 242, .62); cursor: pointer; transition: color .3s }
+.ctour-rail button i { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; border: 1px solid rgba(238, 245, 242, .2); transition: background .35s, color .35s, border-color .35s }
+.ctour-rail svg { width: 14px; height: 14px }
+.ctour-rail span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.ctour-rail em { font-style: normal; font-size: .76rem; color: rgba(238, 245, 242, .5) }
+.ctour-rail button:hover { color: var(--on-dark) }
+.ctour-rail button.past i { border-color: rgba(180, 228, 228, .5); color: var(--teal-200) }
+.ctour-rail button[aria-current] { color: var(--on-dark); font-weight: 600 }
+.ctour-rail button[aria-current] i { background: var(--teal-200); color: var(--teal-900); border-color: var(--teal-200) }
+.ctour-rail button[aria-current] em { color: var(--teal-200) }
+
+@media (max-width: 900px) {
+  .ctour.held .ctour-stick { padding-top: calc(var(--hdr) + 1vh) }
+  /* minmax(0, 1fr): a plain 1fr track will not shrink below the map's content */
+  .ctour-grid { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; gap: 10px }
+  .ctour:not(.held) .ctour-grid { height: auto; grid-template-rows: 58svh auto }
+  .ctour-panel { grid-template-rows: auto; gap: 10px; padding: 14px 16px }
+  .ctour-count { font-size: 1.5rem }
+  .ctour-cards { min-height: 146px }
+  .ctour-card { gap: 5px }
+  .ctour-card h3 { font-size: 1.45rem }
+  .ctour-card p:not(.ctour-eyebrow) { font-size: .88rem }
+  .ctour-rail { order: 3; display: flex; gap: 6px; overflow: visible }
+  .ctour-rail li { flex: 1 }
+  .ctour-rail button { grid-template-columns: minmax(0, 1fr); justify-items: stretch; padding: 0; border-top: 0 }
+  .ctour-rail button span, .ctour-rail button em { display: none }
+  .ctour-rail button i { width: 100%; height: 32px; border-radius: var(--r-sm) }
+  .cpin { --d: 26px }
+  .cpin > i svg { width: 14px; height: 14px }
+  .cpin-tag { padding: 3px 7px 4px } .cpin-tag b { font-size: .7rem } .cpin-tag small { font-size: .62rem }
+  .cpin:not(.on):not(.home) .cpin-tag { display: none }
+  .ctour-legend { display: none }
+  .ct-label.region > span { font-size: .54rem; letter-spacing: .26em }
+}
 
 /* ===== Restrained corners (research: 0–4px reads premium; consistency over exact value) ===== */
-.chip, .filters button, .tall-no, .cpin-tag, .cmap-hint, .subnav-in, .subnav a, .cm-dist rect, .para figcaption, .glance, .todo { border-radius: var(--r-sm) }
+.chip, .filters button, .tall-no, .subnav-in, .subnav a, .para figcaption, .glance, .todo { border-radius: var(--r-sm) }
 .ibtn { border-radius: var(--r-sm) }
 .bookbar .btn { border-radius: var(--r-btn) }
 .socials a { border-radius: var(--r-sm) }
