@@ -7,16 +7,12 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ImageAccordion } from './ImageAccordion';
 import { hasMotion } from '@/lib/env';
+import { day } from '@/content/site';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const DAY = [
-  { when: 'Morning', line: 'A walk under the palms before breakfast.' },
-  { when: 'Late morning', line: 'Coffee on your balcony, over the lawns.' },
-  { when: 'Afternoon', line: 'A swim as the day cools down.' },
-  { when: 'Sunset', line: 'The Bay of Bengal from the sea view deck.' },
-  { when: 'Night', line: 'Lamp-lit paths back to your suite.' },
-];
+/* the same five moments as the homepage, from content/site.ts */
+const DAY = day.map(d => ({ when: d.time, line: d.text }));
 
 export function ScrollAccordion() {
   const root = useRef<HTMLElement>(null);

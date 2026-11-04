@@ -116,11 +116,16 @@ export const pillars = [
   { key: 'home', img: '/img/living-room.webp', title: 'Home', text: 'A living room, a kitchenette and a balcony in every suite, and your pets are welcome too.' },
 ];
 
+/* A day at Palm Regal: five moments, morning to night. The one source for the homepage day
+   section and the gallery's "A day in five pictures". Exactly five, because the image accordion
+   runs one spring per picture. Gopalpur faces east over the Bay of Bengal, so the sun sets behind
+   the resort: no "sunset over the sea" anywhere. */
 export const day = [
-  { time: 'Morning', title: 'Wake up to', em: 'green.', text: 'Open the balcony doors to lawns and palms, then a slow start on the yoga lawn.', img: '/img/view-2.webp' },
-  { time: 'Afternoon', title: 'A swim,', em: 'then the beach.', text: "The pool first. Gopalpur's main beach is five minutes away on foot.", img: '/img/pool.webp' },
-  { time: 'Evening', title: 'Sunset on', em: 'the sea deck.', text: 'Watch the Bay of Bengal from the terrace as the day cools down.', img: '/img/sea-view-deck.webp' },
-  { time: 'Night', title: 'Gardens', em: 'after dark.', text: 'Lamp-lit walkways, the amphitheatre and a quiet night by the sea.', img: '/img/main-banner.webp' },
+  { time: 'Morning', title: 'Wake up to', em: 'green.', text: 'Open the balcony doors to lawns and palms, then a slow start on the yoga lawn.', img: '/img/view-2.webp', alt: 'A suite balcony over the gardens' },
+  { time: 'Late morning', title: 'A walk under', em: 'the palms.', text: "Wander the garden paths, or take the five-minute walk to Gopalpur's main beach.", img: '/img/exterior-2.webp', alt: 'The palm-lined garden path' },
+  { time: 'Afternoon', title: 'A swim,', em: 'then a slow hour.', text: 'The pool first, then a game in GO PLAY or a film in BayWATCH, the private theatre.', img: '/img/pool.webp', alt: 'The pool at dusk' },
+  { time: 'Evening', title: 'Evenings on', em: 'the sea deck.', text: 'The Bay of Bengal from the terrace, as the breeze comes in off the water.', img: '/img/sea-view-deck.webp', alt: 'The sea view deck over the Bay of Bengal' },
+  { time: 'Night', title: 'Gardens', em: 'after dark.', text: 'Lamp-lit walkways, the amphitheatre and a quiet night by the sea.', img: '/img/main-banner.webp', alt: 'The lamp-lit walkway at night' },
 ];
 
 export const gallery = [

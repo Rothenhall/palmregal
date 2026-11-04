@@ -8,10 +8,16 @@
    - exported as ImageAccordion
    - SHOTS points at this project's own photos
    - optional width / height props, so a page section can size the strip
-   - optional `active` prop, so a scroll position can choose the open picture */
+   - optional `active` prop, so a scroll position can choose the open picture; the pointer
+     still peeks while it is on the strip, and the strip returns to `active` when it leaves
+   - optional `pics` prop (five pictures), so a section passes its own set
+   - optional `label` render prop: a line UNDER each picture, never over it
+   - optional `onPick`, so choosing a picture can move the page (and the cells become
+     keyboard-reachable buttons when it is given) */
 'use client';
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { day } from "@/content/site";
 
 /* ── inlined from lab/spring ──────────────────────── */
 /* ── one spring, for everything that settles ───────────────
@@ -137,15 +143,14 @@ const stillness = () =>
 
 /* SHOTS was Bencho's own pictures, which is not licensed
    to travel. Point this at yours. */
-/* Palm Regal: pointed at this project's own photos (public/img), named so KEEP below
-   can pick them, in the order of a day at the resort. */
-const SHOTS: { name: string; src: string; alt: string }[] = [
-  { name: "garden", src: "/img/exterior-2.webp", alt: "The palm-lined garden path" },
-  { name: "balcony", src: "/img/view-2.webp", alt: "A suite balcony over the gardens" },
-  { name: "pool", src: "/img/pool.webp", alt: "The pool at dusk" },
-  { name: "deck", src: "/img/sea-view-deck.webp", alt: "The sea view deck over the Bay of Bengal" },
-  { name: "night", src: "/img/main-banner.webp", alt: "The lamp-lit walkway at night" },
-];
+/* Palm Regal: pointed at this project's own photos, taken from the one list of the day in
+   content/site.ts (morning to night), so the strip and the words beside it cannot drift apart. */
+type Shot = { name: string; src: string; alt: string };
+const SHOTS: Shot[] = day.map((d) => ({
+  name: d.time.toLowerCase().replace(/\s+/g, "-"),
+  src: d.img,
+  alt: d.alt,
+}));
 
 /* ══ Image accordion ═══════════════════════════════════════
    A row of pictures cropped to slivers. Point at one and it
@@ -234,9 +239,9 @@ const H = 300;
 
    So this list is the block's own, and it is the one place to
    change what is in the strip or how many. */
-/* Palm Regal: the five photos above, by name. They are landscape rather than
+/* Palm Regal: the five moments of the day, by name. The photos are landscape rather than
    portrait; `cover` crops them to the tall slivers just the same. */
-const KEEP = ["garden", "balcony", "pool", "deck", "night"];
+const KEEP = ["morning", "late-morning", "afternoon", "evening", "night"];
 const PICS = KEEP.map((name) => SHOTS.find((s) => s.name === name)!);
 
 /* ── the corner, and it FOLLOWS THE GAP ────────────────────
@@ -313,9 +318,16 @@ export function ImageAccordion({
   /* Palm Regal: the strip's size; defaults are the block's own 340 x 300 */
   width = W,
   height = H,
-  /* Palm Regal: when given, this chooses the open picture (a scroll position, say)
-     and the pointer no longer does. `undefined` leaves the block as it was. */
+  /* Palm Regal: when given, this chooses the open picture (a scroll position, say).
+     The pointer can still peek; when it leaves, the strip settles back on `active`.
+     `undefined` leaves the block as it was. */
   active,
+  /* Palm Regal: the five pictures; defaults to the day in content/site.ts */
+  pics = PICS,
+  /* Palm Regal: a line drawn UNDER each picture (never over it, see below) */
+  label,
+  /* Palm Regal: called when a picture is chosen by click, tap or Enter */
+  onPick,
 }: {
   open?: number;
   reach?: number;
@@ -324,12 +336,16 @@ export function ImageAccordion({
   width?: number | string;
   height?: number | string;
   active?: number | null;
+  pics?: Shot[];
+  label?: (i: number, isOpen: boolean) => ReactNode;
+  onPick?: (i: number) => void;
 } = {}) {
   /* which picture the pointer is on, by index. Null rather
      than -1 so "none" cannot be confused with the first. */
   const [pointed, setAt] = useState<number | null>(null);
-  /* Palm Regal: a controlled `active` wins over the pointer */
-  const at = active === undefined ? pointed : active;
+  /* Palm Regal: the pointer peeks; otherwise a controlled `active` holds the strip open.
+     The stability argument above still holds: the peeked picture is the one that grows. */
+  const at = pointed !== null ? pointed : (active ?? null);
   const still = stillness();
 
   /* ── one spring each, and NO stagger ───────────────────────
@@ -362,7 +378,7 @@ export function ImageAccordion({
 
   return (
     <div
-      className="acc"
+      className={"acc" + (label ? " acc--label" : "")}
       /* the same radius the pictures take — see RMAX */
       style={{ width, height, gap: g, borderRadius: Math.min(RMAX, g) }}
       /* ── `out` with a containment test, not `leave` ───────
@@ -378,13 +394,22 @@ export function ImageAccordion({
       }}
       onPointerCancel={() => setAt(null)}
     >
-      {PICS.map((pic, i) => {
+      {pics.map((pic, i) => {
         const u = swell[i] / 100;
         return (
           <div
             key={pic.name}
             className="acc-cell"
             data-open={at === i || undefined}
+            /* Palm Regal: when choosing a picture does something, each cell is a real control */
+            role={onPick ? "button" : undefined}
+            tabIndex={onPick ? 0 : undefined}
+            aria-label={onPick ? pic.alt : undefined}
+            aria-pressed={onPick ? at === i : undefined}
+            onClick={onPick ? () => onPick(i) : undefined}
+            onKeyDown={onPick ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPick(i); } } : undefined}
+            onFocus={onPick ? () => setAt(i) : undefined}
+            onBlur={onPick ? () => setAt(null) : undefined}
             style={{
               /* the whole layout, in one number per picture.
                  `flex-basis: 0` so the grow numbers are the
@@ -413,7 +438,10 @@ export function ImageAccordion({
                 the photograph on both sides, and nothing in it
                 moves or resizes. */}
             {/* Palm Regal: alt text kept for these photos, which carry meaning on this site */}
-            <img src={pic.src} alt={pic.alt} draggable={false} />
+            <img src={pic.src} alt={onPick ? "" : pic.alt} draggable={false} />
+            {/* Palm Regal: the label lives BELOW the photograph, in its own band, so the
+                argument that follows still holds: nothing sits over the picture. */}
+            {label && <div className="acc-label">{label(i, at === i)}</div>}
             {/* ── AND THERE IS NOTHING OVER THE PICTURE ──────
                 The filename sat here in the corner of whichever
                 one was open, on a scrim to keep it legible over

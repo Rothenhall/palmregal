@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Hero } from '@/components/Hero';
 import { BookBar } from '@/components/BookForm';
 import { DelightsStack } from '@/components/DelightsStack';
-import { DayJourney } from '@/components/DayJourney';
+import { DaySun } from '@/components/DaySun';
 import { Icon } from '@/components/Icons';
 import { Todo } from '@/components/Todo';
 import { CoastMap } from '@/components/CoastMap';
@@ -46,7 +46,7 @@ export default function Home() {
         </div>
       </section>
 
-      <DayJourney />
+      <DaySun />
 
       <section className="sec lux" data-bg="dusk" id="location" aria-labelledby="loc-h">
         <div className="wrap">
