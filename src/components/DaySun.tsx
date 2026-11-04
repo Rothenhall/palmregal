@@ -30,6 +30,11 @@ const onArc = (t: number) => {
   };
 };
 
+/* The page colour follows the sun: soft aqua-teal in the morning, the brightest sky-teal in the
+   afternoon, warm dusk in the evening, the logo's deep navy at night. Every tone stays dark enough
+   for the light text (at least 7:1). Motion.tsx reads it from data-page-color. */
+const SKY = ['#1B4650', '#1E4C62', '#22576F', '#2C3440', '#121735'];
+
 export function DaySun() {
   const root = useRef<HTMLElement>(null);
   const trig = useRef<ScrollTrigger | null>(null);
@@ -55,6 +60,8 @@ export function DaySun() {
       onUpdate: self => {
         place(self.progress);
         const n = Math.min(N - 1, Math.floor(self.progress * N * .999));
+        /* set straight away (not on the next render) so the page colour turns with the moment */
+        if (el.dataset.pageColor !== SKY[n]) { el.dataset.pageColor = SKY[n]; dispatchEvent(new Event('pagecolor')); }
         setI(c => (c === n ? c : n));
       },
     });
@@ -73,9 +80,9 @@ export function DaySun() {
   };
 
   return (
-    <section ref={root} id="gallery" className={'dsun' + (held ? ' held' : '')} data-bg="night" data-moment={i} aria-labelledby="dsun-h">
+    <section ref={root} id="gallery" className={'dsun' + (held ? ' held' : '')} data-bg="night" data-page-color={held ? SKY[i] : undefined} data-moment={i} aria-labelledby="dsun-h">
       <div className="dsun-stick">
-        <div className="dsun-sky" aria-hidden="true">{day.map((d, n) => <i key={d.time} className={n === i ? 'on' : ''} />)}</div>
+        <div className="dsun-sky" aria-hidden="true">{day.map((d, n) => <i key={d.time} className={n === i ? 'on' : ''} />)}<b className="dsun-stars" /></div>
         <div className="wrap dsun-grid">
           <div className="dsun-copy">
             <p className="eyebrow" id="dsun-h">A day at Palm Regal</p>

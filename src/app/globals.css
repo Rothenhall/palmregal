@@ -975,12 +975,11 @@ html.shift .phero2 { background: var(--teal-900) }
 .ct-road-case { fill: none; stroke: #0b232b; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round }
 .ct-road { fill: none; stroke: rgba(238, 245, 242, .38); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round }
 /* the way: drawn in once the camera has nearly arrived, then a light travels along it */
-.ct-way-line { fill: none; stroke: var(--teal-200); stroke-width: calc(var(--u, 1) * 2.6px); stroke-linecap: round; stroke-dasharray: 1 1; stroke-dashoffset: 1; animation: ct-draw 1.3s var(--ease) .55s forwards }
-.ct-way.walk .ct-way-line { stroke-dasharray: .001 .045; stroke-width: calc(var(--u, 1) * 4px); stroke-dashoffset: 0; animation: fadeIn .6s var(--ease) .6s both }
-.ct-way-dot { fill: none; stroke: #fff; stroke-width: calc(var(--u, 1) * 7px); stroke-linecap: round; stroke-dasharray: 0 1; opacity: 0; animation: ct-travel 2.8s linear 1.9s infinite; filter: drop-shadow(0 0 4px rgba(180, 228, 228, .9)) }
+.ct-way-line { fill: none; stroke: var(--teal-200); stroke-width: calc(var(--u, 1) * 2.6px); stroke-linecap: round }
+/* the walk to the beach is a dotted footpath, spaced in screen pixels */
+.ct-way.walk .ct-way-line { stroke-dasharray: 0 calc(var(--u, 1) * 9px); stroke-width: calc(var(--u, 1) * 4px); animation: fadeIn .6s var(--ease) .6s both }
+.ct-way-dot { fill: none; stroke: #fff; stroke-width: calc(var(--u, 1) * 7px); stroke-linecap: round; opacity: 0; filter: drop-shadow(0 0 4px rgba(180, 228, 228, .9)) }
 .ct-way.walk .ct-way-dot { display: none }
-@keyframes ct-draw { to { stroke-dashoffset: 0 } }
-@keyframes ct-travel { 0% { stroke-dashoffset: -.02; opacity: 0 } 12%, 88% { opacity: 1 } 100% { stroke-dashoffset: -.98; opacity: 0 } }
 
 /* labels and pins are HTML, placed by the camera, so they stay readable at any zoom */
 .ctour-labels, .ctour-pins { position: absolute; inset: 0; pointer-events: none }
@@ -1322,6 +1321,12 @@ html:not(.motion) .suites-stack .suite { position: relative; top: 0 }
 .dsun-sky i:nth-child(4) { --glow: rgba(242, 199, 147, .18) }  /* evening: lamp light, never UI */
 .dsun-sky i:nth-child(5) { --glow: rgba(60, 60, 132, .42) }    /* night: the logo's navy */
 .dsun-sky i.on { opacity: 1 }
+/* a few stars come out with the moon */
+.dsun-stars { position: absolute; inset: 0 0 45% 0; opacity: 0; transition: opacity 1.6s var(--ease);
+  background-image: radial-gradient(1.2px 1.2px at 12% 22%, #fff, transparent), radial-gradient(1px 1px at 27% 8%, #fff, transparent), radial-gradient(1.4px 1.4px at 41% 30%, #fff, transparent),
+    radial-gradient(1px 1px at 58% 14%, #fff, transparent), radial-gradient(1.3px 1.3px at 71% 34%, #fff, transparent), radial-gradient(1px 1px at 84% 10%, #fff, transparent),
+    radial-gradient(1.2px 1.2px at 93% 26%, #fff, transparent), radial-gradient(1px 1px at 6% 40%, #fff, transparent), radial-gradient(1px 1px at 50% 44%, #fff, transparent) }
+.dsun[data-moment="4"] .dsun-stars { opacity: .55 }
 .dsun:not(.held) .dsun-sky i:nth-child(3) { opacity: 1 }
 .dsun-grid { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, .78fr) minmax(0, 1.6fr); gap: clamp(28px, 4.5vw, 72px); align-items: center; height: 100% }
 .dsun-copy { display: flex; flex-direction: column; justify-content: center }

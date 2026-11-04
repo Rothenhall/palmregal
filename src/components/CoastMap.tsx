@@ -98,6 +98,8 @@ export function CoastMap() {
   const haze = useRef<HTMLDivElement>(null);
   const chip = useRef<HTMLSpanElement>(null);
   const dots = useRef<SVGPathElement>(null);
+  const wayLine = useRef<SVGPathElement>(null);
+  const wayDot = useRef<SVGPathElement>(null);
   const pinEls = useRef<Record<string, HTMLElement | null>>({});
   const regEls = useRef<Record<string, HTMLElement | null>>({});
   const trig = useRef<ScrollTrigger | null>(null);
@@ -196,6 +198,27 @@ export function CoastMap() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [i]);
 
+  /* draw the way in, measured from the path itself so it always reaches the place
+     (a pathLength-based dash is not drawn to the end by every browser) */
+  useLayoutEffect(() => {
+    const line = wayLine.current, dot = wayDot.current;
+    if (!line || stop.walk) return;
+    const L = line.getTotalLength();
+    line.style.strokeDasharray = `${L}px ${L}px`;
+    /* the line rests fully drawn; the animation only covers the draw-in, so it can never stop short */
+    line.style.strokeDashoffset = '0px';
+    if (!hasMotion()) return;
+    const draw = line.animate([{ strokeDashoffset: `${L}px` }, { strokeDashoffset: '0px' }], { duration: 1300, delay: 550, easing: 'cubic-bezier(.22, 1, .36, 1)', fill: 'backwards' });
+    let travel: Animation | undefined;
+    if (dot) {
+      dot.style.strokeDasharray = `0px ${L * 2}px`;
+      travel = dot.animate([
+        { strokeDashoffset: '0px', opacity: 0 }, { opacity: 1, offset: .12 }, { opacity: 1, offset: .88 }, { strokeDashoffset: `${-L}px`, opacity: 0 },
+      ], { duration: 2800, delay: 1900, iterations: Infinity });
+    }
+    return () => { draw.cancel(); travel?.cancel(); };
+  }, [i, stop.walk]);
+
   /* the scroll walks the stops; measured once the section has its scrolling height */
   useEffect(() => {
     if (!held) return;
@@ -266,8 +289,8 @@ export function CoastMap() {
               <path d={geo.roads} className="ct-road" vectorEffect="non-scaling-stroke" />
               {route && (
                 <g key={stop.id} className={'ct-way' + (stop.walk ? ' walk' : '')}>
-                  <path d={route.d} pathLength={1} className="ct-way-line" />
-                  <path d={route.d} pathLength={1} className="ct-way-dot" />
+                  <path d={route.d} className="ct-way-line" ref={wayLine} />
+                  <path d={route.d} className="ct-way-dot" ref={wayDot} />
                 </g>
               )}
             </svg>

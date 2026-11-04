@@ -33,7 +33,7 @@ export function Motion() {
     } else if (lenis) lenis.scrollTo(0, { immediate: true });
     if (!hasMotion()) { html.classList.add('ready'); return; }
 
-    let ctx: gsap.Context | null = null; let started = false; const splits: SplitText[] = [];
+    let ctx: gsap.Context | null = null; let started = false; const splits: SplitText[] = []; let onColor: (() => void) | null = null;
     const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), { rootMargin: '0px 0px -8% 0px' });
 
     const init = () => {
@@ -83,15 +83,18 @@ export function Motion() {
         const secs = gsap.utils.toArray<HTMLElement>('main [data-bg]');
         if (secs.length) {
           html.classList.add('shift');
-          const setBg = (k: string) => { document.body.style.backgroundColor = COLORS[k] || COLORS.mint; };
-          setBg(secs[0].dataset.bg!);
+          /* a section can name its own page colour (data-page-color), as the day does as its sun moves */
+          const colorOf = (s: HTMLElement) => s.dataset.pageColor || COLORS[s.dataset.bg!] || COLORS.mint;
+          const setBg = (c: string) => { document.body.style.backgroundColor = c; };
+          setBg(colorOf(secs[0]));
           /* whichever section crosses 55% of the screen sets the colour; works after jumps too */
           let last = '';
           const pick = () => {
-            const line = innerHeight * .55; let k = secs[0].dataset.bg!;
-            for (const s of secs) { const r = s.getBoundingClientRect(); if (r.top <= line) k = s.dataset.bg!; else break; }
+            const line = innerHeight * .55; let k = colorOf(secs[0]);
+            for (const s of secs) { const r = s.getBoundingClientRect(); if (r.top <= line) k = colorOf(s); else break; }
             if (k !== last) { last = k; setBg(k); }
           };
+          onColor = pick; addEventListener('pagecolor', pick);
           ScrollTrigger.create({ start: 0, end: 'max', onUpdate: pick, onRefresh: pick });
         }
       });
@@ -102,7 +105,7 @@ export function Motion() {
     const onLoad = () => ScrollTrigger.refresh(); addEventListener('load', onLoad);
 
     return () => {
-      clearTimeout(fallback); removeEventListener('load', onLoad); io.disconnect();
+      clearTimeout(fallback); removeEventListener('load', onLoad); io.disconnect(); if (onColor) removeEventListener('pagecolor', onColor);
       ctx?.revert(); splits.forEach(s => s.revert());
       html.classList.remove('shift', 'ready'); document.body.style.backgroundColor = '';
     };
