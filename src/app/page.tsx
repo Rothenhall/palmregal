@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Hero } from '@/components/Hero';
+import { ContinuousArrival } from '@/components/ContinuousArrival';
 import { BookBar } from '@/components/BookForm';
 import { DelightsStack } from '@/components/DelightsStack';
 import { DaySun } from '@/components/DaySun';
@@ -8,7 +8,6 @@ import { Todo } from '@/components/Todo';
 import { CoastMap } from '@/components/CoastMap';
 import { MomentsWall } from '@/components/MomentsWall';
 import { ReviewBelt, ThreeWays } from '@/components/Sections';
-import { SuiteJourney } from '@/components/SuiteJourney';
 import { facilities } from '@/content/site';
 import { DRAFT } from '@/lib/book';
 
@@ -16,7 +15,7 @@ import { DRAFT } from '@/lib/book';
 export default function Home() {
   return (
     <>
-      <Hero />
+      <ContinuousArrival />
 
       <section className="book" id="book" data-bg="dusk" aria-label="Check availability">
         <div className="wrap">
@@ -25,7 +24,6 @@ export default function Home() {
         </div>
       </section>
 
-      <SuiteJourney />
 
 
       <section className="sec dsec" data-bg="dusk" id="facilities" aria-labelledby="dl-h">

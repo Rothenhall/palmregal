@@ -15,6 +15,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { inEverySuite, suites } from '@/content/site';
 import { hasMotion } from '@/lib/env';
+import { arrivalDistance } from '@/lib/arrival';
 import { Icon } from './Icons';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -27,26 +28,39 @@ const title = (name: string) => {
   return <>{w.slice(0, -k).join(' ')} <em>{w.slice(-k).join(' ')}</em></>;
 };
 
-export function SuiteJourney() {
+export function SuiteJourney({ connected = false }: { connected?: boolean }) {
   const root = useRef<HTMLElement>(null);
   const track = useRef<HTMLDivElement>(null);
   const [held, setHeld] = useState(false);
 
-  useEffect(() => { if (hasMotion()) setHeld(true); }, []);
+  useEffect(() => {
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+    const connection = (navigator as Navigator & { connection?: EventTarget & { saveData?: boolean } }).connection;
+    const update = () => setHeld(hasMotion() && !connection?.saveData);
+    update(); reduced.addEventListener('change', update); connection?.addEventListener('change', update);
+    return () => { reduced.removeEventListener('change', update); connection?.removeEventListener('change', update); };
+  }, []);
 
   useEffect(() => {
     if (!held) return;
     const sec = root.current!, tr = track.current!;
+    const arrival = connected ? sec.closest<HTMLElement>('.arrival') : null;
     const dist = () => Math.max(0, tr.scrollWidth - innerWidth);
     /* the section is as tall as the strip is wide, so one scroll step moves it one step sideways,
        plus a short rest at each end so the opening and the close are read before it moves */
-    const lead = () => innerHeight * .35, tail = () => innerHeight * .25;
-    const setH = () => { sec.style.height = `${dist() + innerHeight + lead() + tail()}px`; };
+    const lead = () => connected ? 0 : innerHeight * .35, tail = () => innerHeight * .25;
+    const setH = () => {
+      if (arrival) arrival.style.height = `${arrivalDistance() + dist() + innerHeight + tail()}px`;
+      else sec.style.height = `${dist() + innerHeight + lead() + tail()}px`;
+    };
     setH();
     const ctx = gsap.context(() => {
       const tween = gsap.to(tr, {
         x: () => -dist(), ease: 'none',
-        scrollTrigger: { trigger: sec, start: () => `top+=${lead()} top`, end: () => `bottom-=${tail()} bottom`, scrub: true, invalidateOnRefresh: true },
+        scrollTrigger: { trigger: arrival || sec,
+          start: () => arrival ? arrival.offsetTop + arrivalDistance() : `top+=${lead()} top`,
+          end: () => arrival ? arrival.offsetTop + arrivalDistance() + dist() : `bottom-=${tail()} bottom`,
+          scrub: true, invalidateOnRefresh: true },
       });
       const along = { containerAnimation: tween };
 
@@ -54,10 +68,10 @@ export function SuiteJourney() {
       tr.querySelectorAll<HTMLElement>('.sj-num').forEach(el =>
         gsap.fromTo(el.firstElementChild, { yPercent: 104 }, { yPercent: 0, ease: 'none', scrollTrigger: { ...along, trigger: el, start: 'left 100%', end: 'left 50%', scrub: true } }));
       /* each main photograph opens from a sliver, and the picture drifts inside its frame */
-      tr.querySelectorAll<HTMLElement>('.sj-hero').forEach(el => {
-        gsap.fromTo(el, { clipPath: 'inset(10% 0% 10% 42%)' }, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'none', scrollTrigger: { ...along, trigger: el, start: 'left 100%', end: 'left 30%', scrub: true } });
+      tr.querySelectorAll<HTMLElement>('.sj-hero').forEach((el, i) => {
+        if (!connected || i > 0) gsap.fromTo(el, { clipPath: 'inset(10% 0% 10% 42%)' }, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'none', scrollTrigger: { ...along, trigger: el, start: 'left 100%', end: 'left 30%', scrub: true } });
         const img = el.querySelector('img');
-        if (img) gsap.fromTo(img, { xPercent: -7, scale: 1.16 }, { xPercent: 7, scale: 1.04, ease: 'none', scrollTrigger: { ...along, trigger: el, start: 'left right', end: 'right left', scrub: true } });
+        if (img) gsap.fromTo(img, { xPercent: connected && i === 0 ? 0 : -7, scale: connected && i === 0 ? 1 : 1.16 }, { xPercent: 7, scale: 1.04, ease: 'none', scrollTrigger: { ...along, trigger: el, start: connected && i === 0 ? 'left left' : 'left right', end: 'right left', scrub: true } });
       });
       /* the smaller photographs travel at their own speeds, for depth */
       tr.querySelectorAll<HTMLElement>('[data-drift]').forEach(el => {
@@ -65,16 +79,18 @@ export function SuiteJourney() {
         gsap.fromTo(el, { x: () => s * innerWidth * .1 }, { x: () => -s * innerWidth * .1, ease: 'none', scrollTrigger: { ...along, trigger: el, start: 'left right', end: 'right left', scrub: true, invalidateOnRefresh: true } });
       });
       /* the words arrive in a short cascade */
-      tr.querySelectorAll<HTMLElement>('.sj-copy').forEach(el =>
-        gsap.from(el.children, { y: 26, opacity: 0, duration: .9, stagger: .07, ease: 'power3.out', scrollTrigger: { ...along, trigger: el, start: 'left 84%', toggleActions: 'play none none reverse' } }));
+      tr.querySelectorAll<HTMLElement>('.sj-copy').forEach((el, i) => {
+        if (connected && i === 0) return; // The arrival reveals this copy with the first card.
+        gsap.from(el.children, { y: 26, opacity: 0, duration: .9, stagger: .07, ease: 'power3.out', scrollTrigger: { ...along, trigger: el, start: 'left 84%', toggleActions: 'play none none reverse' } });
+      });
     }, sec);
     ScrollTrigger.addEventListener('refreshInit', setH);
     ScrollTrigger.refresh();
-    return () => { ScrollTrigger.removeEventListener('refreshInit', setH); ctx.revert(); sec.style.height = ''; };
-  }, [held]);
+    return () => { ScrollTrigger.removeEventListener('refreshInit', setH); ctx.revert(); sec.style.height = ''; arrival?.style.removeProperty('height'); };
+  }, [held, connected]);
 
   return (
-    <section ref={root} className={'sj' + (held ? ' held' : '')} data-bg="night" id="suites" aria-labelledby="suites-h">
+    <section ref={root} className={'sj' + (held ? ' held' : '') + (connected ? ' sj--arrival' : '')} data-bg="night" id="suites" aria-labelledby="suites-h">
       <div className="sj-stick">
         <div className="sj-track" ref={track}>
           <div className="sj-intro" data-chapter="-1">

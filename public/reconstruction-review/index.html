@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Palm Regal — reconstruction proof</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0a2024;--panel:#123036;--ink:#f5f0e6;--muted:#bed0cc;--line:#355056;--gold:#eac586;--radius:12px}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,sans-serif}a{color:var(--gold);text-underline-offset:4px}button,select,input{font:inherit}button,select{min-height:44px;padding:9px 15px;border:1px solid var(--line);border-radius:7px;background:var(--panel);color:var(--ink)}button{cursor:pointer}button[aria-pressed=true]{background:var(--gold);color:var(--bg);border-color:var(--gold)}:focus-visible{outline:3px solid var(--gold);outline-offset:4px}main,nav{width:min(1320px,calc(100% - 48px));margin:auto}nav{padding:24px 0;display:flex;justify-content:space-between;gap:20px;border-bottom:1px solid var(--line)}nav strong{letter-spacing:.12em;text-transform:uppercase;font-size:14px}header{max-width:900px;padding:52px 0 28px}.eyebrow{color:var(--gold);font-size:13px;text-transform:uppercase;letter-spacing:.1em}h1{font:400 clamp(32px,5vw,58px)/1.12 Georgia,serif;margin:14px 0 20px}h2{font:400 28px/1.3 Georgia,serif;margin:0 0 12px}h3{font-size:18px;margin:0 0 10px}p{margin:0 0 16px}.muted,small{color:var(--muted)}.controls{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin-bottom:18px}.field{display:grid;gap:5px}.field label{font-size:13px;color:var(--muted)}.notice{border-left:3px solid var(--gold);padding:14px 18px;background:var(--panel);margin:8px 0 28px}.stage{position:relative;margin-bottom:32px}.stage-inner{background:#061619;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}.stage video{width:100%;height:min(65vw,72svh);display:block;object-fit:contain;background:#020b0d}.stage[data-scroll=true]{height:260svh}.stage[data-scroll=true] .stage-inner{position:sticky;top:12px}.stage[data-rendition=mobile] video{height:min(72svh,800px)}.scrub{display:flex;align-items:center;gap:16px;padding:14px 18px}.scrub label{white-space:nowrap}.scrub input{width:100%;accent-color:var(--gold);min-height:44px}.scrub output{min-width:110px;font-variant-numeric:tabular-nums;font-size:14px}.caption{padding:0 18px 16px;color:var(--muted);font-size:14px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:40px}.card{padding:24px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius)}.card video,.card img{display:block;width:100%;height:auto;border-radius:6px;background:#020b0d}.card video{aspect-ratio:16/9;object-fit:contain}.card img{margin-top:16px}.card h2{font-size:25px}details{padding:22px 0;border-top:1px solid var(--line)}summary{cursor:pointer;min-height:44px;padding:8px 0;font-size:19px}details>div{padding:16px 0}details video{display:block;width:100%;max-height:70svh;background:#020b0d}table{width:100%;border-collapse:collapse;margin:12px 0 24px}td,th{padding:12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--gold)}.table-wrap{overflow:auto}footer{padding:36px 0 60px;color:var(--muted)}#status{min-height:26px;color:var(--gold)}.error{color:#ffb5a8}ul{padding-left:22px}li{margin-bottom:8px}
+    @media(max-width:700px){main,nav{width:calc(100% - 28px)}header{padding-top:32px}.grid{grid-template-columns:1fr;gap:16px}.card{padding:18px}.scrub{gap:8px;padding:10px}.scrub label{font-size:13px}.scrub output{min-width:82px;font-size:12px}.controls{gap:8px}.stage video{height:52svh}.stage[data-rendition=mobile] video{height:66svh}nav{font-size:14px}.table-wrap{font-size:14px}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  </style>
+</head>
+<body>
+<nav><strong>Palm Regal</strong><a href="/">Return to website</a></nav>
+<main>
+  <header><span class="eyebrow">Local reconstruction study · baseline preserved</span><h1>Original footage.<br>Measured camera movement.</h1><p class="muted">A three-second source-based retiming proof. Compare the real building, inspect the original curtains, and review the camera-reconstruction results.</p></header>
+  <div class="notice"><strong>This is a feasibility proof.</strong> It contains no generated architecture, replacement curtains or image zoom. It does not reconstruct the missing flight through the window. The homepage now uses the night proof and the original bedroom-photo handoff. <a href="/?arrival=baseline">Compare the preserved 44.05-second v7 homepage</a>.</div>
+  <div class="controls">
+    <div class="field"><label for="shot">Original aerial shot</label><select id="shot"><option value="night">Night — original 57.96–59.68s</option><option value="day">Day — original 23.36–24.76s</option></select></div>
+    <div class="field"><label for="rendition">Framing</label><select id="rendition"><option value="auto">Match my screen</option><option value="desktop">Desktop · 1920 × 1080</option><option value="mobile">Portrait · 720 × 1280</option></select></div>
+    <button id="mode" type="button" aria-pressed="false">Enable scroll preview</button>
+    <a id="download" href="night-proof-desktop.mp4" download>Download proof</a>
+  </div>
+  <p id="status" role="status">Loading proof metadata…</p>
+  <noscript><p>JavaScript is needed for the comparison controls. You can <a href="night-proof-desktop.mp4">play the night proof directly</a> or use the original-footage players below.</p></noscript>
+  <section id="stage" class="stage" data-scroll="false" aria-label="Source-based aerial proof">
+    <div class="stage-inner">
+      <video id="proof" controls muted playsinline preload="metadata" poster="night-poster.webp" aria-label="Three-second original-footage interpolation proof"></video>
+      <div class="scrub"><label for="scrub">Frame position</label><input id="scrub" type="range" min="0" max="179" value="0" step="1"><output id="time" for="scrub">0.00 / 3.00s</output></div>
+      <div id="caption" class="caption">44 original night frames retimed to 180 frames. Camera motion remains within the recorded shot.</div>
+    </div>
+  </section>
+  <div class="grid">
+    <article class="card"><h2>Original timing</h2><p class="muted">The same shot at its recorded 25 FPS. The proof above slows this observed motion; it does not create a closer camera position.</p><video id="original" controls muted playsinline preload="none" poster="night-poster.webp" src="night-original.mp4" aria-label="Original unretimed aerial footage"></video></article>
+    <article class="card"><h2>Withheld-frame comparison</h2><p class="muted">A real frame was withheld, estimated from its neighbors, then compared at the same architectural crop. No sharpening or blur conceals the differences.</p><img id="heldout" src="night-heldout.jpg" width="960" height="584" alt="Real withheld frame compared with optical-flow interpolation, a preceding real frame and a simple blend"></article>
+  </div>
+  <section class="card" aria-labelledby="results-title"><h2 id="results-title">What the reconstruction establishes</h2><div id="results"><p>Loading measured results…</p></div><p class="muted">Sparse points and low image error are evidence about the observed exterior only. They do not establish hidden surfaces, real-world dimensions, the correct balcony identity or the connection to the required bedroom.</p></section>
+  <div class="grid" style="margin-top:24px">
+    <article class="card"><h2>The actual curtains</h2><p class="muted">Original 17.84–19.28s footage, including the people opening the curtains. Its blue wall and three artworks differ from the required bedroom. This is reference evidence, not a replacement curtain shot.</p><video controls muted playsinline preload="none" src="original-curtains.mp4" aria-label="Original beige curtains being opened in the property footage"></video></article>
+    <article class="card"><h2>The required final bedroom</h2><p class="muted">The existing first suite photograph remains the final reference. The route from the selected exterior window into this exact room is not documented by the supplied clips.</p><img src="/img/bedroom-1.webp" width="1500" height="1000" loading="lazy" alt="Actual first suite bedroom with cream wall panels, two artworks, globe sconces and a roller blind"></article>
+  </div>
+  <details id="baseline-details"><summary>Compare the existing 44-second v7 baseline</summary><div><p class="muted">Existing generated aerial and photographic 3D composite, including the synthetic balcony and orange curtains. This file has not been replaced.</p><video id="baseline" controls muted playsinline preload="none" aria-label="Unchanged v7 hero baseline"></video></div></details>
+  <details><summary>Tracking and contact-sheet evidence</summary><div class="grid"><article><h3>Original feature tracks</h3><img id="tracks" src="night-tracks.jpg" loading="lazy" style="width:100%" alt="Matched static property features across the original aerial shot"></article><article><h3>Encoded proof frames</h3><img id="contact" src="night-contact.jpg" loading="lazy" style="width:100%" alt="Eight frames sampled from the exported three-second proof"></article></div></details>
+  <footer><p>To finish an authentic entry, the missing material is overlapping footage of the identified balcony/opening and a continuous move into the exact first bedroom, with its real curtains visible.</p><a href="results.json">Measured results and limitations</a></footer>
+</main>
+<script>
+(()=>{
+  const $=id=>document.getElementById(id),video=$('proof'),range=$('scrub'),stage=$('stage'),mobile=matchMedia('(max-width:760px)');
+  let pending=null,scrollMode=false,raf=0,results=null,ready=false;
+  const framing=()=>$('rendition').value==='auto'?(mobile.matches?'mobile':'desktop'):$('rendition').value;
+  const queue=()=>{if(ready&&!video.seeking&&pending!==null){const next=pending;pending=null;if(Math.abs(video.currentTime-next)>1/120)video.currentTime=next;}};
+  const seek=p=>{pending=Math.max(0,Math.min(179/60,p*179/60));range.value=String(Math.round(p*179));queue();};
+  const scrollSeek=()=>{raf=0;if(!scrollMode)return;const r=stage.getBoundingClientRect();const distance=stage.offsetHeight-innerHeight+24;seek(Math.max(0,Math.min(1,(12-r.top)/Math.max(1,distance))));};
+  const onScroll=()=>{if(scrollMode&&!raf)raf=requestAnimationFrame(scrollSeek);};
+  const updateResults=()=>{
+    if(!results)return;const n=$('shot').value,r=results.shots[n],c=r.reconstruction,v=r.camera_validation,s=r.interpolation.scores;
+    $('results').innerHTML=`<div class="table-wrap"><table><thead><tr><th>Check</th><th>${n==='night'?'Night':'Day'} result</th></tr></thead><tbody><tr><td>Conservative sparse reconstruction</td><td>${c.registered}/${c.input_keyframes} views; ${c.points3D.toLocaleString()} points</td></tr><tr><td>Mean training reprojection error</td><td>${c.mean_reprojection_error_px.toFixed(2)} pixels</td></tr><tr><td>Held-out camera checks</td><td>${v.withheld_frames?`${v.passed_count}/${v.withheld_frames} passed`:'Not accepted for pose validation'}</td></tr><tr><td>Interpolation / nearest-frame accuracy</td><td>${s.motion.luma_psnr_db.toFixed(2)} / ${s.nearest.luma_psnr_db.toFixed(2)} dB</td></tr><tr><td>Interpolation / simple-blend accuracy</td><td>${s.motion.luma_psnr_db.toFixed(2)} / ${s.blend.luma_psnr_db.toFixed(2)} dB</td></tr><tr><td>Full exterior-to-bedroom journey</td><td>Unsupported by available coverage; not generated</td></tr></tbody></table></div><p>${r.verdict}</p>`;
+  };
+  const load=()=>{
+    const n=$('shot').value,f=framing();ready=false;pending=null;range.value='0';stage.dataset.rendition=f;video.pause();video.poster=`${n}-poster${f==='mobile'?'-mobile':''}.webp`;video.src=`${n}-proof-${f}.mp4`;
+    $('download').href=video.src;$('original').pause();$('original').src=`${n}-original.mp4`;$('original').poster=`${n}-poster.webp`;
+    for(const [id,suffix]of [['heldout','heldout'],['tracks','tracks'],['contact','contact']])$(id).src=`${n}-${suffix}.jpg`;
+    $('caption').textContent=`${n==='night'?44:36} original ${n} frames retimed to 180 frames. No spatial extrapolation, relighting or generated architectural detail.`;
+    $('status').classList.remove('error');$('status').textContent='Loading selected proof…';updateResults();
+  };
+  video.addEventListener('loadedmetadata',()=>{ready=true;$('status').textContent=scrollMode?'Scroll through the preview in either direction.':'Use play, the timeline or the frame-position slider.';queue();if(scrollMode)onScroll();});
+  video.addEventListener('seeked',queue);
+  video.addEventListener('timeupdate',()=>{$('time').textContent=`${video.currentTime.toFixed(2)} / 3.00s`;if(!scrollMode&&!video.seeking)range.value=String(Math.round(video.currentTime*60));});
+  video.addEventListener('play',()=>{if(scrollMode)setMode(false);});
+  video.addEventListener('error',()=>{$('status').textContent='The selected proof could not load. Open the video link or return to the website.';$('status').classList.add('error');});
+  function setMode(on){scrollMode=on;pending=null;if(on)video.pause();stage.dataset.scroll=String(on);$('mode').setAttribute('aria-pressed',String(on));$('mode').textContent=on?'Disable scroll preview':'Enable scroll preview';$('status').textContent=on?'Scroll through the preview in either direction.':'Use play, the timeline or the frame-position slider.';if(on){stage.scrollIntoView({block:'start',behavior:'instant'});onScroll();}}
+  $('mode').addEventListener('click',()=>setMode(!scrollMode));range.addEventListener('input',()=>{if(scrollMode)setMode(false);video.pause();seek(Number(range.value)/179);});
+  $('shot').addEventListener('change',load);$('rendition').addEventListener('change',load);mobile.addEventListener('change',()=>{if($('rendition').value==='auto')load();});
+  addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',onScroll);
+  $('baseline-details').addEventListener('toggle',()=>{const b=$('baseline');if($('baseline-details').open&&!b.getAttribute('src')){b.preload='metadata';b.src=`/media/palm-regal-local-arrival-v7-${framing()}.mp4`;b.load();}else if(!$('baseline-details').open)b.pause();});
+  fetch('results.json').then(r=>{if(!r.ok)throw Error('results');return r.json();}).then(r=>{results=r;updateResults();}).catch(()=>{$('results').textContent='Results could not load. The original footage and proof videos remain available above.';});
+  load();
+})();
+</script>
+</body>
+</html>
