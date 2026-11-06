@@ -100,7 +100,7 @@ export function Hero() {
           <p className="aerial-hero__lede">A home by the sea, <em>wrapped in green.</em></p>
           <div className="sh-cta">
             <Link className="btn btn--book" href="/#book">Check availability</Link>
-            <Link className="btn btn--glass" href="/suites/">See the suites <Icon id="i-arrow" /></Link>
+            <Link className="btn btn--glass" href="/#suites">See the suites <Icon id="i-arrow" /></Link>
           </div>
         </div>
         <div className="aerial-hero__footer wrap">

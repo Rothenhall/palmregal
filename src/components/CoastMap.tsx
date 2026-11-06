@@ -17,10 +17,9 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import geo from '@/content/coastGeo.json';
-import { coast, site } from '@/content/site';
+import { coast } from '@/content/site';
 import { hasMotion } from '@/lib/env';
 import { DRAFT } from '@/lib/book';
-import { Icon } from './Icons';
 import { Todo } from './Todo';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -76,9 +75,6 @@ const way = (to: P, walk?: boolean) => {
   const cx = (x0 + x1) / 2 - dy / len * bend, cy = (y0 + y1) / 2 + dx / len * bend;
   return { d: `M${x0} ${y0} Q${cx} ${cy} ${x1} ${y1}`, mid: [(x0 + 2 * cx + x1) / 4, (y0 + 2 * cy + y1) / 4] as P };
 };
-const directions = (name: string) =>
-  `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(site.mapsQuery)}&destination=${encodeURIComponent(name + ', Odisha')}`;
-
 const REGIONS: { id: string; text: string; cls: string; at: P }[] = [
   { id: 'bay', text: 'Bay of Bengal', cls: 'sea', at: labels.bay },
   { id: 'odisha', text: 'Odisha', cls: 'region', at: labels.odisha },
@@ -90,7 +86,10 @@ const PINS = ['pr', 'beach', ...places.map(p => p.id)];
 const pinName = (id: string) => (id === 'pr' ? 'Palm Regal' : coast.find(c => c.id === id)!.name);
 const pinStop = (id: string) => Math.max(1, STOPS.findIndex(s => s.id === id));
 
-export function CoastMap() {
+export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'location-title' }: {
+  immersive?: boolean; headingAs?: 'h1' | 'h2'; headingId?: string;
+}) {
+  const MapHeading = headingAs;
   const root = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const svg = useRef<SVGSVGElement>(null);
@@ -114,6 +113,25 @@ export function CoastMap() {
 
   useEffect(() => { setMoving(hasMotion()); if (hasMotion()) setHeld(true); }, []);
 
+  // Fit destinations into the visible map between the page title and controls.
+  // The map itself remains full bleed; only the camera's usable area is inset.
+  const destinationFrame = (s: Stop, sw: number, sh: number): Cam => {
+    if (!immersive) return frame(s, sw / sh);
+    const compact = sw <= 900;
+    const left = compact ? 28 : Math.min(sw * .06, 88);
+    const right = compact ? 28 : 420;
+    const top = compact ? 175 : 195;
+    const bottom = compact ? 330 : 100;
+    const usableW = Math.max(180, sw - left - right);
+    const usableH = Math.max(160, sh - top - bottom);
+    const xs = s.frame.map(id => pts[id][0]), ys = s.frame.map(id => pts[id][1]);
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    const padding = s.minW * .22;
+    const w = Math.max(s.minW, (x1 - x0 + padding) * sw / usableW, (y1 - y0 + padding) * sw / usableH);
+    return { x: (x0 + x1) / 2 + (right - left) * w / sw / 2,
+      y: (y0 + y1) / 2 + (bottom - top) * w / sw / 2, w };
+  };
+
   /* draw every layer for a camera; `fly` (0 to 1) is how far into a flight we are, for the haze */
   const draw = (c: Cam, fly = 0) => {
     const { w: sw, h: sh } = size.current;
@@ -128,13 +146,27 @@ export function CoastMap() {
     for (const id of PINS) {
       const el = pinEls.current[id]; if (!el) continue;
       el.style.transform = at(pts[id]);
-      el.dataset.flip = id !== 'beach' && (pts[id][0] - vx) * s > sw * .7 ? '1' : '0';
+      const labelEdge = immersive ? (sw <= 900 ? sw - 130 : sw - 520) : sw * .7;
+      el.dataset.flip = id !== 'beach' && (pts[id][0] - vx) * s > labelEdge ? '1' : '0';
+      if (immersive) {
+        const x = (pts[id][0] - vx) * s, y = (pts[id][1] - vy) * s;
+        const underHeading = x < (sw <= 900 ? sw : Math.min(sw * .45, 480) + 110) && y < (sw <= 900 ? 215 : 355);
+        const obscured = underHeading && !STOPS[iRef.current].frame.includes(id);
+        el.style.visibility = obscured ? 'hidden' : '';
+        el.inert = obscured || x < 12 || x > sw - 12 || y < 12 || y > sh - 12
+          || (id === 'beach' && Math.hypot(pts.beach[0] - HOME[0], pts.beach[1] - HOME[1]) * s <= 36);
+      }
     }
     const wide = Math.min(1, Math.max(0, (c.w - 420) / 260));
     for (const r of REGIONS) {
       const el = regEls.current[r.id]; if (!el) continue;
       el.style.transform = at(r.at);
-      el.style.opacity = String(r.cls === 'sea' ? .4 + wide * .6 : wide);
+      const x = (r.at[0] - vx) * s, y = (r.at[1] - vy) * s;
+      const edge = r.cls === 'sea' ? 130 : 65;
+      const obscured = immersive && (x < edge || x > sw - edge || y < 80 || y > sh - 80
+        || (sw <= 900 ? y > sh - 335 || y < 215
+          : (x > sw - 440 && y > 200) || (x < 600 && y < 355)));
+      el.style.opacity = String(obscured ? 0 : r.cls === 'sea' ? .4 + wide * .6 : wide);
     }
     /* the beach shows once it has room to sit apart from the resort */
     stage.current!.dataset.near = Math.hypot(pts.beach[0] - HOME[0], pts.beach[1] - HOME[1]) * s > 36 ? '1' : '0';
@@ -161,19 +193,20 @@ export function CoastMap() {
   const flyTo = (n: number, instant = false) => {
     const { w: sw, h: sh } = size.current;
     if (!sw || !sh) return;
-    const aspect = sw / sh, to = frame(STOPS[n], aspect), from = cam.current;
+    const aspect = sw / sh, to = destinationFrame(STOPS[n], sw, sh), from = cam.current;
     tween.current?.kill();
     if (instant || !from || !hasMotion()) { draw(to); return; }
     const dist = Math.hypot(to.x - from.x, to.y - from.y);
     const dip = Math.min(.7, dist / Math.max(from.w, to.w) * .55);
-    const lw0 = Math.log(from.w), lw1 = Math.log(to.w), maxW = Math.min(W, H * aspect);
+    const lw0 = Math.log(from.w), lw1 = Math.log(to.w), maxW = immersive ? Math.max(W * 1.7, from.w, to.w) : Math.min(W, H * aspect);
     const o = { t: 0 };
     tween.current = gsap.to(o, {
       t: 1, duration: 1.15 + dip * .9, ease: 'none',
       onUpdate: () => {
         const t = o.t, e = t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, arc = Math.sin(Math.PI * t);
         const w = Math.min(maxW, Math.exp(lw0 + (lw1 - lw0) * e) * (1 + dip * arc));
-        draw(clamp({ x: from.x + (to.x - from.x) * e, y: from.y + (to.y - from.y) * e, w }, aspect), arc * Math.min(1, dip * 2.2));
+        const next = { x: from.x + (to.x - from.x) * e, y: from.y + (to.y - from.y) * e, w };
+        draw(immersive ? next : clamp(next, aspect), arc * Math.min(1, dip * 2.2));
       },
     });
   };
@@ -245,7 +278,7 @@ export function CoastMap() {
     : `Choose a place to see the way from the resort. ${places.length} places nearby, nearest first.`;
 
   return (
-    <div ref={root} className={'ctour' + (held ? ' held' : '')} style={{ '--n': N } as React.CSSProperties} data-stop={stop.id}>
+    <div ref={root} className={'ctour' + (held ? ' held' : '') + (immersive ? ' ctour--immersive' : '')} style={{ '--n': N } as React.CSSProperties} data-stop={stop.id}>
       <svg width="0" height="0" style={{ position: 'absolute' }} aria-hidden="true">
         <defs>
           <symbol id="ck-home" viewBox="0 0 24 24"><path d="M4 11.5 12 5l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5h-5v5H5a1 1 0 0 1-1-1z" fill="currentColor" /></symbol>
@@ -260,6 +293,11 @@ export function CoastMap() {
 
       <div className="ctour-stick">
         <div className="ctour-grid">
+          {immersive && <header className="ctour-heading">
+            <p className="eyebrow">Location · Gopalpur on Sea</p>
+            <MapHeading className="ctour-title" id={headingId}>Gopalpur, and<br /><em>all around it.</em></MapHeading>
+            <p className="ctour-heading-copy">A short walk to the sea. A little further to discover Odisha.</p>
+          </header>}
           <div className="ctour-stage" ref={stage} data-near="0">
             <div className="ctour-back" ref={back} aria-hidden="true" />
             <svg ref={svg} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid slice" role="img"
@@ -270,7 +308,16 @@ export function CoastMap() {
                 <clipPath id="ct-open"><path d={geo.openSea} /></clipPath>
                 <pattern id="ct-dots" width="12" height="12" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r=".8" fill="rgba(238,245,242,.07)" /></pattern>
                 <linearGradient id="ct-landfill" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#173a42" /><stop offset="1" stopColor="#11303a" /></linearGradient>
+                {/* Blend the regional dataset's extent into the page rather than
+                    exposing its rectangular crop in the full-screen overview. */}
+                {immersive && <>
+                  <linearGradient id="ct-extent-x"><stop stopColor="white" stopOpacity="0" /><stop offset=".07" stopColor="white" /><stop offset=".93" stopColor="white" /><stop offset="1" stopColor="white" stopOpacity="0" /></linearGradient>
+                  <linearGradient id="ct-extent-y" x1="0" y1="0" x2="0" y2="1"><stop stopColor="white" stopOpacity="0" /><stop offset=".09" stopColor="white" /><stop offset=".9" stopColor="white" /><stop offset="1" stopColor="white" stopOpacity="0" /></linearGradient>
+                  <mask id="ct-extent-horizontal" maskUnits="userSpaceOnUse" x="0" y="0" width={W} height={H}><rect width={W} height={H} fill="url(#ct-extent-x)" /></mask>
+                  <mask id="ct-extent" maskUnits="userSpaceOnUse" x="0" y="0" width={W} height={H}><rect width={W} height={H} fill="url(#ct-extent-y)" mask="url(#ct-extent-horizontal)" /></mask>
+                </>}
               </defs>
+              <g mask={immersive ? 'url(#ct-extent)' : undefined}>
               {/* the shore: shallow water fading out from the land, and soundings further out */}
               <g clipPath="url(#ct-sea)">
                 <path d={geo.coast} className="ct-shallow-1" vectorEffect="non-scaling-stroke" />
@@ -293,6 +340,7 @@ export function CoastMap() {
                   <path d={route.d} className="ct-way-dot" ref={wayDot} />
                 </g>
               )}
+              </g>
             </svg>
 
             <div className="ctour-labels" aria-hidden="true">
@@ -329,7 +377,6 @@ export function CoastMap() {
                   <p className="ctour-eyebrow">{s.eyebrow}</p>
                   <h3>{s.name}</h3>
                   <p>{s.id === 'all' ? overview : s.text}{s.todo && <Todo>Confirm</Todo>}</p>
-                  {s.to && s.id !== 'pr' && <a className="tlink" href={directions(s.name)} target="_blank" rel="noopener" tabIndex={n === i ? undefined : -1}>Directions <Icon id="i-arrow" /></a>}
                 </article>
               ))}
             </div>

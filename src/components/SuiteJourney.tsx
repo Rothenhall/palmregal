@@ -13,7 +13,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { inEverySuite, suites } from '@/content/site';
+import { inEverySuite, suites, type Suite } from '@/content/site';
 import { hasMotion } from '@/lib/env';
 import { Icon } from './Icons';
 
@@ -21,6 +21,30 @@ gsap.registerPlugin(ScrollTrigger);
 
 const N = suites.length;
 const pad = (n: number) => String(n).padStart(2, '0');
+const AMENITY_ICONS: Record<string, string> = {
+  'Kitchenette': 'i-kitchen', 'Private balcony': 'i-balcony', 'Living room': 'i-sofa',
+  'Home comforts': 'p-home', 'Air conditioning': 'i-ac', 'Wi-Fi': 'i-wifi',
+  'Parking': 'i-parking', 'Pets welcome': 'i-pet',
+};
+
+function SuitePhotos({ suite }: { suite: Suite }) {
+  const [index, setIndex] = useState(0);
+  const photo = suite.photos[index];
+  const count = suite.photos.length;
+  return (
+    <figure className="sj-hero" aria-label={`${suite.name} photographs`}>
+      <img src={photo.src} alt={photo.alt} loading="lazy" />
+      {suite.todo && <span className="stand">Photo to confirm</span>}
+      <figcaption className="sj-photo-caption">
+        <span aria-live="polite"><small>{pad(index + 1)} / {pad(count)}</small>{photo.alt}</span>
+        {count > 1 && <div className="sj-photo-controls">
+          <button type="button" className="sj-photo-prev" aria-label={`Previous photograph of ${suite.name}`} onClick={() => setIndex(n => (n + count - 1) % count)}><Icon id="i-arrow" /></button>
+          <button type="button" aria-label={`Next photograph of ${suite.name}`} onClick={() => setIndex(n => (n + 1) % count)}><Icon id="i-arrow" /></button>
+        </div>}
+      </figcaption>
+    </figure>
+  );
+}
 /* "One Bedroom Suite" reads "One Bedroom" + italic "Suite"; other names italicise their last two words */
 const title = (name: string) => {
   const w = name.split(' '), k = w[w.length - 1] === 'Suite' ? 1 : 2;
@@ -32,7 +56,14 @@ export function SuiteJourney() {
   const track = useRef<HTMLDivElement>(null);
   const [held, setHeld] = useState(false);
 
-  useEffect(() => { if (hasMotion()) setHeld(true); }, []);
+  useEffect(() => {
+    const motion = matchMedia('(prefers-reduced-motion: reduce)');
+    const height = matchMedia('(min-height: 681px)');
+    const configure = () => setHeld(hasMotion() && height.matches);
+    configure();
+    motion.addEventListener('change', configure); height.addEventListener('change', configure);
+    return () => { motion.removeEventListener('change', configure); height.removeEventListener('change', configure); };
+  }, []);
 
   useEffect(() => {
     if (!held) return;
@@ -80,28 +111,27 @@ export function SuiteJourney() {
           <div className="sj-intro" data-chapter="-1">
             <p className="eyebrow">Our suites</p>
             <h2 id="suites-h">Room to live, <em>not just sleep.</em></h2>
-            <p className="lede">{N === 3 ? 'Three' : N} suites, each with its own living room, a kitchenette and a balcony. Like a home by the sea, with the resort around it.</p>
+            <p className="lede">{N === 3 ? 'Three' : N} suite categories, with room to settle in. Living rooms, kitchenettes and balconies, with the resort around you.</p>
             {held && <span className="sj-cue" aria-hidden="true"><i />Scroll to walk through</span>}
           </div>
 
           {suites.map((s, i) => (
             <article className="sj-ch" data-chapter={i} key={s.slug} aria-labelledby={`sj-${s.slug}`}>
               <div className="sj-num num" aria-hidden="true"><span>{s.no}</span></div>
-              <figure className="sj-hero">
-                <img src={s.photos[0].src} alt={s.photos[0].alt} loading="lazy" />
-                {s.todo && <span className="stand">Photo to confirm</span>}
-              </figure>
+              <SuitePhotos suite={s} />
               <div className="sj-copy">
                 <p className="sj-kicker">Suite {s.no} <span>/ {pad(N)}</span></p>
                 <h3 id={`sj-${s.slug}`}>{title(s.name)}</h3>
                 <p className="sj-long">{s.long}</p>
+                <ul className="sj-highlights">{s.highlights.map(h => <li key={h}>{h}</li>)}</ul>
                 <ul className="sj-facts">
                   {s.guests && <li><Icon id="i-guests" />{s.guests}</li>}
                   {s.size && <li><Icon id="i-size" />{s.size}</li>}
                   <li><Icon id="i-balcony" />{s.outdoor}</li>
                 </ul>
+                {(!s.guests || !s.size) && <p className="sj-detail-note">Ask reception about guest capacity and suite size.</p>}
                 <p className="sj-best"><small>Best for</small>{s.bestFor}</p>
-                <Link className="tlink" href={`/suites/#${s.slug}`}>See the suite <Icon id="i-arrow" /></Link>
+                <Link className="tlink" href="/#book">Check availability <Icon id="i-arrow" /></Link>
               </div>
               {s.photos.length > 1 && (
                 <div className="sj-bits">
@@ -117,10 +147,10 @@ export function SuiteJourney() {
           ))}
 
           <div className="sj-outro" data-chapter={N}>
-            <p className="eyebrow">In every suite</p>
-            <ul className="sj-every">{inEverySuite.map(x => <li key={x}>{x}</li>)}</ul>
+            <p className="eyebrow">Why stay with us</p>
+            <h3>The comforts<br /><em>of your own place.</em></h3>
+            <ul className="sj-amenities">{inEverySuite.map(x => <li key={x}><Icon id={AMENITY_ICONS[x]} /><span>{x}</span></li>)}</ul>
             <div className="sj-outro-links">
-              <Link className="btn btn--light" href="/suites/">Compare the suites</Link>
               <a className="tlink" href="#book">Check availability <Icon id="i-arrow" /></a>
             </div>
           </div>

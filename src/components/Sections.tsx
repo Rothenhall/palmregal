@@ -9,7 +9,7 @@ export function SuiteTall() {
   return (
     <div className="tall">
       {suites.map((s, i) => (
-        <div className="tall-par" key={s.slug}><Link className="tall-card" href={`/suites/#${s.slug}`}>
+        <div className="tall-par" key={s.slug}><Link className="tall-card" href="/#book">
           <div className="img" data-gl="photo" data-depth="-130"><img src={s.photos[0].src} alt={s.photos[0].alt} loading="lazy" />{s.todo && <span className="stand">Photo to confirm</span>}</div>
           <span className="tall-shade" />
           <span className="tall-top"><span className="tall-no">{s.no}</span><span className="tall-go"><Icon id="i-arrow" /></span></span>

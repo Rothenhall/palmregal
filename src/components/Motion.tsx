@@ -28,7 +28,13 @@ export function Motion() {
     const html = document.documentElement;
     const lenis = (window as any).__lenis;
     if (location.hash) {
-      const go = () => { const t = document.querySelector(location.hash); if (t) lenis ? lenis.scrollTo(t, { offset: -70, immediate: true }) : t.scrollIntoView(); };
+      const go = () => {
+        const t = document.querySelector(location.hash); if (!t) return;
+        if (lenis) {
+          lenis.resize();
+          lenis.scrollTo(t, { offset: t.matches('.location-map, .dsun.held') ? 0 : -70, immediate: true });
+        } else t.scrollIntoView();
+      };
       setTimeout(go, 60);
     } else if (lenis) lenis.scrollTo(0, { immediate: true });
     if (!hasMotion()) { html.classList.add('ready'); return; }
@@ -83,7 +89,7 @@ export function Motion() {
         const secs = gsap.utils.toArray<HTMLElement>('main [data-bg]');
         if (secs.length) {
           html.classList.add('shift');
-          /* a section can name its own page colour (data-page-color), as the day does as its sun moves */
+          /* Optional section colour, independent of local lighting effects. */
           const colorOf = (s: HTMLElement) => s.dataset.pageColor || COLORS[s.dataset.bg!] || COLORS.mint;
           const setBg = (c: string) => { document.body.style.backgroundColor = c; };
           setBg(colorOf(secs[0]));

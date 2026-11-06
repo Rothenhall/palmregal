@@ -20,7 +20,7 @@ export function SketchMap() {
         <text x="258" y="86">Tara Tarini Temple</text><text className="sm" x="258" y="72">35 km</text>
         <text x="386" y="158">Chilika Lake</text><text className="sm" x="386" y="144">46 km</text>
       </svg>
-      <div className="map-foot"><Link className="btn btn--light" href="/location/"><Icon id="i-map" />Map and directions</Link></div>
+      <div className="map-foot"><Link className="btn btn--light" href="/#location"><Icon id="i-map" />Explore the coast</Link></div>
     </div>
   );
 }
@@ -33,7 +33,7 @@ export function Cta({ bg = 'night' }: { bg?: string }) {
         <h2 id="cta-h" data-split data-drop>Your suite by the sea is <em>waiting.</em></h2>
         <div className="row">
           <Link className="btn btn--book" href="/#book">Check availability</Link>
-          <Link className="btn btn--line" href="/contact/">Send an enquiry <Icon id="i-arrow" /></Link>
+          <Link className="btn btn--line" href="/#contact">Contact the resort <Icon id="i-arrow" /></Link>
         </div>
       </div>
     </section>

@@ -1,6 +1,6 @@
 # Palm Regal website (v0.6)
 
-Next.js 15 site for Palm Regal Resort Homestay, Gopalpur on Sea. It exports to plain static files, ready for Vercel.
+Single-page Next.js site for Palm Regal Resort Homestay, Gopalpur on Sea. It exports to plain static files, ready for Vercel. Navigation stays within the homepage; booking is available through the header and booking form.
 
 ## Run it on your computer
 
@@ -27,11 +27,15 @@ The page needs an internet connection for Google Fonts.
 | All the words, numbers, suites, facilities, FAQs, photos | `src/content/site.ts` |
 | Colours, type, layout | `src/app/globals.css` (tokens at the top) |
 | Homepage | `src/app/page.tsx` |
-| Inner pages | `src/app/{suites,facilities,gallery,location,contact}/page.tsx` |
+| Homepage navigation anchors | `src/content/site.ts`, sections in `src/app/page.tsx` |
 | Scroll-controlled aerial hero | `src/components/Hero.tsx`, styles under `.aerial-hero` in `src/app/globals.css` |
 | Liquid glass layer (WebGL) | `src/components/LiquidLayer.tsx`, shaders in `src/lib/shaders.ts` |
 | Scroll motion and colour shifts | `src/components/Motion.tsx` |
 | Photos | `public/img/` |
+
+The homepage ends with ten FAQs and a short enquiry form, on the same deep-teal ground as the footer. Enquiries currently open the visitor's email app; they are not submitted to a delivery service. The WhatsApp number remains empty by request.
+
+Current decisions and deferred map photographs: [experience follow-ups](docs/experience-follow-ups.md). Official API options and the proposed five-review section: [Google reviews plan](docs/google-reviews-plan.md). No live Google review feed is connected yet.
 
 The homepage uses a continuous AI-generated night arrival based on the original property's night aerial around 58.60 seconds. Kling 3.0 generated the camera approach and scene motion from a restored, dimly lit reference frame; the garden/window glow is gently increased in finishing. This is an illustrative generated scene, so fine inferred details are not documentary footage.
 

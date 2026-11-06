@@ -59,7 +59,7 @@ export function Header() {
           </Link>
           <nav className="nav" aria-label="Main">
             {nav.map(n => (
-              <Link key={n.href} href={n.href} aria-current={path === n.href ? 'page' : undefined}>
+              <Link key={n.href} href={n.href}>
                 <span className="roll"><span>{n.label}</span><span aria-hidden="true">{n.label}</span></span>
               </Link>
             ))}
@@ -74,17 +74,17 @@ export function Header() {
       </header>
       <div className={open ? 'mnav open' : 'mnav'} id="mnav" role="dialog" aria-modal="true" aria-label="Menu" hidden={!open}>
         <div className="mnav-top">
-          <Link className="logo" href="/"><img src="/img/emblem.png" alt="" width={40} height={40} /><span><b>{site.name}</b></span></Link>
+          <Link className="logo" href="/" onClick={() => setOpen(false)}><img src="/img/emblem.png" alt="" width={40} height={40} /><span><b>{site.name}</b></span></Link>
           <button ref={closeBtn} className="ibtn" type="button" aria-label="Close menu" onClick={() => { setOpen(false); openBtn.current?.focus(); }}><Icon id="i-x" /></button>
         </div>
         <nav aria-label="Mobile">
-          <Link href="/"><i>00</i>Home</Link>
-          {nav.map((n, i) => <Link key={n.href} href={n.href}><i>0{i + 1}</i>{n.label}</Link>)}
+          <Link href="/" onClick={() => setOpen(false)}><i>00</i>Home</Link>
+          {nav.map((n, i) => <Link key={n.href} href={n.href} onClick={() => setOpen(false)}><i>0{i + 1}</i>{n.label}</Link>)}
         </nav>
         <div className="mnav-foot">
-          <Link className="btn btn--book" href="/#book">Book direct</Link>
-          <a className="btn btn--line" href={site.phoneHref}><Icon id="i-phone" />Call</a>
-          <a className="btn btn--line" href={waHref()}><Icon id="i-wa" />WhatsApp</a>
+          <Link className="btn btn--book" href="/#book" onClick={() => setOpen(false)}>Book direct</Link>
+          <a className="btn btn--line" href={site.phoneHref} onClick={() => setOpen(false)}><Icon id="i-phone" />Call</a>
+          <a className="btn btn--line" href={waHref()} onClick={() => setOpen(false)}><Icon id="i-wa" />WhatsApp</a>
         </div>
       </div>
     </>
