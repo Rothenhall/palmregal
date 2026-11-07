@@ -43,7 +43,7 @@ export function DelightsStack() {
             const top = () => stack.getBoundingClientRect().top + scrollY + nextOffset;
             gsap.fromTo(card, { scale: 1, y: 0, '--recede-opacity': 0 }, {
               scale: .96, y: -8, '--recede-opacity': .16, ease: 'none',
-              scrollTrigger: { trigger: stack, start: () => top() - innerHeight * .92, end: top, scrub: true, invalidateOnRefresh: true },
+              scrollTrigger: { trigger: stack, start: () => top() - innerHeight * .92, end: top, scrub: .6, invalidateOnRefresh: true },
             });
           });
         }
@@ -51,7 +51,7 @@ export function DelightsStack() {
           const photo = card.querySelector<HTMLElement>('.dcard-main');
           if (!photo || photo.dataset.revealed === 'true') return;
           gsap.fromTo(photo, { clipPath: 'inset(6% 4% 6% 4%)' }, {
-            clipPath: 'inset(0% 0% 0% 0%)', duration: .85, ease: 'power2.out',
+            clipPath: 'inset(0% 0% 0% 0%)', duration: 1.3, ease: 'power3.out',
             onStart: () => { photo.dataset.revealed = 'true'; },
             scrollTrigger: { trigger: card, start: 'top 88%', once: true },
           });

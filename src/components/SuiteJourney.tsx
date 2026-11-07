@@ -77,7 +77,7 @@ export function SuiteJourney() {
     const ctx = gsap.context(() => {
       const tween = gsap.to(tr, {
         x: () => -dist(), ease: 'none',
-        scrollTrigger: { trigger: sec, start: () => `top+=${lead()} top`, end: () => `bottom-=${tail()} bottom`, scrub: true, invalidateOnRefresh: true },
+        scrollTrigger: { trigger: sec, start: () => `top+=${lead()} top`, end: () => `bottom-=${tail()} bottom`, scrub: 1, invalidateOnRefresh: true },
       });
       const along = { containerAnimation: tween };
 
@@ -97,7 +97,7 @@ export function SuiteJourney() {
       });
       /* the words arrive in a short cascade */
       tr.querySelectorAll<HTMLElement>('.sj-copy').forEach(el =>
-        gsap.from(el.children, { y: 26, opacity: 0, duration: .9, stagger: .07, ease: 'power3.out', scrollTrigger: { ...along, trigger: el, start: 'left 84%', toggleActions: 'play none none reverse' } }));
+        gsap.from(el.children, { y: 20, opacity: 0, duration: 1.2, stagger: .09, ease: 'power3.out', scrollTrigger: { ...along, trigger: el, start: 'left 84%', toggleActions: 'play none none reverse' } }));
     }, sec);
     ScrollTrigger.addEventListener('refreshInit', setH);
     ScrollTrigger.refresh();

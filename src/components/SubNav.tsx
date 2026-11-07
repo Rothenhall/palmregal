@@ -11,7 +11,7 @@ export function SubNav({ items, label }: { items: { id: string; label: string }[
   }, [items]);
   const go = (id: string) => (e: React.MouseEvent) => {
     e.preventDefault(); const el = document.getElementById(id); if (!el) return;
-    const lenis = (window as any).__lenis; lenis ? lenis.scrollTo(el, { offset: -130 }) : el.scrollIntoView({ behavior: 'smooth' });
+    const lenis = (window as any).__lenis; lenis ? lenis.scrollTo(el, { offset: -130, duration: 1.6 }) : el.scrollIntoView({ behavior: 'smooth' });
     history.replaceState(null, '', '#' + id);
   };
   return (

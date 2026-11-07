@@ -201,7 +201,7 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
     const lw0 = Math.log(from.w), lw1 = Math.log(to.w), maxW = immersive ? Math.max(W * 1.7, from.w, to.w) : Math.min(W, H * aspect);
     const o = { t: 0 };
     tween.current = gsap.to(o, {
-      t: 1, duration: 1.15 + dip * .9, ease: 'none',
+      t: 1, duration: 1.5 + dip * 1.1, ease: 'none',
       onUpdate: () => {
         const t = o.t, e = t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, arc = Math.sin(Math.PI * t);
         const w = Math.min(maxW, Math.exp(lw0 + (lw1 - lw0) * e) * (1 + dip * arc));
@@ -270,7 +270,7 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
     if (!st) { setI(n); return; }
     const y = st.start + ((n + .5) / N) * (st.end - st.start);
     const lenis = (window as any).__lenis;
-    if (lenis) lenis.scrollTo(y, { duration: 1.4 }); else window.scrollTo({ top: y, behavior: moving ? 'smooth' : 'auto' });
+    if (lenis) lenis.scrollTo(y, { duration: 1.7 }); else window.scrollTo({ top: y, behavior: moving ? 'smooth' : 'auto' });
   };
 
   const overview = held

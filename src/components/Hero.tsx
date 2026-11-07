@@ -41,7 +41,7 @@ export function Hero() {
       const tween = gsap.to(cursor, {
         progress: 1, ease: 'none',
         onUpdate: () => { section.style.setProperty('--aerial-progress', String(cursor.progress)); queue(); },
-        scrollTrigger: { trigger: section, start: 'top top', end: 'bottom bottom', scrub: .2, invalidateOnRefresh: true },
+        scrollTrigger: { trigger: section, start: 'top top', end: 'bottom bottom', scrub: .5, invalidateOnRefresh: true },
       });
       const metadata = () => { ScrollTrigger.refresh(); queue(); };
       const ready = () => { section.dataset.videoReady = 'true'; queue(); };

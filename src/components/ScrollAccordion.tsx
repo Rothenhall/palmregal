@@ -49,7 +49,7 @@ export function ScrollAccordion() {
             </ol>
           </div>
           <div className="dayacc-strip">
-            <ImageAccordion width="100%" height="100%" gap={6} open={62} reach={40} bounce={12} active={driven ? i : undefined} />
+            <ImageAccordion width="100%" height="100%" gap={6} open={62} reach={40} bounce={8} active={driven ? i : undefined} />
           </div>
         </div>
       </div>

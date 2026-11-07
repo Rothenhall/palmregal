@@ -16,7 +16,7 @@ export function Motion() {
 
   useEffect(() => {
     if (!hasMotion() || !isFine()) return;
-    const lenis = new Lenis({ lerp: .1, smoothWheel: true });
+    const lenis = new Lenis({ lerp: .075, smoothWheel: true, wheelMultiplier: .95 });
     (window as any).__lenis = lenis;
     lenis.on('scroll', ScrollTrigger.update);
     const tick = (t: number) => lenis.raf(t * 1000);
@@ -46,11 +46,11 @@ export function Motion() {
       if (started) return; started = true; html.classList.add('ready');
       document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
       ctx = gsap.context(() => {
-        const ease = 'expo.out';
+        const soft = 'power4.out';
         const lines = (el: Element) => { const s = new SplitText(el, { type: 'lines', mask: 'lines' }); splits.push(s); return s.lines; };
         document.querySelectorAll('[data-split]').forEach(h => {
           const now = h.hasAttribute('data-now');
-          gsap.from(lines(h), { yPercent: 105, duration: 1.15, stagger: .08, ease, delay: now ? .2 : 0, scrollTrigger: now ? undefined : { trigger: h, start: 'top 88%', once: true } });
+          gsap.from(lines(h), { yPercent: 105, duration: 1.5, stagger: .1, ease: soft, delay: now ? .2 : 0, scrollTrigger: now ? undefined : { trigger: h, start: 'top 88%', once: true } });
         });
         /* stacking cards: as each card arrives, the one before it recedes (scale to .93, up 10px,
            a touch darker). The cards themselves stay readable; only the one being covered changes. */
@@ -74,7 +74,7 @@ export function Motion() {
           set(0);
           ScrollTrigger.create({ trigger: el, start: 'top 78%', end: 'bottom 40%', onUpdate: self => { const p = gsap.parseEase('power1.inOut')(self.progress); if (p > most) { most = p; set(p); } } });
         });
-        if (!html.classList.contains('gl-on')) gsap.utils.toArray<HTMLElement>('[data-par] img').forEach(img => gsap.fromTo(img, { yPercent: -6, scale: 1.12 }, { yPercent: 6, scale: 1.12, ease: 'none', scrollTrigger: { trigger: img.parentElement!, start: 'top bottom', end: 'bottom top', scrub: true } }));
+        if (!html.classList.contains('gl-on')) gsap.utils.toArray<HTMLElement>('[data-par] img').forEach(img => gsap.fromTo(img, { yPercent: -6, scale: 1.12 }, { yPercent: 6, scale: 1.12, ease: 'none', scrollTrigger: { trigger: img.parentElement!, start: 'top bottom', end: 'bottom top', scrub: .8 } }));
         document.querySelectorAll<SVGPathElement>('.map .route').forEach((r, i) => { const len = r.getTotalLength(); gsap.fromTo(r, { strokeDasharray: len, strokeDashoffset: len }, { strokeDashoffset: 0, duration: 1.8, delay: i * .15, ease: 'power2.inOut', scrollTrigger: { trigger: '.map', start: 'top 75%', once: true }, onComplete: () => { if (!r.classList.contains('accent')) r.style.strokeDasharray = '5 7'; } }); });
         const cnt = document.querySelector('.dl-count'); if (cnt) gsap.from(cnt, { textContent: 0, duration: 1.6, ease: 'power2.out', snap: { textContent: 1 }, scrollTrigger: { trigger: cnt, start: 'top 88%', once: true } });
         /* parallax: [data-speed] moves against the scroll; positive is faster than the page, negative slower */
@@ -82,9 +82,9 @@ export function Motion() {
         gsap.utils.toArray<HTMLElement>('[data-speed]').forEach(el => {
           const sp = parseFloat(el.dataset.speed || '0') * mob; if (!sp) return;
           const trig = (el.dataset.ptrigger && el.closest(el.dataset.ptrigger)) || el;
-          gsap.fromTo(el, { y: sp * 110 }, { y: -sp * 110, ease: 'none', scrollTrigger: { trigger: trig, start: 'top bottom', end: 'bottom top', scrub: .4 } });
+          gsap.fromTo(el, { y: sp * 110 }, { y: -sp * 110, ease: 'none', scrollTrigger: { trigger: trig, start: 'top bottom', end: 'bottom top', scrub: .9 } });
         });
-        gsap.utils.toArray<HTMLElement>('[data-stagger]').forEach(g => gsap.from(g.children, { y: 36, opacity: 0, duration: 1, stagger: .07, ease, clearProps: 'transform,opacity', scrollTrigger: { trigger: g, start: 'top 85%', once: true } }));
+        gsap.utils.toArray<HTMLElement>('[data-stagger]').forEach(g => gsap.from(g.children, { y: 28, opacity: 0, duration: 1.3, stagger: .09, ease: soft, clearProps: 'transform,opacity', scrollTrigger: { trigger: g, start: 'top 85%', once: true } }));
         /* page colour follows the section in the middle of the screen */
         const secs = gsap.utils.toArray<HTMLElement>('main [data-bg]');
         if (secs.length) {

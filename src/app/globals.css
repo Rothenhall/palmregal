@@ -50,8 +50,8 @@
   --shadow-header: 0 10px 30px -18px rgba(16, 46, 55, .45), inset 0 1px 0 rgba(255, 255, 255, .12);
   --shadow-card: 0 24px 50px -30px rgba(16, 46, 55, .45);
   --shadow-float: 0 18px 40px -16px rgba(16, 46, 55, .6);
-  --ease: cubic-bezier(.22, 1, .36, 1); --ease-io: cubic-bezier(.65, 0, .25, 1); --ease-pop: cubic-bezier(.34, 1.56, .64, 1);
-  --dur-1: .2s; --dur-2: .4s; --dur-3: .6s; --dur-4: .9s; --dur-5: 1.4s;
+  --ease: cubic-bezier(.22, 1, .36, 1); --ease-io: cubic-bezier(.65, 0, .25, 1); --ease-pop: cubic-bezier(.34, 1.18, .64, 1); --ease-soft: cubic-bezier(.25, .1, .25, 1);
+  --dur-1: .25s; --dur-2: .5s; --dur-3: .8s; --dur-4: 1.1s; --dur-5: 1.6s;
   color-scheme: light;
 }
 *, *::before, *::after { box-sizing: border-box }
@@ -95,7 +95,7 @@ p { margin: 0 }
 [data-bg="dawn"] { --sec-bg: var(--dawn); --sec-ink: var(--ink) }
 html.shift [data-bg] { background: transparent }
 html.shift .book { background: var(--mint) }
-html.shift body { transition: background-color .9s var(--ease) }
+html.shift body { transition: background-color 1.4s var(--ease-soft) }
 .dark, [data-bg="teal"], [data-bg="canopy"], [data-bg="night"], [data-bg="dusk"] { --muted: rgba(238, 245, 242, .78) }
 [data-bg="teal"] .eyebrow, [data-bg="canopy"] .eyebrow, [data-bg="night"] .eyebrow, [data-bg="dusk"] .eyebrow, .dark .eyebrow { color: var(--aqua) }
 [data-bg="teal"] h1 em, [data-bg="teal"] h2 em, [data-bg="teal"] h3 em,
@@ -105,8 +105,8 @@ html.shift body { transition: background-color .9s var(--ease) }
 [data-bg="teal"] .lede, [data-bg="canopy"] .lede, [data-bg="night"] .lede, [data-bg="dusk"] .lede { color: rgba(238, 245, 242, .8) }
 
 /* Buttons and links */
-.btn { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: .6em; min-height: 48px; padding: 0 1.5rem; border-radius: var(--r-btn); border: 0; font-weight: 600; font-size: .9rem; letter-spacing: .02em; text-decoration: none; cursor: pointer; overflow: hidden; isolation: isolate; transition: color .4s var(--ease), transform .3s var(--ease); white-space: nowrap }
-.btn::after { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; transform: translateY(101%); transition: transform .5s var(--ease) }
+.btn { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: .6em; min-height: 48px; padding: 0 1.5rem; border-radius: var(--r-btn); border: 0; font-weight: 600; font-size: .9rem; letter-spacing: .02em; text-decoration: none; cursor: pointer; overflow: hidden; isolation: isolate; transition: color .5s var(--ease), transform .45s var(--ease); white-space: nowrap }
+.btn::after { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; transform: translateY(101%); transition: transform .7s var(--ease) }
 .btn:hover::after { transform: translateY(0) }
 .btn:active { transform: scale(.98) }
 .btn--book { background: var(--sun); color: var(--teal-night) } .btn--book::after { background: var(--sun-2) }
@@ -139,7 +139,7 @@ html.gl-on [data-gl].gl-ready .none { display: none }
 
 /* Header */
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 62; background: var(--teal) }
-.hdr { position: fixed; left: 0; right: 0; top: 0; z-index: 60; padding-top: env(safe-area-inset-top, 0px); color: var(--teal); transition: background .5s var(--ease), color .5s var(--ease), transform .6s var(--ease), box-shadow .5s }
+.hdr { position: fixed; left: 0; right: 0; top: 0; z-index: 60; padding-top: env(safe-area-inset-top, 0px); color: var(--teal); transition: background .5s var(--ease), color .5s var(--ease), transform .8s var(--ease), box-shadow .6s }
 .hdr.over-dark { color: var(--on-dark) }
 .hdr.solid { background: rgba(238, 245, 242, .86); backdrop-filter: blur(16px) saturate(1.3); -webkit-backdrop-filter: blur(16px) saturate(1.3); color: var(--teal); box-shadow: var(--shadow-header) }
 .hdr.hide { transform: translateY(-110%) }
@@ -553,8 +553,8 @@ html.gl-pill #pillGl { display: block; visibility: visible; position: absolute; 
 @media (max-width: 520px) { .form { grid-template-columns: 1fr } }
 
 /* Reveal helpers (motion only) */
-html.motion [data-reveal] { opacity: 0; transform: translateY(28px) }
-html.motion [data-reveal].in { opacity: 1; transform: none; transition: opacity 1s var(--ease), transform 1.1s var(--ease) }
+html.motion [data-reveal] { opacity: 0; transform: translateY(24px) }
+html.motion [data-reveal].in { opacity: 1; transform: none; transition: opacity 1.3s var(--ease), transform 1.5s var(--ease) }
 html.motion.js:not(.ready) [data-split] { visibility: hidden }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important } }
@@ -1367,11 +1367,11 @@ html:not(.motion) .suites-stack .suite { position: relative; top: 0 }
 .dsun-copy { display: flex; flex-direction: column; justify-content: center }
 .dsun-copy > .eyebrow { margin: 0 }
 .dsun-num { display: flex; align-items: baseline; gap: 10px; margin: 24px 0 26px; font: 300 clamp(2rem, 3vw, 3rem)/1 var(--display); color: var(--teal-100) }
-.dsun-num span { display: inline-block; animation: dsun-in .45s var(--ease) }
+.dsun-num span { display: inline-block; animation: dsun-in .8s var(--ease) }
 .dsun-num b { font: 500 .68rem/1 var(--body); letter-spacing: .12em; color: rgba(238,245,242,.58) }
 @keyframes dsun-in { from { opacity: 0; transform: translateY(16px) } to { opacity: 1; transform: none } }
 .dsun-words { position: relative; min-height: 236px }
-.dsun.held .dsun-step { position: absolute; inset: 0 0 auto 0; opacity: 0; transform: translateY(12px); transition: opacity .4s var(--ease), transform .5s var(--ease); pointer-events: none }
+.dsun.held .dsun-step { position: absolute; inset: 0 0 auto 0; opacity: 0; transform: translateY(12px); transition: opacity .9s var(--ease), transform 1s var(--ease); pointer-events: none }
 .dsun.held .dsun-step.on { opacity: 1; transform: none; pointer-events: auto }
 .dsun:not(.held) .dsun-step { padding-block: 18px; border-top: 1px solid var(--line-d) }
 .dsun-step time { font-size: .72rem; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--teal-200) }

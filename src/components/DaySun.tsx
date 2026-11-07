@@ -67,7 +67,7 @@ export function DaySun() {
     if (!st) { setI(n); return; }
     const y = st.start + ((n + .5) / N) * (st.end - st.start);
     const lenis = (window as any).__lenis;
-    if (lenis) lenis.scrollTo(y, { duration: 1.2 }); else window.scrollTo({ top: y, behavior: 'smooth' });
+    if (lenis) lenis.scrollTo(y, { duration: 1.6 }); else window.scrollTo({ top: y, behavior: 'smooth' });
   };
 
   return (
@@ -102,7 +102,7 @@ export function DaySun() {
             </nav>
             <div className="dsun-strip">
               <ImageAccordion
-                width="100%" height="100%" gap={6} open={74} reach={42} bounce={14}
+                width="100%" height="100%" gap={6} open={74} reach={42} bounce={8}
                 active={i}
                 onPick={pick}
               />
