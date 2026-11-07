@@ -58,7 +58,7 @@ export function SuiteJourney() {
 
   useEffect(() => {
     const motion = matchMedia('(prefers-reduced-motion: reduce)');
-    const height = matchMedia('(min-height: 681px)');
+    const height = matchMedia('(min-height: 520px)');
     const configure = () => setHeld(hasMotion() && height.matches);
     configure();
     motion.addEventListener('change', configure); height.addEventListener('change', configure);
