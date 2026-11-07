@@ -17,7 +17,7 @@ export function MomentsWall() {
     if (!matchMedia('(hover:hover) and (pointer:fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     let tx = 0, ty = 0, x = 0, y = 0, raf = 0;
     const move = (e: PointerEvent) => { const r = sec.getBoundingClientRect(); tx = ((e.clientX - r.left) / r.width - .5) * -40; ty = ((e.clientY - r.top) / r.height - .5) * -30; if (!raf) raf = requestAnimationFrame(step); };
-    const step = () => { x += (tx - x) * .08; y += (ty - y) * .08; w.style.setProperty('--mx', x.toFixed(2) + 'px'); w.style.setProperty('--my', y.toFixed(2) + 'px'); raf = Math.abs(tx - x) + Math.abs(ty - y) > .1 ? requestAnimationFrame(step) : 0; };
+    const step = () => { x += (tx - x) * .06; y += (ty - y) * .06; w.style.setProperty('--mx', x.toFixed(2) + 'px'); w.style.setProperty('--my', y.toFixed(2) + 'px'); raf = Math.abs(tx - x) + Math.abs(ty - y) > .1 ? requestAnimationFrame(step) : 0; };
     sec.addEventListener('pointermove', move);
     return () => { sec.removeEventListener('pointermove', move); cancelAnimationFrame(raf); };
   }, []);
@@ -34,7 +34,7 @@ export function MomentsWall() {
       <div className="mwall-par" data-speed="-0.35" data-ptrigger=".moments-sec"><div className={'mwall' + (open !== null ? ' dim' : '')} ref={wall}>
         {tiles.map((t, i) => (
           <button key={i} type="button" className="mtile2" style={{ ['--d' as string]: `${((i * 37) % 11) / 10}`, animationDelay: `${(i % COLS) * .04 + Math.floor(i / COLS) * .08}s` }} onClick={() => setOpen(i)} aria-label={`Open moment: ${t.cap}`} tabIndex={i < 12 ? 0 : -1}>
-            <img src={t.src} alt="" loading="lazy" />
+            <img src={t.src} alt="" loading="lazy" decoding="async" />
           </button>
         ))}
       </div></div>

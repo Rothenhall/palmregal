@@ -17,27 +17,32 @@ export function Header() {
 
   useEffect(() => {
     const hdr = ref.current!; let lastY = window.scrollY; let raf = 0;
+    /* Section edges are measured only when the layout changes, never while scrolling: reading
+       positions mid-scroll forces the browser to lay out the page again in every frame. */
+    const PROBE = 38;
+    let solidAt = 40, darkSpans: [number, number][] = [];
+    const measure = () => {
+      const y = window.scrollY, hero = document.querySelector<HTMLElement>('.hero');
+      solidAt = hero ? hero.offsetTop + hero.offsetHeight - 80 : 40;
+      darkSpans = Array.from(document.querySelectorAll<HTMLElement>('main [data-bg], main [data-dark="1"]'))
+        .filter(s => s.dataset.dark === '1' || DARK.includes(s.dataset.bg || ''))
+        .map(s => { const r = s.getBoundingClientRect(); return [r.top + y, r.bottom + y] as [number, number]; });
+      update();
+    };
     const update = () => {
       raf = 0;
-      const y = window.scrollY, hero = document.querySelector<HTMLElement>('.hero');
-      const solidAt = hero ? hero.offsetTop + hero.offsetHeight - 80 : 40;
-      const solid = y > solidAt;
-      hdr.classList.toggle('solid', solid);
+      const y = window.scrollY, at = y + PROBE;
+      hdr.classList.toggle('solid', y > solidAt);
       if (y > 300 && y > lastY + 4) hdr.classList.add('hide'); else if (y < lastY - 4 || y < 300) hdr.classList.remove('hide');
       lastY = y;
-      let dark = false;
-      {
-        const probe = 38;
-        if (hero && hero.dataset.dark === '1') { const r = hero.getBoundingClientRect(); dark = r.top <= probe && r.bottom >= probe; }
-        if (!dark) document.querySelectorAll<HTMLElement>('main [data-bg]').forEach(s => { const r = s.getBoundingClientRect(); if (r.top <= probe && r.bottom >= probe && DARK.includes(s.dataset.bg || '')) dark = true; });
-      }
-      hdr.classList.toggle('over-dark', dark);
+      hdr.classList.toggle('over-dark', darkSpans.some(([top, bottom]) => top <= at && bottom >= at));
     };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
-    update();
+    const layout = new ResizeObserver(() => measure());
+    layout.observe(document.body);
+    measure();
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('pr:hero', onScroll);
-    return () => { window.removeEventListener('scroll', onScroll); window.removeEventListener('pr:hero', onScroll); cancelAnimationFrame(raf); };
+    return () => { window.removeEventListener('scroll', onScroll); layout.disconnect(); cancelAnimationFrame(raf); };
   }, [path]);
 
   useEffect(() => { setOpen(false); }, [path]);

@@ -3,7 +3,6 @@ import './globals.css';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { IconSprite, Icon } from '@/components/Icons';
-import { LiquidLayer } from '@/components/LiquidLayer';
 import { Motion } from '@/components/Motion';
 import { site } from '@/content/site';
 import { DRAFT, waHref } from '@/lib/book';
@@ -38,7 +37,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={DRAFT ? 'draft' : undefined}>
         <a className="skip" href="#main">Skip to content</a>
         <IconSprite />
-        <LiquidLayer />
         <Header />
         <main id="main">{children}</main>
         <Footer />

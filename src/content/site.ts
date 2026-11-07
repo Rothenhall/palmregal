@@ -1,7 +1,7 @@
 /*
  * All of the site's words, numbers and photos live here.
  * Anything marked `todo` is waiting on the resort and shows a small
- * "to confirm" tag while NEXT_PUBLIC_DRAFT is not "false".
+ * "to confirm" tag when NEXT_PUBLIC_DRAFT is "true" (hidden by default).
  */
 
 export const site = {
@@ -13,8 +13,6 @@ export const site = {
   /** WhatsApp Business number in international format, digits only. Empty until the resort confirms it. */
   whatsapp: '',
   address: '1 Park Avenue, Adjt. Zone by the Park, Gopalpur on Sea, Odisha 761002',
-  addressShort: '1 Park Avenue, Gopalpur on Sea, Odisha 761002',
-  mapsQuery: 'Palm Regal Resort Homestay, Gopalpur, Odisha',
   instagram: 'https://www.instagram.com/palmregalresort/',
   checkIn: '12 PM',
   checkOut: '10 AM',
@@ -32,7 +30,6 @@ export type Suite = {
   slug: string;
   no: string;
   name: string;
-  short: string;
   long: string;
   guests: string;
   size: string;
@@ -48,7 +45,6 @@ export const suites: Suite[] = [
     slug: 'one-bedroom',
     no: '01',
     name: 'One Bedroom Suite',
-    short: 'A spacious living area with a convertible sofa bed, a kitchenette and an exclusive balcony.',
     long: 'Your own living room, a bedroom, a kitchenette and a private balcony over the gardens. Room for three, with the convertible sofa bed in the living area.',
     guests: 'Up to 3',
     size: '627 sq ft',
@@ -65,7 +61,6 @@ export const suites: Suite[] = [
     slug: 'two-bedroom',
     no: '02',
     name: 'Two Bedroom Suite',
-    short: 'A spacious living area with a convertible sofa bed, a kitchenette and two exclusive balconies.',
     long: 'Two bedrooms, a shared living room, a kitchenette and two private balconies. Made for families and friends travelling together, with room for five.',
     guests: 'Up to 5',
     size: '1042 sq ft',
@@ -82,7 +77,6 @@ export const suites: Suite[] = [
     slug: 'sea-and-garden',
     no: '03',
     name: 'Two Bedroom Sea and Garden View',
-    short: 'Two bedrooms looking out over the sea and the gardens.',
     long: 'A two-bedroom stay with views of the sea and the gardens. Speak with reception to find out more about this category for your dates.',
     guests: '',
     size: '',
@@ -99,12 +93,12 @@ export const inEverySuite = ['Kitchenette', 'Private balcony', 'Living room', 'H
 export type Facility = { name: string; tag?: string; text: string; img?: string; standIn?: boolean; group: string };
 
 export const facilities: Facility[] = [
-  { group: 'play', name: 'BayWATCH', tag: 'The Theatre', text: 'Watch your favourite shows and films on Amazon Prime, Netflix, Hotstar and more.' },
+  { group: 'play', name: 'BayWATCH', tag: 'The Theatre', text: 'Watch your favourite shows and films on Prime Video, Netflix, JioHotstar and more.' },
   { group: 'move', name: 'MUSCLE', tag: 'The Gymnasium', text: 'A fully equipped gym for your morning routine.', img: '/img/gym.webp' },
   { group: 'play', name: 'Acqua', tag: 'The Pool', text: 'The swimming pool, lit up as the evening comes in.', img: '/img/pool.webp' },
   { group: 'eat', name: 'SHACK', tag: 'The Restaurant', text: 'Homestyle meals from our kitchen. Pre-order, or have a parcel sent to your suite.' },
-  { group: 'play', name: 'GO PLAY', tag: 'The Gaming Lounge', text: 'Foosball, table tennis, pool, carrom, board games and a PS5.', img: '/img/game-room.webp' },
-  { group: 'play', name: 'Children Play Area', text: 'A large outdoor garden with swings, slides and room to run.', img: '/img/children-play.webp' },
+  { group: 'play', name: 'GO PLAY', tag: 'The Gaming Lounge', text: 'Foosball, table tennis, a pool table, carrom, board games and a PS5.', img: '/img/game-room.webp' },
+  { group: 'play', name: "Children's Play Area", text: 'A large outdoor garden with swings, slides and room to run.', img: '/img/children-play.webp' },
   { group: 'eat', name: 'Amphitheatre', text: 'Enjoy or host a performance on the lawn, by day or under the stars.', img: '/img/amphitheatre.webp' },
   { group: 'eat', name: 'EAT AGE', tag: 'The Banquet', text: 'A banquet hall for celebrations and gatherings.', img: '/img/banquet.webp' },
   { group: 'move', name: 'Yoga Lawn', text: 'An open lawn for morning yoga.', img: '/img/exterior-1.webp', standIn: true },
@@ -114,14 +108,8 @@ export const facilities: Facility[] = [
   { group: 'grounds', name: 'Temple', text: 'A temple within the property, framed by flowering trees.', img: '/img/temple.webp' },
 ];
 
-export const pillars = [
-  { key: 'green', img: '/img/exterior-2.webp', title: 'Green', text: 'Palms, lawns and gardens all around your suite. Mornings start on the yoga lawn.' },
-  { key: 'sea', img: '/img/sea-view-deck.webp', title: 'Sea', text: "Gopalpur's beach is five minutes away on foot, and the Bay of Bengal is in view from the deck." },
-  { key: 'home', img: '/img/living-room.webp', title: 'Home', text: 'A living room, a kitchenette and a balcony in every suite, and your pets are welcome too.' },
-];
-
 /* A day at Palm Regal: five moments, morning to night. The one source for the homepage day
-   section and the gallery's "A day in five pictures". Exactly five, because the image accordion
+   section. Exactly five, because the image accordion
    runs one spring per picture. Gopalpur faces east over the Bay of Bengal, so the sun sets behind
    the resort: no "sunset over the sea" anywhere. */
 export const day = [
@@ -154,33 +142,9 @@ export const gallery = [
   { src: '/img/pet-friendly.webp', alt: 'A dog on the lawn', cap: 'Pets welcome', group: 'Grounds' },
 ];
 
-export const nearby = [
-  { name: 'Gopalpur main beach', dist: '5 min walk' },
-  { name: 'Secluded beach, over a wooden bridge', dist: '5 min walk' },
-  { name: 'Biju Adventure Park', dist: '5 min drive' },
-  { name: 'Berhampur railway station', dist: '25 min drive' },
-];
-
-export const attractions = [
-  { km: '46', name: 'Chilika Lake', text: "Asia's largest coastal lagoon. Birdwatching and boating." },
-  { km: '35', name: 'Tara Tarini Temple', text: 'Hilltop temple with wide views.' },
-  { km: '113', name: 'Jirang Monastery', text: 'The "Mini Tibet of Odisha".' },
-  { km: '41', name: 'Sonpur Blue Flag Beach', text: 'A certified clean beach.', todo: true },
-  { km: '–', name: 'Dhabaleshwar', text: 'Distance to confirm.', todo: true },
-  { km: '–', name: 'Tapta Pani Temple', text: 'Distance to confirm.', todo: true },
-];
-
-export const cities = [
-  { name: 'Berhampur', time: '25 min' },
-  { name: 'Bhubaneswar', time: '3 hrs' },
-  { name: 'Cuttack', time: '3.5 hrs' },
-  { name: 'Visakhapatnam', time: '5 hrs' },
-  { name: 'Kolkata', time: '11 hrs' },
-];
-
 export const faqs: { q: string; a: string[]; todo?: string }[] = [
   { q: 'What kinds of suites are there?', a: ['One Bedroom Suites for up to 3 guests (627 sq ft), Two Bedroom Suites for up to 5 guests (1042 sq ft), and Two Bedroom Sea and Garden View suites. The One Bedroom and Two Bedroom suites have a living area with a convertible sofa bed, a kitchenette and private balconies. Contact reception for details of the Sea and Garden View category.'] },
-  { q: 'What are the check-in and check-out times?', a: ['Check-in is at 12:00 PM and check-out at 10:00 AM. Early check-in and late check-out depend on availability: call 7205970222 or email palmregalresort@gmail.com.'] },
+  { q: 'What are the check-in and check-out times?', a: [`Check-in is at 12 PM and check-out at 10 AM. Early check-in and late check-out depend on availability: call ${site.phone} or email ${site.email}.`] },
   { q: 'Can we cook in our suite?', a: ['Every suite has a kitchenette. Meals are also available at The Shack, our in-house restaurant. Please pre-order to avoid delays.'] },
   { q: 'Is there room service?', a: ["There's no traditional room service, but The Shack can send a parcel to your suite. Use the crockery in your kitchenette to serve."] },
   { q: 'Can we bring our pet?', a: ['Yes. Palm Regal is pet friendly, so bring your furry companions and enjoy the stay together.'] },
@@ -189,20 +153,6 @@ export const faqs: { q: string; a: string[]; todo?: string }[] = [
   { q: 'What is the cancellation policy?', a: ['Individual bookings: free cancellation up to 24 hours before arrival. Later cancellations and no-shows are charged in full.', 'Groups of 5 or more rooms: free up to 7 days before arrival, 50% within 7 days, and 100% on the day of check-in or for no-shows.', 'Date changes are free up to 48 hours before check-in, subject to availability.'] },
   { q: 'Which is the nearest railway station?', a: ['Berhampur railway station, about 25 minutes by car.'] },
   { q: 'Can you arrange a taxi?', a: ["There's no in-house taxi, but reception can arrange one at extra cost, or share local taxi contacts."], todo: 'Driver list to confirm' },
-];
-
-export const heroSlides = [
-  { src: '/img/exterior-2.webp', alt: 'Palm-lined garden path at Palm Regal', cap: 'Palms, lawns and gardens all around your suite.' },
-  { src: '/img/beach-evening.webp', alt: 'Waves on Gopalpur beach under an evening sky', cap: "Sea breeze, five minutes' walk from Gopalpur beach." },
-  { src: '/img/main-banner.webp', alt: 'Lit garden walkway at Palm Regal at night', cap: 'Evenings in the garden, lit softly after dark.' },
-];
-
-/** The "at a glance" glass card in the hero. Only facts the resort has given us. */
-export const glance = [
-  { label: 'Gopalpur beach', value: '5 min walk' },
-  { label: 'Resort facilities', value: '13' },
-  { label: 'Suite sizes', value: '627–1042 sq ft' },
-  { label: 'Pets', value: 'Welcome' },
 ];
 
 /** Places on the coast map. x/y are positions on a 1000 x 640 sketch, not to scale. */
@@ -216,13 +166,6 @@ export const coast = [
   { id: 'jirang', name: 'Jirang Monastery', x: 70, y: 210, detail: '113 km · the "Mini Tibet of Odisha"', far: true },
 ];
 
-/** Quick starts for the Book Direct pill: each fills the message for you. */
-export const quickStarts = [
-  { label: 'Plan a weekend', note: 'We are planning a weekend away.' },
-  { label: 'Bring my pet', note: 'We will be bringing our pet.' },
-  { label: 'Family stay', note: 'We are a family, with children.' },
-];
-
 /* Order: what sets Palm Regal apart first (Baymard / h2c: lead with differentiators), standard facilities last */
 export const facilityGroups = [
   { id: 'play', title: 'Play and', em: 'unwind.', text: 'A pool, a private theatre, a gaming lounge and a garden for the children.' },
@@ -231,10 +174,3 @@ export const facilityGroups = [
   { id: 'move', title: 'Move and', em: 'breathe.', text: 'A gym, a yoga lawn and a jogging track inside the property.' },
 ];
 
-/** Gallery chapters: each groups photos by their `group` */
-export const CHAPTERS = [
-  { id: 'grounds', group: 'Grounds', title: 'The', em: 'grounds.', text: 'Palms, lawns and lamp-lit paths around the suites.' },
-  { id: 'suites', group: 'Suites', title: 'The', em: 'suites.', text: 'Living rooms, bedrooms, kitchenettes and balconies.' },
-  { id: 'resort-life', group: 'Facilities', title: 'Resort', em: 'life.', text: 'The pool, the gaming lounge, the gym and the banquet hall.' },
-  { id: 'the-sea', group: 'Sea', title: 'The', em: 'sea.', text: 'The deck over the Bay of Bengal and Gopalpur beach at dusk.' },
-];

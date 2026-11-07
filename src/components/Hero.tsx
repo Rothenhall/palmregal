@@ -9,6 +9,7 @@ import { Icon } from './Icons';
 
 gsap.registerPlugin(ScrollTrigger);
 const MEDIA = '/media/palm-regal-night-arrival-v4-';
+const FPS = 30;
 
 export function Hero() {
   const root = useRef<HTMLElement>(null);
@@ -28,27 +29,32 @@ export function Hero() {
       const cursor = { progress: 0 };
       // Reference-conditioned generated night arrival; the camera and lighting
       // are already in the clip. No image zoom is applied by the website.
-      // Serialize seeks and always catch up to the newest requested position.
+      // The clip is encoded with every frame as a keyframe (30 fps), so any seek lands at once.
+      // Seeks are serialized, always catch up to the newest position, and only ask for a frame
+      // that is not already showing, aiming at its middle so the decoder never has to round.
+      let shown = -1;
       const seek = () => {
         frame = 0;
         if (disposed || video.readyState < 2 || video.seeking || document.hidden) return;
         if (!Number.isFinite(video.duration)) return;
-        const target = cursor.progress * Math.max(0, video.duration - 1 / 60);
-        if (Math.abs(video.currentTime - target) > 1 / 120) video.currentTime = target;
+        const last = Math.max(0, Math.round(video.duration * FPS) - 1);
+        const f = Math.round(cursor.progress * last);
+        if (f !== shown) { shown = f; video.currentTime = (f + .5) / FPS; }
       };
       const queue = () => { if (!frame && !disposed) frame = requestAnimationFrame(seek); };
       section.dataset.motion = 'true';
+      const bar = section.querySelector<HTMLElement>('.aerial-hero__progress i');
       const tween = gsap.to(cursor, {
         progress: 1, ease: 'none',
-        onUpdate: () => { section.style.setProperty('--aerial-progress', String(cursor.progress)); queue(); },
-        scrollTrigger: { trigger: section, start: 'top top', end: 'bottom bottom', scrub: .5, invalidateOnRefresh: true },
+        onUpdate: () => { if (bar) bar.style.transform = `scaleX(${cursor.progress})`; queue(); },
+        scrollTrigger: { trigger: section, start: 'top top', end: 'bottom bottom', scrub: .8, invalidateOnRefresh: true },
       });
       const metadata = () => { ScrollTrigger.refresh(); queue(); };
       const ready = () => { section.dataset.videoReady = 'true'; queue(); };
       const fail = () => {
         tween.scrollTrigger?.kill(); tween.kill(); cancelAnimationFrame(frame);
         delete section.dataset.motion; delete section.dataset.videoReady;
-        section.style.removeProperty('--aerial-progress'); ScrollTrigger.refresh();
+        if (bar) bar.style.transform = ''; ScrollTrigger.refresh();
       };
       video.addEventListener('loadedmetadata', metadata);
       video.addEventListener('loadeddata', ready);
@@ -68,7 +74,7 @@ export function Hero() {
         document.removeEventListener('visibilitychange', queue);
         video.pause(); video.removeAttribute('src'); video.load();
         delete section.dataset.motion; delete section.dataset.videoReady;
-        section.style.removeProperty('--aerial-progress');
+        if (bar) bar.style.transform = '';
       };
     };
     configure();

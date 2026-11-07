@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { nav, site } from '@/content/site';
 import { Icon } from './Icons';
-import { Fireflies } from "./Sections";
+import { LiquidLayer } from './LiquidLayer';
 
 export function Footer() {
   return (
@@ -19,8 +19,19 @@ export function Footer() {
         </div>
         <div className="foot-note"><span>Resort homestay · Gopalpur on Sea</span><a href="#main">Back to the top <span aria-hidden="true">↑</span></a></div>
       </div>
-      <div className="water" data-gl="water"><Fireflies /><div className="bigword" aria-hidden="true" data-speed=".28" data-ptrigger=".foot"><img src="/img/emblem.png" alt="" />Palm <em>Regal</em></div></div>
+      <div className="water"><LiquidLayer /><Fireflies /><div className="bigword" aria-hidden="true" data-speed=".28" data-ptrigger=".foot"><img src="/img/emblem.png" alt="" />Palm <em>Regal</em></div></div>
       <div className="foot-bottom"><span>© {new Date().getFullYear()} Palm Regal Resort Homestay, Gopalpur</span><span>Website by Rothenhall</span></div>
     </footer>
+  );
+}
+
+/* Night over the footer water: fireflies and garden lamps */
+function Fireflies() {
+  const f = Array.from({ length: 16 });
+  return (
+    <div className="flies" aria-hidden="true">
+      {f.map((_, i) => <i key={i} style={{ left: `${(i * 61) % 100}%`, top: `${12 + ((i * 37) % 70)}%`, animationDelay: `${-(i * 1.3) % 9}s`, animationDuration: `${7 + (i % 5) * 1.6}s` }} />)}
+      <b className="lamp l1" /><b className="lamp l2" /><b className="lamp l3" />
+    </div>
   );
 }

@@ -17,20 +17,24 @@ const N = day.length;
 const pad = (n: number) => String(n).padStart(2, '0');
 
 const LIGHT = [[210, 190, 151], [176, 198, 179], [139, 182, 185], [210, 158, 112], [100, 143, 158]];
-const paint = (el: HTMLElement, progress: number) => {
+const paint = (els: HTMLElement[], progress: number) => {
   // Each selected chapter's midpoint lands exactly on its time-rail marker.
   const p = Math.max(0, Math.min(1, (progress * N - .5) / Math.max(1, N - 1)));
   const tone = p * (LIGHT.length - 1), lo = Math.floor(tone), hi = Math.min(LIGHT.length - 1, lo + 1);
-  const rgb = LIGHT[lo].map((v, k) => Math.round(v + (LIGHT[hi][k] - v) * (tone - lo)));
-  el.style.setProperty('--day-glow', rgb.join(', '));
-  el.style.setProperty('--day-progress', String(p));
-  const edge = 50 / N;
-  el.style.setProperty('--day-position', `${edge + (100 - edge * 2) * p}%`);
+  const glow = LIGHT[lo].map((v, k) => Math.round(v + (LIGHT[hi][k] - v) * (tone - lo))).join(', ');
+  const edge = 50 / N, at = `${(edge + (100 - edge * 2) * p).toFixed(3)}%`, pr = p.toFixed(4);
+  for (const el of els) {
+    if (el.style.getPropertyValue('--day-glow') !== glow) el.style.setProperty('--day-glow', glow);
+    el.style.setProperty('--day-progress', pr);
+    el.style.setProperty('--day-position', at);
+  }
 };
 
 export function DaySun() {
   const root = useRef<HTMLElement>(null);
   const trig = useRef<ScrollTrigger | null>(null);
+  const sky = useRef<HTMLDivElement>(null);
+  const rail = useRef<HTMLElement>(null);
   const [i, setI] = useState(0);
   const [held, setHeld] = useState(false);
 
@@ -41,17 +45,20 @@ export function DaySun() {
     return () => preference.removeEventListener('change', update);
   }, []);
 
-  useEffect(() => { if (!held && root.current) paint(root.current, (i + .5) / N); }, [i, held]);
+  /* the light only touches the two elements that use it (the glow and the time rail), never the
+     whole section, so a scroll frame restyles two small boxes instead of every photograph */
+  const lit = () => [sky.current, rail.current].filter(Boolean) as HTMLElement[];
+  useEffect(() => { if (!held) paint(lit(), (i + .5) / N); }, [i, held]);
 
   /* measured once the section has its scrolling height, or start and end would be wrong */
   useEffect(() => {
     if (!held) return;
-    const el = root.current!;
-    paint(el, 0);
+    const el = root.current!, targets = lit();
+    paint(targets, 0);
     const st = ScrollTrigger.create({
       trigger: el, start: 'top top', end: 'bottom bottom',
       onUpdate: self => {
-        paint(el, self.progress);
+        paint(targets, self.progress);
         const n = Math.min(N - 1, Math.floor(self.progress * N * .999));
         setI(c => (c === n ? c : n));
       },
@@ -67,13 +74,13 @@ export function DaySun() {
     if (!st) { setI(n); return; }
     const y = st.start + ((n + .5) / N) * (st.end - st.start);
     const lenis = (window as any).__lenis;
-    if (lenis) lenis.scrollTo(y, { duration: 1.6 }); else window.scrollTo({ top: y, behavior: 'smooth' });
+    if (lenis) lenis.scrollTo(y, { duration: 2 }); else window.scrollTo({ top: y, behavior: 'smooth' });
   };
 
   return (
     <section ref={root} id="gallery" className={'dsun' + (held ? ' held' : '')} data-bg="night" data-moment={i} aria-labelledby="dsun-h">
       <div className="dsun-stick">
-        <div className="dsun-sky" aria-hidden="true" />
+        <div className="dsun-sky" ref={sky} aria-hidden="true" />
         <div className="wrap dsun-grid">
           <div className="dsun-copy">
             <p className="eyebrow" id="dsun-h">A day at Palm Regal</p>
@@ -93,7 +100,7 @@ export function DaySun() {
           </div>
 
           <div className="dsun-stage">
-            <nav className="dsun-timeline" aria-label="Choose a moment in the day">
+            <nav className="dsun-timeline" ref={rail} aria-label="Choose a moment in the day">
               <span className="dsun-timeline-line" aria-hidden="true" />
               <span className="dsun-timeline-orb" aria-hidden="true" />
               {day.map((d, n) => <button key={d.time} type="button" onClick={() => pick(n)} aria-current={n === i ? 'step' : undefined}>
@@ -102,7 +109,7 @@ export function DaySun() {
             </nav>
             <div className="dsun-strip">
               <ImageAccordion
-                width="100%" height="100%" gap={6} open={74} reach={42} bounce={8}
+                width="100%" height="100%" gap={6} open={74} reach={42} bounce={5}
                 active={i}
                 onPick={pick}
               />

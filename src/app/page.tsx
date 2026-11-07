@@ -49,7 +49,7 @@ export default function Home() {
         <MomentsWall />
         <div className="wrap moments-copy">
           <p className="eyebrow">Moments at Palm Regal</p>
-          <h2 id="mom-h" data-split data-drop>Every one of these is a stay <em>we were part of.</em></h2>
+          <h2 id="mom-h" data-split>Every one of these is a stay <em>we were part of.</em></h2>
           <p className="lede">Beach mornings, pool evenings, birthdays on the lawn and dogs on the grass. <Todo>Guest photos, with permission</Todo></p>
         </div>
       </section>

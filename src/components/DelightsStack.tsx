@@ -41,17 +41,19 @@ export function DelightsStack() {
             offset += heights[index] + gap;
             const nextOffset = offset;
             const top = () => stack.getBoundingClientRect().top + scrollY + nextOffset;
-            gsap.fromTo(card, { scale: 1, y: 0, '--recede-opacity': 0 }, {
-              scale: .96, y: -8, '--recede-opacity': .16, ease: 'none',
-              scrollTrigger: { trigger: stack, start: () => top() - innerHeight * .92, end: top, scrub: .6, invalidateOnRefresh: true },
-            });
+            /* transform and an overlay's opacity only: both stay on the compositor, so the card's
+               photos and text are never repainted while it recedes */
+            const veil = card.querySelector<HTMLElement>('.dcard-veil');
+            gsap.timeline({ scrollTrigger: { trigger: stack, start: () => top() - innerHeight * .92, end: top, scrub: .9, invalidateOnRefresh: true } })
+              .fromTo(card, { scale: 1, y: 0 }, { scale: .96, y: -8, ease: 'none', force3D: true }, 0)
+              .fromTo(veil, { opacity: 0 }, { opacity: .16, ease: 'none' }, 0);
           });
         }
         cards.forEach(card => {
           const photo = card.querySelector<HTMLElement>('.dcard-main');
           if (!photo || photo.dataset.revealed === 'true') return;
           gsap.fromTo(photo, { clipPath: 'inset(6% 4% 6% 4%)' }, {
-            clipPath: 'inset(0% 0% 0% 0%)', duration: 1.3, ease: 'power3.out',
+            clipPath: 'inset(0% 0% 0% 0%)', duration: 1.6, ease: 'power3.out',
             onStart: () => { photo.dataset.revealed = 'true'; },
             scrollTrigger: { trigger: card, start: 'top 88%', once: true },
           });
@@ -85,6 +87,7 @@ export function DelightsStack() {
           const pics = list.filter(f => f.img && !f.standIn).slice(0, 2);
           return (
             <article className={'dcard dcard--' + TONES[gi]} key={g.id}>
+              <span className="dcard-veil" aria-hidden="true" />
               <div className="dcard-body">
                 <span className="dcard-no">{NUM[gi]}</span>
                 <h3>{g.title} <em>{g.em}</em></h3>
@@ -94,8 +97,8 @@ export function DelightsStack() {
                 </ul>
               </div>
               <div className="dcard-media">
-                {pics[0] && <div className="dcard-main"><img src={pics[0].img} alt={pics[0].name} loading="lazy" /></div>}
-                {pics[1] && <div className="dcard-small"><img src={pics[1].img} alt={pics[1].name} loading="lazy" /></div>}
+                {pics[0] && <div className="dcard-main"><img src={pics[0].img} alt={pics[0].name} loading="lazy" decoding="async" /></div>}
+                {pics[1] && <div className="dcard-small"><img src={pics[1].img} alt={pics[1].name} loading="lazy" decoding="async" /></div>}
               </div>
             </article>
           );

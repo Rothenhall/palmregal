@@ -33,7 +33,7 @@ function SuitePhotos({ suite }: { suite: Suite }) {
   const count = suite.photos.length;
   return (
     <figure className="sj-hero" aria-label={`${suite.name} photographs`}>
-      <img src={photo.src} alt={photo.alt} loading="lazy" />
+      <img src={photo.src} alt={photo.alt} decoding="async" />
       {suite.todo && <span className="stand">Photo to confirm</span>}
       <figcaption className="sj-photo-caption">
         <span aria-live="polite"><small>{pad(index + 1)} / {pad(count)}</small>{photo.alt}</span>
@@ -77,7 +77,7 @@ export function SuiteJourney() {
     const ctx = gsap.context(() => {
       const tween = gsap.to(tr, {
         x: () => -dist(), ease: 'none',
-        scrollTrigger: { trigger: sec, start: () => `top+=${lead()} top`, end: () => `bottom-=${tail()} bottom`, scrub: 1, invalidateOnRefresh: true },
+        scrollTrigger: { trigger: sec, start: () => `top+=${lead()} top`, end: () => `bottom-=${tail()} bottom`, scrub: 1.4, invalidateOnRefresh: true },
       });
       const along = { containerAnimation: tween };
 
@@ -97,7 +97,7 @@ export function SuiteJourney() {
       });
       /* the words arrive in a short cascade */
       tr.querySelectorAll<HTMLElement>('.sj-copy').forEach(el =>
-        gsap.from(el.children, { y: 20, opacity: 0, duration: 1.2, stagger: .09, ease: 'power3.out', scrollTrigger: { ...along, trigger: el, start: 'left 84%', toggleActions: 'play none none reverse' } }));
+        gsap.from(el.children, { y: 20, opacity: 0, duration: 1.5, stagger: .11, ease: 'power3.out', scrollTrigger: { ...along, trigger: el, start: 'left 84%', toggleActions: 'play none none reverse' } }));
     }, sec);
     ScrollTrigger.addEventListener('refreshInit', setH);
     ScrollTrigger.refresh();
@@ -137,7 +137,7 @@ export function SuiteJourney() {
                 <div className="sj-bits">
                   {s.photos.slice(1, 3).map((p, k) => (
                     <figure key={p.src + k} className={'sj-bit b' + k} data-drift={k ? -.45 : .35}>
-                      <span className="sj-bit-ph"><img src={p.src} alt={p.alt} loading="lazy" /></span>
+                      <span className="sj-bit-ph"><img src={p.src} alt={p.alt} decoding="async" /></span>
                       <figcaption>{p.alt}</figcaption>
                     </figure>
                   ))}

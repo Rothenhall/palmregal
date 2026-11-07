@@ -29,8 +29,8 @@ The page needs an internet connection for Google Fonts.
 | Homepage | `src/app/page.tsx` |
 | Homepage navigation anchors | `src/content/site.ts`, sections in `src/app/page.tsx` |
 | Scroll-controlled aerial hero | `src/components/Hero.tsx`, styles under `.aerial-hero` in `src/app/globals.css` |
-| Liquid glass layer (WebGL) | `src/components/LiquidLayer.tsx`, shaders in `src/lib/shaders.ts` |
-| Scroll motion and colour shifts | `src/components/Motion.tsx` |
+| Footer water (WebGL) | `src/components/LiquidLayer.tsx`, shader in `src/lib/shaders.ts` |
+| Smooth scroll, heading reveals, parallax and colour shifts | `src/components/Motion.tsx` |
 | Photos | `public/img/` |
 
 The homepage ends with ten FAQs and a short enquiry form, on the same deep-teal ground as the footer. Enquiries currently open the visitor's email app; they are not submitted to a delivery service. The WhatsApp number remains empty by request.
@@ -39,13 +39,13 @@ Current decisions and deferred map photographs: [experience follow-ups](docs/exp
 
 The homepage uses a continuous AI-generated night arrival based on the original property's night aerial around 58.60 seconds. Kling 3.0 generated the camera approach and scene motion from a restored, dimly lit reference frame; the garden/window glow is gently increased in finishing. This is an illustrative generated scene, so fine inferred details are not documentary footage.
 
-`public/media/palm-regal-night-arrival-v4-desktop.mp4` is 1920×1080 and `palm-regal-night-arrival-v4-mobile.mp4` is a 720×1280 portrait crop. Both contain 483 frames at 60 fps over 8.05 seconds, sampled from the native 24fps generation without stretching its speed. No photo zoom or CSS camera transform is added by the website. The hero provides 220svh of desktop scroll travel and 160svh on phones. Scrolling advances/reverses the camera move and lighting progression; it does not autoplay or loop.
+`public/media/palm-regal-night-arrival-v4-desktop.mp4` is 1920×1080 and `palm-regal-night-arrival-v4-mobile.mp4` is a 720×1280 portrait crop. Both contain 242 frames at 30 fps over 8.05 seconds, sampled from the native 24fps generation without stretching its speed, and every frame is a keyframe (H.264, `-g 1 -tune fastdecode`) so scroll seeking lands on any frame at once instead of decoding up to the previous keyframe. No photo zoom or CSS camera transform is added by the website. The hero provides 220svh of desktop scroll travel and 160svh on phones. Scrolling advances/reverses the camera move and lighting progression; it does not autoplay or loop.
 
 Matching WebP posters render immediately. Reduced-motion preferences, data saving, disabled JavaScript or video errors show a still hero with both booking links available. Motion preference and viewport changes reconfigure the video and clean up the previous scroll trigger.
 
 ## Still waiting on the resort
 
-Items marked with an orange "to confirm" tag. Set `NEXT_PUBLIC_DRAFT=false` to hide the tags for launch.
+Items marked `todo` in `src/content/site.ts`. Set `NEXT_PUBLIC_DRAFT=true` to show them on the page as orange "to confirm" tags while reviewing; they are hidden by default.
 
 - WhatsApp Business number: set `whatsapp` in `src/content/site.ts`. Until then, Book Direct opens an email.
 - Booking engine or WhatsApp enquiry (Book Direct)

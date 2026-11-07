@@ -1,5 +1,5 @@
 'use client';
-/* Smooth scroll, heading reveals, word fill, parallax and the page-colour shifts between sections */
+/* Smooth scroll, heading reveals, parallax and the page-colour shifts between sections */
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { gsap } from 'gsap';
@@ -9,14 +9,16 @@ import Lenis from 'lenis';
 import { hasMotion, isFine } from '@/lib/env';
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
-const COLORS: Record<string, string> = { dawn: '#F4F8F3', dusk: '#0C252C', mint: '#EEF5F2', sage: '#DCEBE4', teal: '#193F47', canopy: '#2E5E43', night: '#102E37' };
+/* the phone address bar showing and hiding is not a real resize: never recalculate every trigger for it */
+ScrollTrigger.config({ ignoreMobileResize: true });
+const COLORS: Record<string, string> = { dusk: '#0C252C', night: '#102E37' };
 
 export function Motion() {
   const path = usePathname();
 
   useEffect(() => {
     if (!hasMotion() || !isFine()) return;
-    const lenis = new Lenis({ lerp: .075, smoothWheel: true, wheelMultiplier: .95 });
+    const lenis = new Lenis({ lerp: .06, smoothWheel: true, wheelMultiplier: .85 });
     (window as any).__lenis = lenis;
     lenis.on('scroll', ScrollTrigger.update);
     const tick = (t: number) => lenis.raf(t * 1000);
@@ -39,69 +41,40 @@ export function Motion() {
     } else if (lenis) lenis.scrollTo(0, { immediate: true });
     if (!hasMotion()) { html.classList.add('ready'); return; }
 
-    let ctx: gsap.Context | null = null; let started = false; const splits: SplitText[] = []; let onColor: (() => void) | null = null;
-    const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), { rootMargin: '0px 0px -8% 0px' });
+    let ctx: gsap.Context | null = null; let started = false; const splits: SplitText[] = [];
 
     const init = () => {
       if (started) return; started = true; html.classList.add('ready');
-      document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
       ctx = gsap.context(() => {
         const soft = 'power4.out';
         const lines = (el: Element) => { const s = new SplitText(el, { type: 'lines', mask: 'lines' }); splits.push(s); return s.lines; };
         document.querySelectorAll('[data-split]').forEach(h => {
-          const now = h.hasAttribute('data-now');
-          gsap.from(lines(h), { yPercent: 105, duration: 1.5, stagger: .1, ease: soft, delay: now ? .2 : 0, scrollTrigger: now ? undefined : { trigger: h, start: 'top 88%', once: true } });
+          gsap.from(lines(h), { yPercent: 105, duration: 1.8, stagger: .12, ease: soft, scrollTrigger: { trigger: h, start: 'top 88%', once: true } });
         });
-        /* stacking cards: as each card arrives, the one before it recedes (scale to .93, up 10px,
-           a touch darker). The cards themselves stay readable; only the one being covered changes. */
-        document.querySelectorAll<HTMLElement>('[data-stack]').forEach(stack => {
-          const cards = Array.from(stack.children) as HTMLElement[];
-          ScrollTrigger.create({ trigger: stack, start: 'top bottom', end: 'bottom top', onUpdate: () => {
-            const vh = innerHeight;
-            cards.forEach((c, i) => {
-              const next = cards[i + 1]; if (!next) return;
-              const t = Math.max(0, Math.min(1, (vh * .9 - next.getBoundingClientRect().top) / (vh * .75)));
-              c.style.transform = `scale(${1 - t * .07}) translateY(${-t * 10}px)`; c.style.filter = `brightness(${1 - t * .18})`;
-            });
-          } });
-        });
-        /* colour fill: a full-colour copy is revealed over a faded one as you read down, edged by a
-           thin line. The words never move; once filled it stays filled (NN/g). */
-        document.querySelectorAll<HTMLElement>('[data-fill]').forEach(el => {
-          const top = el.querySelector<HTMLElement>('.fill-top')!, line = el.querySelector<HTMLElement>('.fill-line')!;
-          let most = 0;
-          const set = (p: number) => { top.style.clipPath = `inset(0 0 ${(1 - p) * 100}% 0)`; line.style.top = `${p * 100}%`; line.style.opacity = p > .005 && p < .995 ? '1' : '0'; };
-          set(0);
-          ScrollTrigger.create({ trigger: el, start: 'top 78%', end: 'bottom 40%', onUpdate: self => { const p = gsap.parseEase('power1.inOut')(self.progress); if (p > most) { most = p; set(p); } } });
-        });
-        if (!html.classList.contains('gl-on')) gsap.utils.toArray<HTMLElement>('[data-par] img').forEach(img => gsap.fromTo(img, { yPercent: -6, scale: 1.12 }, { yPercent: 6, scale: 1.12, ease: 'none', scrollTrigger: { trigger: img.parentElement!, start: 'top bottom', end: 'bottom top', scrub: .8 } }));
-        document.querySelectorAll<SVGPathElement>('.map .route').forEach((r, i) => { const len = r.getTotalLength(); gsap.fromTo(r, { strokeDasharray: len, strokeDashoffset: len }, { strokeDashoffset: 0, duration: 1.8, delay: i * .15, ease: 'power2.inOut', scrollTrigger: { trigger: '.map', start: 'top 75%', once: true }, onComplete: () => { if (!r.classList.contains('accent')) r.style.strokeDasharray = '5 7'; } }); });
-        const cnt = document.querySelector('.dl-count'); if (cnt) gsap.from(cnt, { textContent: 0, duration: 1.6, ease: 'power2.out', snap: { textContent: 1 }, scrollTrigger: { trigger: cnt, start: 'top 88%', once: true } });
         /* parallax: [data-speed] moves against the scroll; positive is faster than the page, negative slower */
         const mob = innerWidth < 760 ? .5 : 1;
         gsap.utils.toArray<HTMLElement>('[data-speed]').forEach(el => {
           const sp = parseFloat(el.dataset.speed || '0') * mob; if (!sp) return;
           const trig = (el.dataset.ptrigger && el.closest(el.dataset.ptrigger)) || el;
-          gsap.fromTo(el, { y: sp * 110 }, { y: -sp * 110, ease: 'none', scrollTrigger: { trigger: trig, start: 'top bottom', end: 'bottom top', scrub: .9 } });
+          gsap.fromTo(el, { y: sp * 110 }, { y: -sp * 110, ease: 'none', scrollTrigger: { trigger: trig, start: 'top bottom', end: 'bottom top', scrub: 1.2 } });
         });
-        gsap.utils.toArray<HTMLElement>('[data-stagger]').forEach(g => gsap.from(g.children, { y: 28, opacity: 0, duration: 1.3, stagger: .09, ease: soft, clearProps: 'transform,opacity', scrollTrigger: { trigger: g, start: 'top 85%', once: true } }));
         /* page colour follows the section in the middle of the screen */
         const secs = gsap.utils.toArray<HTMLElement>('main [data-bg]');
         if (secs.length) {
           html.classList.add('shift');
-          /* Optional section colour, independent of local lighting effects. */
-          const colorOf = (s: HTMLElement) => s.dataset.pageColor || COLORS[s.dataset.bg!] || COLORS.mint;
+          const colorOf = (s: HTMLElement) => COLORS[s.dataset.bg!] || COLORS.dusk;
           const setBg = (c: string) => { document.body.style.backgroundColor = c; };
           setBg(colorOf(secs[0]));
-          /* whichever section crosses 55% of the screen sets the colour; works after jumps too */
-          let last = '';
+          /* whichever section crosses 55% of the screen sets the colour; works after jumps too.
+             Section tops are measured on refresh only, so scrolling never forces a layout. */
+          let last = '', tops: number[] = [];
           const pick = () => {
-            const line = innerHeight * .55; let k = colorOf(secs[0]);
-            for (const s of secs) { const r = s.getBoundingClientRect(); if (r.top <= line) k = colorOf(s); else break; }
+            const line = scrollY + innerHeight * .55; let k = colorOf(secs[0]);
+            for (let n = 0; n < secs.length; n++) { if (tops[n] <= line) k = colorOf(secs[n]); else break; }
             if (k !== last) { last = k; setBg(k); }
           };
-          onColor = pick; addEventListener('pagecolor', pick);
-          ScrollTrigger.create({ start: 0, end: 'max', onUpdate: pick, onRefresh: pick });
+          const measure = () => { tops = secs.map(s => s.getBoundingClientRect().top + scrollY); pick(); };
+          ScrollTrigger.create({ start: 0, end: 'max', onUpdate: pick, onRefresh: measure });
         }
       });
       requestAnimationFrame(() => ScrollTrigger.refresh());
@@ -111,7 +84,7 @@ export function Motion() {
     const onLoad = () => ScrollTrigger.refresh(); addEventListener('load', onLoad);
 
     return () => {
-      clearTimeout(fallback); removeEventListener('load', onLoad); io.disconnect(); if (onColor) removeEventListener('pagecolor', onColor);
+      clearTimeout(fallback); removeEventListener('load', onLoad);
       ctx?.revert(); splits.forEach(s => s.revert());
       html.classList.remove('shift', 'ready'); document.body.style.backgroundColor = '';
     };
