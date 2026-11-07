@@ -21,11 +21,11 @@ export const site = {
 };
 
 export const nav = [
-  { href: '/suites/', label: 'Suites' },
-  { href: '/facilities/', label: 'Facilities' },
-  { href: '/gallery/', label: 'Gallery' },
-  { href: '/location/', label: 'Location' },
-  { href: '/contact/', label: 'Contact' },
+  { href: '/#suites', label: 'Suites' },
+  { href: '/#facilities', label: 'Facilities' },
+  { href: '/#gallery', label: 'Gallery' },
+  { href: '/#location', label: 'Location' },
+  { href: '/#contact', label: 'Contact' },
 ];
 
 export type Suite = {
@@ -38,6 +38,7 @@ export type Suite = {
   size: string;
   outdoor: string;
   bestFor: string;
+  highlights: string[];
   photos: { src: string; alt: string }[];
   todo?: boolean;
 };
@@ -53,6 +54,7 @@ export const suites: Suite[] = [
     size: '627 sq ft',
     outdoor: '1 private balcony',
     bestFor: 'Couples and small families',
+    highlights: ['Separate living room', 'Convertible sofa bed', 'Kitchenette'],
     photos: [
       { src: '/img/bedroom-1.webp', alt: 'One Bedroom Suite bedroom' },
       { src: '/img/kitchen.webp', alt: 'Suite kitchenette' },
@@ -69,6 +71,7 @@ export const suites: Suite[] = [
     size: '1042 sq ft',
     outdoor: '2 private balconies',
     bestFor: 'Families and friends travelling together',
+    highlights: ['Two bedrooms', 'Shared living room', 'Kitchenette'],
     photos: [
       { src: '/img/living-room.webp', alt: 'Two Bedroom Suite living room' },
       { src: '/img/bedroom-2.webp', alt: 'Suite bedroom' },
@@ -80,17 +83,18 @@ export const suites: Suite[] = [
     no: '03',
     name: 'Two Bedroom Sea and Garden View',
     short: 'Two bedrooms looking out over the sea and the gardens.',
-    long: 'Two bedrooms looking out over the sea and the gardens.',
+    long: 'A two-bedroom stay with views of the sea and the gardens. Speak with reception to find out more about this category for your dates.',
     guests: '',
     size: '',
     outdoor: 'Sea and garden view',
     bestFor: 'Waking up to the sea',
+    highlights: ['Two bedrooms', 'Sea and garden views'],
     photos: [{ src: '/img/view-2.webp', alt: 'Balcony looking over the gardens' }],
     todo: true,
   },
 ];
 
-export const inEverySuite = ['Kitchenette', 'Private balcony', 'Living room', 'Air conditioning', 'Wi-Fi', 'Parking', 'Pets welcome'];
+export const inEverySuite = ['Kitchenette', 'Private balcony', 'Living room', 'Home comforts', 'Air conditioning', 'Wi-Fi', 'Parking', 'Pets welcome'];
 
 export type Facility = { name: string; tag?: string; text: string; img?: string; standIn?: boolean; group: string };
 
@@ -175,11 +179,12 @@ export const cities = [
 ];
 
 export const faqs: { q: string; a: string[]; todo?: string }[] = [
-  { q: 'What kinds of suites are there?', a: ['One Bedroom Suites for up to 3 guests (627 sq ft) and Two Bedroom Suites for up to 5 guests (1042 sq ft). Both have a spacious living area with a convertible sofa bed, a kitchenette and an exclusive balcony, two in the larger suite.'] },
+  { q: 'What kinds of suites are there?', a: ['One Bedroom Suites for up to 3 guests (627 sq ft), Two Bedroom Suites for up to 5 guests (1042 sq ft), and Two Bedroom Sea and Garden View suites. The One Bedroom and Two Bedroom suites have a living area with a convertible sofa bed, a kitchenette and private balconies. Contact reception for details of the Sea and Garden View category.'] },
   { q: 'What are the check-in and check-out times?', a: ['Check-in is at 12:00 PM and check-out at 10:00 AM. Early check-in and late check-out depend on availability: call 7205970222 or email palmregalresort@gmail.com.'] },
   { q: 'Can we cook in our suite?', a: ['Every suite has a kitchenette. Meals are also available at The Shack, our in-house restaurant. Please pre-order to avoid delays.'] },
   { q: 'Is there room service?', a: ["There's no traditional room service, but The Shack can send a parcel to your suite. Use the crockery in your kitchenette to serve."] },
   { q: 'Can we bring our pet?', a: ['Yes. Palm Regal is pet friendly, so bring your furry companions and enjoy the stay together.'] },
+  { q: 'How far is Gopalpur beach?', a: ['Gopalpur main beach is about a five-minute walk from the resort.'] },
   { q: 'Is parking available?', a: ['Yes, spacious basement parking. Electric vehicle charging is available on request.'] },
   { q: 'What is the cancellation policy?', a: ['Individual bookings: free cancellation up to 24 hours before arrival. Later cancellations and no-shows are charged in full.', 'Groups of 5 or more rooms: free up to 7 days before arrival, 50% within 7 days, and 100% on the day of check-in or for no-shows.', 'Date changes are free up to 48 hours before check-in, subject to availability.'] },
   { q: 'Which is the nearest railway station?', a: ['Berhampur railway station, about 25 minutes by car.'] },

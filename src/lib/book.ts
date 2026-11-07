@@ -26,7 +26,7 @@ export function sendLink(message: string) {
 }
 
 export function waHref() {
-  return site.whatsapp ? `https://wa.me/${site.whatsapp}` : '/contact/';
+  return site.whatsapp ? `https://wa.me/${site.whatsapp}` : '/#contact';
 }
 
 export function todayISO(offset = 0) {

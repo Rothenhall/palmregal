@@ -1,6 +1,6 @@
 # Palm Regal website (v0.6)
 
-Next.js site for Palm Regal Resort Homestay, Gopalpur on Sea. It exports to plain static files, ready for Vercel.
+Single-page Next.js site for Palm Regal Resort Homestay, Gopalpur on Sea. It exports to plain static files, ready for Vercel. Navigation stays within the homepage; booking is available through the header and booking form.
 
 ## Run it on your computer
 
@@ -18,7 +18,7 @@ npm run build        # writes the static site to ./out
 npm start            # serves ./out at http://localhost:3000
 ```
 
-The page needs an internet connection for Google Fonts.
+Fraunces and Figtree are bundled as local WOFF2 variable fonts, with their OFL licences in `public/fonts/`. Rendering and animation startup do not depend on Google Fonts responding. Use `npm ci` before production validation so installed versions match the lockfile and Vercel (Next.js 15.5.28).
 
 ## Where things are
 
@@ -27,19 +27,21 @@ The page needs an internet connection for Google Fonts.
 | All the words, numbers, suites, facilities, FAQs, photos | `src/content/site.ts` |
 | Colours, type, layout | `src/app/globals.css` (tokens at the top) |
 | Homepage | `src/app/page.tsx` |
-| Inner pages | `src/app/{suites,facilities,gallery,location,contact}/page.tsx` |
-| Arrival film and suite handoff | `src/components/ContinuousArrival.tsx`, `Hero.tsx`, `SuiteJourney.tsx`, `src/lib/arrival.ts` |
+| Homepage navigation anchors | `src/content/site.ts`, sections in `src/app/page.tsx` |
+| Scroll-controlled aerial hero | `src/components/Hero.tsx`, styles under `.aerial-hero` in `src/app/globals.css` |
 | Liquid glass layer (WebGL) | `src/components/LiquidLayer.tsx`, shaders in `src/lib/shaders.ts` |
 | Scroll motion and colour shifts | `src/components/Motion.tsx` |
 | Photos | `public/img/` |
 
-The homepage uses the actual property's night aerial, retimed locally from the source video. `public/media/palm-regal-source-arrival-v9-desktop.mp4` is 1920×1080 and its mobile rendition is 720×1280. Both contain 180 frames at 60 fps over three seconds. Source coverage is 57.96–59.72 seconds of the original 25 FPS property video. Motion interpolation smooths the observed movement; it does not invent new camera positions, architecture or curtain motion. No paid generation service was used for this version.
+The homepage ends with ten FAQs and a short enquiry form, on the same deep-teal ground as the footer. Enquiries currently open the visitor's email app; they are not submitted to a delivery service. The WhatsApp number remains empty by request.
 
-The original bedroom photograph transitions over the aerial toward the end of the scroll sequence, then contracts into the existing first suite card. The photo transition is deliberate: available footage does not document a continuous flight from the selected balcony into that exact bedroom. The default sequence contains no synthetic balcony or replacement curtains. The arrival uses six viewport heights of desktop scroll travel and five on phones before the horizontal suite journey. Forward/reverse seeking, navigation and fallbacks retain their existing behavior.
+Current decisions and deferred map photographs: [experience follow-ups](docs/experience-follow-ups.md). Official API options and the proposed five-review section: [Google reviews plan](docs/google-reviews-plan.md). No live Google review feed is connected yet.
 
-For comparison, open `/?arrival=baseline`. This selects the unchanged v7 44.05-second composite, including its original generated aerial, approximate building planes and synthetic cloth, with the original 13/10.5 viewport-height pacing and registered ending-photo handoff. Its media remains under `public/media/palm-regal-local-arrival-v7-*`. The standalone `/reconstruction-review/index.html` contains night/day source proofs, original curtain footage, measured camera-validation results and the baseline comparison. Reconstruction scripts and reports live in `output/palm-regal-reconstruction-v1/`; the v7 renderer remains in `output/palm-regal-local-film-v1/` at the workspace root.
+The homepage uses a continuous AI-generated night arrival based on the original property's night aerial around 58.60 seconds. Kling 3.0 generated the camera approach and scene motion from a restored, dimly lit reference frame; the garden/window glow is gently increased in finishing. This is an illustrative generated scene, so fine inferred details are not documentary footage.
 
-Matching WebP posters render immediately. Reduced-motion preferences, data saving, disabled JavaScript or video errors show a still hero with both booking links available. Motion preference and viewport changes reconfigure the video and clean up the previous scroll trigger.
+`public/media/palm-regal-night-arrival-v4-desktop.mp4` is 1920×1080 and `palm-regal-night-arrival-v4-mobile.mp4` is a 720×1280 portrait crop. Both contain 483 frames at 60 fps over 8.05 seconds, with existing motion-compensated interpolation from the native 24fps generation. The baseline media is preserved. On 7 November the user approved a further push-in toward the balconies, followed by a fade through the night colour into the actual `/img/bedroom-1.webp`. `src/lib/heroArrival.ts` defines reversible smoothstep phases and framing, capped at 3.15× desktop and 2.3× mobile. This is a crop within moving footage, not a reconstructed flight through a particular window or generated curtain movement. The hero provides 420svh of desktop scroll travel and 320svh on phones; it does not autoplay or loop. The bedroom photograph is revealed without a zoom and preserves the original asset rather than another compressed video. Magnified facade detail remains limited by the source resolution.
+
+Matching WebP posters render immediately. Reduced-motion preferences, data saving, disabled JavaScript or video errors show a still hero with both booking links available. If the bedroom image fails to load, the aerial remains visible with its booking links. Motion preference and viewport changes reconfigure the video and clean up the previous scroll trigger. Hero copy fades before the room reveal, and its invisible actions leave the keyboard tab order.
 
 ## Still waiting on the resort
 

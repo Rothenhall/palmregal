@@ -111,10 +111,14 @@ export function LiquidLayer() {
       const resize = () => { const W = innerWidth, H = innerHeight; renderer.setSize(W, H, false); camera.left = -W / 2; camera.right = W / 2; camera.top = H / 2; camera.bottom = -H / 2; camera.updateProjectionMatrix(); beads.forEach(b => b.fs = parseFloat(getComputedStyle(b.h).fontSize)); items.forEach(it => { if (it.kind !== 'hero') { const r = radii(it.el); it.u.uRadT.value = r[0]; it.u.uRadB.value = r[1]; } }); };
       scan(); resize(); addEventListener('resize', resize);
       const drift = new THREE.Vector2();
+      let wasVisible = false;
       const frame = () => {
+        if (document.hidden) return;
+        let visible = false;
         const t = (performance.now() - t0) / 1000, W = innerWidth, H = innerHeight;
         for (const it of items) {
           const r = it.el.getBoundingClientRect(), u = it.u; const vis = r.bottom > -50 && r.top < H + 50 && r.width > 0; it.mesh.visible = vis; if (!vis) continue;
+          visible = true;
           place(it.mesh, r.left, r.top, r.width, r.height, W, H); u.uSize.value.set(r.width, r.height); u.uTime.value = t;
           if (it.kind === 'hero') { const rr = radii(it.el); u.uRadT.value = rr[0]; u.uRadB.value = rr[1]; }
           /* cinematic push: every photo settles from slightly close to its framing as it scrolls through */
@@ -138,6 +142,7 @@ export function LiquidLayer() {
         }
         for (const b of beads) {
           const hr = b.h.getBoundingClientRect(); const vis = b.u.uAmt.value > .001 && hr.bottom > -60 && hr.top < H + 60; b.mesh.visible = vis; if (!vis) continue;
+          visible = true;
           const tn = lastText(b.h); if (!tn) { b.mesh.visible = false; continue; }
           let end = tn.textContent!.length; while (end > 1 && /\s/.test(tn.textContent![end - 1])) end--;
           range.setStart(tn, end - 1); range.setEnd(tn, end); const rr = range.getBoundingClientRect();
@@ -145,12 +150,18 @@ export function LiquidLayer() {
           const cx = rr.right + R * 1.3, cy = rr.top + rr.height * .42 + Math.sin(t * 1.2 + b.i) * 1.6;
           place(b.mesh, cx - Sz / 2, cy - Sz / 2, Sz, Sz, W, H); b.u.uSize.value.set(Sz, Sz); b.u.uR.value = R; b.u.uTime.value = t;
         }
-        if (water) { const r = water.el.getBoundingClientRect(), u = water.u; const vis = r.bottom > 0 && r.top < H; water.mesh.visible = vis; if (vis) { place(water.mesh, r.left, r.top, r.width, r.height, W, H); u.uSize.value.set(r.width, r.height); u.uTime.value = t; u.uRip.value += (water.ripT - u.uRip.value) * .05; } }
-        renderer.render(scene, camera);
+        if (water) { const r = water.el.getBoundingClientRect(), u = water.u; const vis = r.bottom > 0 && r.top < H; water.mesh.visible = vis; if (vis) { visible = true; place(water.mesh, r.left, r.top, r.width, r.height, W, H); u.uSize.value.set(r.width, r.height); u.uTime.value = t; u.uRip.value += (water.ripT - u.uRip.value) * .05; } }
+        if (visible) renderer.render(scene, camera);
+        else if (wasVisible) renderer.clear();
+        wasVisible = visible;
       };
-      gsap.ticker.add(frame);
-      cleanup = () => { gsap.ticker.remove(frame); removeEventListener('resize', resize); offs.forEach(f => f()); io?.disconnect(); bio?.disconnect(); renderer.dispose(); html.classList.remove('gl-on', 'gl-photos'); delete (window as Any).__glScan; };
-    })();
+      // Decorative WebGL must never interrupt the shared scroll-animation ticker.
+      const tick = () => { try { frame(); } catch { cleanup(); } };
+      const lost = (event: Event) => { event.preventDefault(); cleanup(); };
+      cleanup = () => { gsap.ticker.remove(tick); canvas.removeEventListener('webglcontextlost', lost); removeEventListener('resize', resize); offs.forEach(f => f()); io?.disconnect(); bio?.disconnect(); renderer.dispose(); html.classList.remove('gl-on', 'gl-photos'); delete (window as Any).__glScan; };
+      canvas.addEventListener('webglcontextlost', lost);
+      gsap.ticker.add(tick);
+    })().catch(() => { cleanup(); document.documentElement.classList.remove('gl-on', 'gl-photos'); });
     return () => { alive = false; cleanup(); };
   }, []);
 

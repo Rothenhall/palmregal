@@ -1,10 +1,7 @@
 'use client';
-/* A day at Palm Regal, told with the image accordion and the sun.
-   The section holds while the scroll walks the day, morning to night: the accordion opens one
-   moment at a time, a thin arc above it carries the sun across the sky (it becomes the moon at
-   night), and the light behind the strip changes with it. The words change in place beside the
-   strip, never over a photograph. Choosing a sliver jumps the scroll to that moment; the pointer
-   can peek at any picture without losing your place. A clear start and end, five steps. */
+/* A day unfolds through the existing photo accordion. A compact time rail sits
+   with the pictures, while a restrained local glow follows the scroll. The
+   surrounding page keeps its deep teal, rather than changing colour per photo. */
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
@@ -19,21 +16,17 @@ gsap.registerPlugin(ScrollTrigger);
 const N = day.length;
 const pad = (n: number) => String(n).padStart(2, '0');
 
-/* The sun rides a quadratic arc from the left horizon to the right, peaking mid-day.
-   Same curve as the SVG path below, in percent of the arc box. */
-const ARC = { x0: 2, y0: 92, cx: 50, cy: -38, x1: 98, y1: 92 };
-const onArc = (t: number) => {
-  const u = 1 - t;
-  return {
-    x: u * u * ARC.x0 + 2 * u * t * ARC.cx + t * t * ARC.x1,
-    y: u * u * ARC.y0 + 2 * u * t * ARC.cy + t * t * ARC.y1,
-  };
+const LIGHT = [[210, 190, 151], [176, 198, 179], [139, 182, 185], [210, 158, 112], [100, 143, 158]];
+const paint = (el: HTMLElement, progress: number) => {
+  // Each selected chapter's midpoint lands exactly on its time-rail marker.
+  const p = Math.max(0, Math.min(1, (progress * N - .5) / Math.max(1, N - 1)));
+  const tone = p * (LIGHT.length - 1), lo = Math.floor(tone), hi = Math.min(LIGHT.length - 1, lo + 1);
+  const rgb = LIGHT[lo].map((v, k) => Math.round(v + (LIGHT[hi][k] - v) * (tone - lo)));
+  el.style.setProperty('--day-glow', rgb.join(', '));
+  el.style.setProperty('--day-progress', String(p));
+  const edge = 50 / N;
+  el.style.setProperty('--day-position', `${edge + (100 - edge * 2) * p}%`);
 };
-
-/* The page colour follows the sun: soft aqua-teal in the morning, the brightest sky-teal in the
-   afternoon, warm dusk in the evening, the logo's deep navy at night. Every tone stays dark enough
-   for the light text (at least 7:1). Motion.tsx reads it from data-page-color. */
-const SKY = ['#1B4650', '#1E4C62', '#22576F', '#2C3440', '#121735'];
 
 export function DaySun() {
   const root = useRef<HTMLElement>(null);
@@ -41,27 +34,25 @@ export function DaySun() {
   const [i, setI] = useState(0);
   const [held, setHeld] = useState(false);
 
-  useEffect(() => { if (hasMotion()) setHeld(true); }, []);
+  useEffect(() => {
+    const preference = matchMedia('(prefers-reduced-motion: reduce)');
+    const update = () => setHeld(hasMotion());
+    update(); preference.addEventListener('change', update);
+    return () => preference.removeEventListener('change', update);
+  }, []);
+
+  useEffect(() => { if (!held && root.current) paint(root.current, (i + .5) / N); }, [i, held]);
 
   /* measured once the section has its scrolling height, or start and end would be wrong */
   useEffect(() => {
     if (!held) return;
     const el = root.current!;
-    const place = (p: number) => {
-      /* the sun moves continuously; the moments change in steps */
-      const t = Math.min(1, Math.max(0, p * 1.04 - .02));
-      const { x, y } = onArc(t);
-      el.style.setProperty('--sx', `${x}%`);
-      el.style.setProperty('--sy', `${y}%`);
-    };
-    place(0);
+    paint(el, 0);
     const st = ScrollTrigger.create({
       trigger: el, start: 'top top', end: 'bottom bottom',
       onUpdate: self => {
-        place(self.progress);
+        paint(el, self.progress);
         const n = Math.min(N - 1, Math.floor(self.progress * N * .999));
-        /* set straight away (not on the next render) so the page colour turns with the moment */
-        if (el.dataset.pageColor !== SKY[n]) { el.dataset.pageColor = SKY[n]; dispatchEvent(new Event('pagecolor')); }
         setI(c => (c === n ? c : n));
       },
     });
@@ -80,9 +71,9 @@ export function DaySun() {
   };
 
   return (
-    <section ref={root} id="gallery" className={'dsun' + (held ? ' held' : '')} data-bg="night" data-page-color={held ? SKY[i] : undefined} data-moment={i} aria-labelledby="dsun-h">
+    <section ref={root} id="gallery" className={'dsun' + (held ? ' held' : '')} data-bg="night" data-moment={i} aria-labelledby="dsun-h">
       <div className="dsun-stick">
-        <div className="dsun-sky" aria-hidden="true">{day.map((d, n) => <i key={d.time} className={n === i ? 'on' : ''} />)}<b className="dsun-stars" /></div>
+        <div className="dsun-sky" aria-hidden="true" />
         <div className="wrap dsun-grid">
           <div className="dsun-copy">
             <p className="eyebrow" id="dsun-h">A day at Palm Regal</p>
@@ -97,25 +88,23 @@ export function DaySun() {
               ))}
             </div>
             <div className="dsun-foot">
-              <div className="dsun-dots" aria-hidden="true">{day.map((d, n) => <i key={d.time} className={n === i ? 'on' : n < i ? 'past' : ''} />)}</div>
-              <Link className="tlink" href="/gallery/">Full gallery <Icon id="i-arrow" /></Link>
+              <Link className="tlink" href="/#moments">More moments <Icon id="i-arrow" /></Link>
             </div>
           </div>
 
           <div className="dsun-stage">
-            <div className="dsun-arc" aria-hidden="true">
-              <svg viewBox="0 0 100 100" preserveAspectRatio="none">
-                <path d={`M${ARC.x0} ${ARC.y0} Q${ARC.cx} ${ARC.cy} ${ARC.x1} ${ARC.y1}`} vectorEffect="non-scaling-stroke" />
-              </svg>
-              <span className="dsun-orb" />
-              <span className="dsun-horizon" />
-            </div>
+            <nav className="dsun-timeline" aria-label="Choose a moment in the day">
+              <span className="dsun-timeline-line" aria-hidden="true" />
+              <span className="dsun-timeline-orb" aria-hidden="true" />
+              {day.map((d, n) => <button key={d.time} type="button" onClick={() => pick(n)} aria-current={n === i ? 'step' : undefined}>
+                <span className="dsun-timeline-point" aria-hidden="true" />{d.time}
+              </button>)}
+            </nav>
             <div className="dsun-strip">
               <ImageAccordion
                 width="100%" height="100%" gap={6} open={74} reach={42} bounce={14}
-                active={held ? i : undefined}
-                onPick={held ? pick : undefined}
-                label={(n, isOpen) => <><span className="num">{pad(n + 1)}</span><b aria-hidden={!isOpen}>{day[n].time}</b></>}
+                active={i}
+                onPick={pick}
               />
             </div>
           </div>

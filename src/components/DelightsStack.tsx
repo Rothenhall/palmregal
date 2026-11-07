@@ -1,9 +1,7 @@
 /* "Reasons to stay in": the 13 facilities in four groups, as full-screen stacking cards that run
    edge to edge, words on one half and the photograph filling the other. Each card sticks;
    the next slides over it while the one before recedes (the shared [data-stack] rule in Motion). */
-import Link from 'next/link';
 import { facilities, facilityGroups } from '@/content/site';
-import { Icon } from './Icons';
 
 const TONES = ['teal', 'dusk', 'paper', 'canopy'];
 const NUM = ['I', 'II', 'III', 'IV'];
@@ -33,7 +31,6 @@ export function DelightsStack() {
           );
         })}
       </div>
-      <div className="wrap"><Link className="btn btn--line dstack-all" href="/facilities/">See all {facilities.length} facilities <Icon id="i-arrow" /></Link></div>
     </div>
   );
 }
