@@ -6,6 +6,7 @@ Current decisions updated: 7 Nov 2026. The older v0.7 notes below are historical
 
 - Keep one homepage, the aerial hero and horizontal room journey. Extra routes, directions links and the floating booking pill have been removed by request.
 - FAQs and the enquiry form now share the bottom section's deep-teal finish with the footer. WhatsApp remains empty by request; enquiries currently prepare an email.
+- Resort Delights stacking now depends on whether all four cards actually fit the desktop viewport, with a compact laptop layout. Its own scroll controller uses stable flow measurements. Mobile and oversized content keep normal flow with a photo reveal; reduced motion stays static. This fixes the old 760px height cutoff without changing the restored aerial hero.
 - **Deferred decision: photographs inside the full-screen homepage map.** Save for a later design discussion; do not implement now. Candidate: a compact photograph with the active destination's text, without covering the map or interrupting scrolling.
 - Five genuine Google reviews are requested. There is no connected feed. [Google reviews research and plan](google-reviews-plan.md) covers official sources, access, limitations, placement and animation.
 - See [experience follow-ups](experience-follow-ups.md) for the current remaining work. No new browser checks were requested for this pass.

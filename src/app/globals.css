@@ -1424,7 +1424,7 @@ html:not(.motion) .suites-stack .suite { position: relative; top: 0 }
 .dsec-head h2 { font-size: var(--h-section); margin-top: 14px }
 .dsec-head .lede { padding-bottom: .3em }
 .dstack { display: grid; gap: 34px }
-.dcard { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); min-height: min(76svh, 640px); padding: clamp(24px, 4vw, 56px); border-radius: var(--r-lg); overflow: hidden; transform-origin: 50% 0; will-change: transform; box-shadow: 0 30px 60px -36px rgba(11, 34, 40, .55) }
+.dcard { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); min-height: min(76svh, 640px); padding: clamp(24px, 4vw, 56px); border-radius: var(--r-lg); overflow: hidden; transform-origin: 50% 0; box-shadow: 0 30px 60px -36px rgba(11, 34, 40, .55) }
 .dcard--teal { background: var(--teal-800); color: var(--on-dark) }
 .dcard--paper { background: var(--mint-50); color: var(--ink-900); border: 1px solid var(--c-line) }
 .dcard--canopy { background: var(--canopy-800); color: var(--on-dark) }
@@ -1447,24 +1447,20 @@ html:not(.motion) .suites-stack .suite { position: relative; top: 0 }
 .dcard--teal .dcard-small { outline-color: var(--teal-800) } .dcard--paper .dcard-small { outline-color: var(--mint-50) } .dcard--canopy .dcard-small { outline-color: var(--canopy-800) } .dcard--dusk .dcard-small { outline-color: var(--teal-950) }
 .dcard-main img, .dcard-small img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.6s var(--ease) }
 .dcard:hover .dcard-main img { transform: scale(1.03) }
-@supports (animation-timeline: view()) {
-  html.motion .dcard-main, html.motion .dcard-small { animation: frame-open linear both; animation-timeline: view(); animation-range: entry 0% entry 60% }
-}
 .dstack-all { margin-top: 40px }
 html:not(.motion) .dcard { position: relative; top: 0 }
 @media (max-width: 900px) {
   .dsec-head { grid-template-columns: 1fr; gap: 12px }
-  .dcard { grid-template-columns: 1fr; top: calc(var(--hdr) + 12px); min-height: 0 }
+  .dcard { grid-template-columns: 1fr; min-height: 0 }
   .dcard-media { order: -1; min-height: 220px } .dcard li { grid-template-columns: 1fr; gap: 2px }
 }
 
 /* Stacking only where a whole card fits on screen; elsewhere the cards are a plain list,
    so nothing is ever covered before it can be read (sticky-card guidance: test with the pin off) */
 @media (min-width: 901px) and (min-height: 760px) {
-  html.motion .dcard { position: sticky; top: calc(var(--hdr) + 28px) }
   html.motion .suites-stack .suite { position: sticky; top: calc(var(--hdr) + 76px) }
 }
-@media (max-width: 900px), (max-height: 759px) { .dcard, .suites-stack .suite { transform: none !important; filter: none !important } }
+@media (max-width: 900px), (max-height: 759px) { .suites-stack .suite { transform: none !important; filter: none !important } }
 
 /* ===== Bold and immersive: the homepage in evening tones ===== */
 html.shift .book { background: var(--teal-950) }
@@ -1617,8 +1613,14 @@ html.gl-photos .gtile button { background: transparent }
 .dcard-main { inset: 0; border-radius: 0 }
 /* the second photograph straddles the seam between words and picture */
 .dcard-small { left: -7%; top: auto; bottom: max(104px, 12vh); width: 32%; outline-width: 8px }
-@media (min-width: 901px) and (min-height: 760px) {
-  html.motion .dcard { top: 0 }
+.dstack-wrap[data-stacking="true"] .dcard { position: sticky; top: 0; will-change: transform }
+.dcard::after { content: ''; position: absolute; inset: 0; z-index: 2; background: var(--teal-950); opacity: var(--recede-opacity, 0); pointer-events: none }
+@media (min-width: 901px) and (max-height: 850px) {
+  .dcard-body { padding-top: calc(var(--hdr) + 24px); padding-bottom: 48px; gap: 12px }
+  .dcard h3 { font-size: clamp(2.4rem, 4.2vw, 3.8rem) }
+  .dcard-lede { font-size: .96rem }
+  .dcard li { padding-block: 10px }
+  .dcard-small { bottom: 48px }
 }
 @media (max-width: 900px) {
   .dcard { grid-template-columns: minmax(0, 1fr); min-height: 100svh }
