@@ -5,11 +5,11 @@ Updated 7 November 2026. Current user decisions take precedence over older brief
 ## Decisions to preserve
 
 - Keep the website on one homepage. Extra page routes and directions links were removed by request.
-- Hero goal: aerial approach into the first bedroom. On 7 November the user approved a soft fade instead of needing a verified balcony/window connection, then requested a further balcony push-in before that fade. Keep the moving aerial, push in within that footage, fade through the night colour, then reveal the actual first bedroom photograph without zooming the bedroom. This is an editorial transition, not a reconstructed flight through the opening. Keep the separate horizontal room journey.
+- Keep the current aerial hero and horizontal room journey.
 - Keep the WhatsApp number empty until the user supplies a confirmed Business number. Do not assume the reception phone is also WhatsApp. Current WhatsApp controls retain their contact-section fallback.
 - FAQ and a short enquiry form belong at the bottom, sharing the current deep-teal finish and footer. Dates and suite preferences are optional, disclosed within the form.
 - Enquiries currently prepare a message in the visitor's email app. They are not delivered by a website backend and do not reserve a room.
-- Avoid routine browser checks for simple layout changes. On 7 November the user reported multiple production effects failing; targeted browser diagnostics and production-build checks are appropriate for that requested investigation.
+- No new browser verification for these changes unless requested; use source checks and the production build.
 
 ## Deferred: attraction photographs in the homepage map
 

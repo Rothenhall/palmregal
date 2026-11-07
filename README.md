@@ -18,7 +18,7 @@ npm run build        # writes the static site to ./out
 npm start            # serves ./out at http://localhost:3000
 ```
 
-Fraunces and Figtree are bundled as local WOFF2 variable fonts, with their OFL licences in `public/fonts/`. Rendering and animation startup do not depend on Google Fonts responding. Use `npm ci` before production validation so installed versions match the lockfile and Vercel (Next.js 15.5.28).
+The page needs an internet connection for Google Fonts.
 
 ## Where things are
 
@@ -39,9 +39,9 @@ Current decisions and deferred map photographs: [experience follow-ups](docs/exp
 
 The homepage uses a continuous AI-generated night arrival based on the original property's night aerial around 58.60 seconds. Kling 3.0 generated the camera approach and scene motion from a restored, dimly lit reference frame; the garden/window glow is gently increased in finishing. This is an illustrative generated scene, so fine inferred details are not documentary footage.
 
-`public/media/palm-regal-night-arrival-v4-desktop.mp4` is 1920×1080 and `palm-regal-night-arrival-v4-mobile.mp4` is a 720×1280 portrait crop. Both contain 483 frames at 60 fps over 8.05 seconds, with existing motion-compensated interpolation from the native 24fps generation. The baseline media is preserved. On 7 November the user approved a further push-in toward the balconies, followed by a fade through the night colour into the actual `/img/bedroom-1.webp`. `src/lib/heroArrival.ts` defines reversible smoothstep phases and framing, capped at 3.15× desktop and 2.3× mobile. This is a crop within moving footage, not a reconstructed flight through a particular window or generated curtain movement. The hero provides 420svh of desktop scroll travel and 320svh on phones; it does not autoplay or loop. The bedroom photograph is revealed without a zoom and preserves the original asset rather than another compressed video. Magnified facade detail remains limited by the source resolution.
+`public/media/palm-regal-night-arrival-v4-desktop.mp4` is 1920×1080 and `palm-regal-night-arrival-v4-mobile.mp4` is a 720×1280 portrait crop. Both contain 483 frames at 60 fps over 8.05 seconds, sampled from the native 24fps generation without stretching its speed. No photo zoom or CSS camera transform is added by the website. The hero provides 220svh of desktop scroll travel and 160svh on phones. Scrolling advances/reverses the camera move and lighting progression; it does not autoplay or loop.
 
-Matching WebP posters render immediately. Reduced-motion preferences, data saving, disabled JavaScript or video errors show a still hero with both booking links available. If the bedroom image fails to load, the aerial remains visible with its booking links. Motion preference and viewport changes reconfigure the video and clean up the previous scroll trigger. Hero copy fades before the room reveal, and its invisible actions leave the keyboard tab order.
+Matching WebP posters render immediately. Reduced-motion preferences, data saving, disabled JavaScript or video errors show a still hero with both booking links available. Motion preference and viewport changes reconfigure the video and clean up the previous scroll trigger.
 
 ## Still waiting on the resort
 

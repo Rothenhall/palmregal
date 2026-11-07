@@ -27,39 +27,17 @@ export function Motion() {
   useEffect(() => {
     const html = document.documentElement;
     const lenis = (window as any).__lenis;
-    // A direct hash can be positioned before fonts and held-section heights
-    // settle in a cold production load. Keep aligning until the user takes over.
-    const initialHash = location.hash;
-    let pendingHash = !!initialHash;
-    let hashTimer: ReturnType<typeof setTimeout> | undefined;
-    let hashFrame = 0;
-    const stopHash = () => { pendingHash = false; clearTimeout(hashTimer); cancelAnimationFrame(hashFrame); };
-    const alignHash = () => {
-      if (!pendingHash || location.hash !== initialHash) return;
-      let id: string;
-      try { id = decodeURIComponent(initialHash.slice(1)); } catch { stopHash(); return; }
-      const target = document.getElementById(id); if (!target) return;
-      const offset = target.matches('.location-map, .dsun.held, .sj.held') ? 0 : -70;
-      if (lenis) { lenis.resize(); lenis.scrollTo(target, { offset, immediate: true }); }
-      else window.scrollTo({ top: Math.max(0, target.getBoundingClientRect().top + scrollY + offset), behavior: 'instant' });
-      ScrollTrigger.update();
-    };
-    const scheduleHash = () => {
-      if (!pendingHash) return;
-      clearTimeout(hashTimer);
-      hashTimer = setTimeout(() => { cancelAnimationFrame(hashFrame); hashFrame = requestAnimationFrame(alignHash); }, 80);
-    };
-    const hashResize = new ResizeObserver(scheduleHash);
-    if (pendingHash) { hashResize.observe(document.body); scheduleHash(); }
-    else if (lenis) lenis.scrollTo(0, { immediate: true });
-    const intentEvents = ['wheel', 'touchstart', 'pointerdown', 'keydown'] as const;
-    intentEvents.forEach(name => addEventListener(name, stopHash, { passive: true, capture: true }));
-    addEventListener('hashchange', stopHash);
-    const cleanHash = () => {
-      stopHash(); hashResize.disconnect(); removeEventListener('hashchange', stopHash);
-      intentEvents.forEach(name => removeEventListener(name, stopHash, true));
-    };
-    if (!hasMotion()) { html.classList.add('ready'); return cleanHash; }
+    if (location.hash) {
+      const go = () => {
+        const t = document.querySelector(location.hash); if (!t) return;
+        if (lenis) {
+          lenis.resize();
+          lenis.scrollTo(t, { offset: t.matches('.location-map, .dsun.held') ? 0 : -70, immediate: true });
+        } else t.scrollIntoView();
+      };
+      setTimeout(go, 60);
+    } else if (lenis) lenis.scrollTo(0, { immediate: true });
+    if (!hasMotion()) { html.classList.add('ready'); return; }
 
     let ctx: gsap.Context | null = null; let started = false; const splits: SplitText[] = []; let onColor: (() => void) | null = null;
     const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), { rootMargin: '0px 0px -8% 0px' });
@@ -126,19 +104,14 @@ export function Motion() {
           ScrollTrigger.create({ start: 0, end: 'max', onUpdate: pick, onRefresh: pick });
         }
       });
-      requestAnimationFrame(() => { ScrollTrigger.refresh(); scheduleHash(); });
+      requestAnimationFrame(() => ScrollTrigger.refresh());
     };
     const fonts = (document as any).fonts;
-    let alive = true;
-    const start = () => { if (alive) init(); };
-    if (fonts?.ready) fonts.ready.then(() => { start(); if (alive) { ScrollTrigger.refresh(); scheduleHash(); } });
-    const fallback = setTimeout(start, 1500);
-    const onLoad = () => { ScrollTrigger.refresh(); scheduleHash(); }; addEventListener('load', onLoad);
-    const onFonts = () => { ScrollTrigger.refresh(); scheduleHash(); };
-    fonts?.addEventListener('loadingdone', onFonts);
+    if (fonts?.ready) { fonts.ready.then(init); } const fallback = setTimeout(init, 1500);
+    const onLoad = () => ScrollTrigger.refresh(); addEventListener('load', onLoad);
 
     return () => {
-      alive = false; cleanHash(); clearTimeout(fallback); removeEventListener('load', onLoad); fonts?.removeEventListener('loadingdone', onFonts); io.disconnect(); if (onColor) removeEventListener('pagecolor', onColor);
+      clearTimeout(fallback); removeEventListener('load', onLoad); io.disconnect(); if (onColor) removeEventListener('pagecolor', onColor);
       ctx?.revert(); splits.forEach(s => s.revert());
       html.classList.remove('shift', 'ready'); document.body.style.backgroundColor = '';
     };
