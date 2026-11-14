@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: { default: 'Admin', template: '%s · Palm Regal Admin' },
   robots: { index: false, follow: false, nocache: true },
 };
-export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#193F47' };
+export const viewport: Viewport = { width: 'device-width', initialScale: 1, themeColor: '#ffffff' };
 
 export default function AdminRootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -15,7 +15,7 @@ export default function AdminRootLayout({ children }: { children: React.ReactNod
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Figtree:wght@400;500;600&display=swap" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500&family=Figtree:wght@400;500;600;700&display=swap" />
       </head>
       <body className="adm">{children}</body>
     </html>

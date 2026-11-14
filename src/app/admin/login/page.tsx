@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { AuthError } from 'next-auth';
+import { CircleAlert } from 'lucide-react';
 import { signIn } from '@/auth';
+import { Field, Input, btn } from '../_ui/ui';
+import { RESORT } from '../_lib/format';
 
 export const metadata: Metadata = { title: 'Sign in' };
 
@@ -23,15 +26,17 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const { error } = await searchParams;
   return (
     <main className="adm-login">
-      <form className="adm-card adm-login-card" action={login}>
-        <p className="adm-eyebrow">Palm Regal</p>
-        <h1>Admin sign in</h1>
-        {error && <p className="adm-error" role="alert">That email or password is not right. Please try again.</p>}
-        <label>Email<input name="email" type="email" autoComplete="username" required autoFocus /></label>
-        <label>Password<input name="password" type="password" autoComplete="current-password" required /></label>
-        <button className="adm-btn" type="submit">Sign in</button>
-      </form>
-      <a className="adm-login-credit" href="https://rothenhall.com" target="_blank" rel="noopener" aria-label="Built by Rothenhall Partners (opens in a new tab)"><span>Built by</span><img src="/brand/rothenhall-wordmark-ink.png" alt="" width="640" height="112" loading="lazy" /></a>
+      <div className="adm-login-wrap">
+        <div className="adm-login-brand"><span className="adm-mark" aria-hidden="true">PR</span><span className="adm-wordmark">{RESORT}</span></div>
+        <form className="adm-card adm-login-card" action={login}>
+          <div><h1>Welcome back</h1><p>Sign in to manage your website and guest chats.</p></div>
+          {error && <p className="adm-inline-error" role="alert"><CircleAlert size={16} aria-hidden="true" />That email or password is not right. Please try again.</p>}
+          <Field label="Email" htmlFor="email"><Input id="email" name="email" type="email" autoComplete="username" required autoFocus /></Field>
+          <Field label="Password" htmlFor="password"><Input id="password" name="password" type="password" autoComplete="current-password" required /></Field>
+          <button className={`${btn('primary')} adm-btn--block`} type="submit">Sign in</button>
+        </form>
+        <a className="adm-credit adm-credit--login" href="https://rothenhall.com" target="_blank" rel="noopener" aria-label="Built by Rothenhall Partners (opens in a new tab)"><span>Built by</span><img src="/brand/rothenhall-wordmark-ink.png" alt="" width="640" height="112" loading="lazy" /></a>
+      </div>
     </main>
   );
 }

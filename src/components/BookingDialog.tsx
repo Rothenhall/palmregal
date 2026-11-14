@@ -54,6 +54,8 @@ export function BookingDialog({ bookingUrl }: { bookingUrl: string }) {
         if (!v.checkIn) return setErr('Choose a check-in date.');
         if (v.checkIn < min) return setErr('Check-in cannot be in the past.');
         if (!v.checkOut || v.checkOut <= v.checkIn) return setErr('Choose a check-out date after check-in.');
+        // anonymous count of what guests search for (no cookie, no id); never blocks the booking page
+        try { const b = JSON.stringify({ i: v.checkIn, o: v.checkOut, a: v.adults, c: v.children }), u = '/api/insights/search/'; if (!navigator.sendBeacon?.(u, new Blob([b], { type: 'application/json' }))) fetch(u, { method: 'POST', body: b, keepalive: true }); } catch {}
         window.location.href = bookingLink(v, bookingUrl);
       }}>
         <button type="button" className="bk-x" aria-label="Close" onClick={() => ref.current?.close()}>×</button>
