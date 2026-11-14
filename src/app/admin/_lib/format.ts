@@ -25,11 +25,26 @@ export function timeAgo(t: number, now = Date.now()) {
   return shortDate(t);
 }
 
+const hashOf = (s: string) => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; } return h; };
 /** A friendly, stable number per visitor ("Guest 4821"), from a hash of the visitor id. */
 export function guestLabel(c: Pick<Conv, 'visitor'>) {
-  let h = 2166136261;
-  for (let i = 0; i < c.visitor.length; i++) { h ^= c.visitor.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
-  return `Guest ${1000 + (h % 9000)}`;
+  return `Guest ${1000 + (hashOf(c.visitor) % 9000)}`;
+}
+/** A stable colour (0-5) per visitor, so the same guest is easy to spot in a list. */
+export const guestTone = (c: Pick<Conv, 'visitor'>) => (hashOf(c.visitor) >>> 8) % 6;
+
+/** "Today", "Yesterday", "Earlier this week", "Older": headings for a list sorted newest first. */
+export function dayGroup(t: number, now = Date.now()) {
+  if (dayOf(t) === dayOf(now)) return 'Today';
+  if (dayOf(t) === dayOf(now - 86400_000)) return 'Yesterday';
+  if (now - t < 7 * 86400_000) return 'Earlier this week';
+  return 'Older';
+}
+
+/** The whole chat as plain text, for copying into WhatsApp, email or notes. */
+export function transcriptText(c: Conv) {
+  const head = `${guestLabel(c)} · started ${when(c.createdAt)}`;
+  return [head, '', ...c.msgs.map(m => `[${when(m.ts)}] ${m.r === 'u' ? 'Guest' : 'Assistant'}: ${m.t}`)].join('\n');
 }
 export function firstGuestMessage(c: Conv) {
   return c.msgs.find(m => m.r === 'u')?.t ?? '';

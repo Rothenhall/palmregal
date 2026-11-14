@@ -4,7 +4,27 @@ import { redisConfigured } from '@/lib/chat/redis';
 import { getConv, isDone, listBlocks, needsReply, recentConvs, type Conv } from '@/lib/chat/store';
 import { convLangLabel } from '@/lib/insights/lang';
 import { Badge, EmptyState, PageHeader } from '../../_ui/ui';
-import { firstGuestMessage, guestLabel, handoffText, lastMessage, timeAgo, when } from '../../_lib/format';
+import { dayGroup, firstGuestMessage, guestLabel, guestTone, handoffText, lastMessage, timeAgo, transcriptText, when } from '../../_lib/format';
+import { LiveRefresh } from '../../_ui/LiveRefresh';
+import { InboxKeys } from './InboxKeys';
+import { Download } from 'lucide-react';
+import type { ReactNode } from 'react';
+
+/** Marks every match of the search word in a piece of text. */
+function hi(text: string, needle: string): ReactNode {
+  if (!needle) return text;
+  const safe = needle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const parts = text.split(new RegExp(`(${safe})`, 'gi'));
+  return parts.map((p, i) => (i % 2 ? <mark key={i}>{p}</mark> : p));
+}
+/** With a search, the preview is the message that matched, trimmed to start near the word. */
+function previewFor(c: Conv, needle: string) {
+  if (needle) {
+    const m = c.msgs.find(x => x.t.toLowerCase().includes(needle));
+    if (m) { const at = m.t.toLowerCase().indexOf(needle); return (at > 60 ? '…' + m.t.slice(at - 40) : m.t); }
+  }
+  return firstGuestMessage(c) || lastMessage(c);
+}
 import { ConvActions } from './ConvActions';
 import { InboxToolbar } from './InboxToolbar';
 
@@ -59,7 +79,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ v
     <div className="adm-inbox" data-open={selected ? 'true' : 'false'}>
       <section className="adm-inbox-list" aria-label="Conversations">
         <div className="adm-inbox-head">
-          <h1>Inbox</h1>
+          <div className="adm-inbox-title"><h1>Inbox</h1><span><LiveRefresh /><a className="adm-btn adm-btn--ghost adm-btn--sm adm-btn--icon" href="/admin/inbox/export/" title="Download all chats as a spreadsheet (CSV)" aria-label="Download all chats as a spreadsheet"><Download size={16} /></a></span></div>
           <InboxToolbar view={view} q={q} counts={counts} />
         </div>
         {items.length === 0 ? (
@@ -68,17 +88,21 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ v
           </EmptyState>
         ) : (
           <ul className="adm-rows">
-            {items.map(c => {
+            {items.map((c, i) => {
               const flag = needsReply(c);
-              const preview = firstGuestMessage(c) || lastMessage(c);
+              const preview = previewFor(c, needle);
+              const group = dayGroup(c.updatedAt);
+              const head = i === 0 || dayGroup(items[i - 1].updatedAt) !== group;
               return (
                 <li key={c.id}>
-                  <Link href={`/admin/inbox/${qs({ c: c.id })}`} className="adm-row" aria-current={selected?.id === c.id ? 'true' : undefined}>
+                  {head && <p className="adm-rows-day">{group}</p>}
+                  <Link href={`/admin/inbox/${qs({ c: c.id })}`} className={`adm-row adm-row--guest${flag ? ' is-flagged' : ''}`} data-conv={c.id} aria-current={selected?.id === c.id ? 'true' : undefined}>
+                    <span className="adm-guest-av" data-tone={guestTone(c)} aria-hidden="true">{guestLabel(c).slice(-2)}</span>
                     <span className="adm-row-top">
                       <b>{guestLabel(c)}</b>
                       <time dateTime={new Date(c.updatedAt).toISOString()} title={when(c.updatedAt)}>{timeAgo(c.updatedAt)}</time>
                     </span>
-                    <span className="adm-row-text">{preview}</span>
+                    <span className="adm-row-text">{hi(preview, q)}</span>
                     <span className="adm-row-meta">
                       {flag ? <Badge tone="amber" dot>Needs reply</Badge> : isDone(c) ? <Badge tone="teal">Done</Badge> : null}
                       {isBlocked(c) && <Badge tone="red">Blocked</Badge>}
@@ -101,6 +125,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ v
         <p className="adm-inbox-note">Chats are deleted automatically 90 days after the last message.</p>
       </section>
 
+      <InboxKeys back={`/admin/inbox/${qs({})}`} />
       <section className="adm-inbox-detail" aria-label="Conversation">
         {selected ? <Transcript c={selected} blocked={isBlocked(selected)} back={`/admin/inbox/${qs({})}`} /> : (
           <EmptyState icon={<MessageCircle size={22} />} title="Select a conversation">Choose a chat on the left to read it.</EmptyState>
@@ -121,6 +146,7 @@ function Transcript({ c, blocked, back }: { c: Conv; blocked: boolean; back: str
     <>
       <header className="adm-conv-head">
         <Link href={back} className="adm-back" aria-label="Back to inbox"><ArrowLeft size={18} /></Link>
+        <span className="adm-guest-av adm-guest-av--lg" data-tone={guestTone(c)} aria-hidden="true">{guestLabel(c).slice(-2)}</span>
         <div className="adm-conv-title">
           <h2>{guestLabel(c)}</h2>
           <p>{convLangLabel(c)} · started {when(c.createdAt)}</p>
@@ -128,7 +154,7 @@ function Transcript({ c, blocked, back }: { c: Conv; blocked: boolean; back: str
         <div className="adm-conv-actions">
           {flagged ? <Badge tone="amber" dot>Needs reply</Badge> : isDone(c) ? <Badge tone="teal">Done</Badge> : null}
           {blocked && <Badge tone="red">Blocked</Badge>}
-          <ConvActions id={c.id} done={isDone(c)} canMark={Boolean(c.handoff || c.unanswered?.length)} blocked={blocked} />
+          <ConvActions id={c.id} done={isDone(c)} canMark={Boolean(c.handoff || c.unanswered?.length)} blocked={blocked} transcript={transcriptText(c)} />
         </div>
       </header>
       <div className="adm-conv-scroll">

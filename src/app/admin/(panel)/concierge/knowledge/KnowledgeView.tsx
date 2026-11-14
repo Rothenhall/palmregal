@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { BookOpen, Eye, FileText, MoreHorizontal, Pencil, Plus, StickyNote, Trash2 } from 'lucide-react';
+import { BookOpen, Search, X, Eye, FileText, MoreHorizontal, Pencil, Plus, StickyNote, Trash2 } from 'lucide-react';
 import type { KbDoc } from '@/lib/chat/kb';
 import { ConfirmDialog, Dialog } from '../../../_ui/Dialog';
 import { Menu } from '../../../_ui/Menu';
@@ -18,6 +18,9 @@ export function KnowledgeView({ docs, limits, openAdd, error }: { docs: KbDoc[];
   const [name, setName] = useState('');
   const [deleting, setDeleting] = useState<KbDoc | null>(null);
   const [over, setOver] = useState<Record<string, boolean>>({});
+  const [find, setFind] = useState('');
+  const needle = find.trim().toLowerCase();
+  const shown = needle ? docs.filter(d => `${d.title} ${d.kind === 'note' ? '' : d.filename ?? ''}`.toLowerCase().includes(needle)) : docs;
   const router = useRouter();
   const toast = useToast();
 
@@ -40,10 +43,18 @@ export function KnowledgeView({ docs, limits, openAdd, error }: { docs: KbDoc[];
         <Card><EmptyState icon={<BookOpen size={22} />} title="Nothing added yet" action={add}>Add a PDF, a Word file or a short note, and the assistant will use it to answer guests.</EmptyState></Card>
       ) : (
         <>
+          {docs.length > 5 && (
+            <div className="adm-search adm-kb-find" role="search">
+              <Search size={16} aria-hidden="true" />
+              <input type="search" value={find} onChange={e => setFind(e.target.value)} placeholder={`Filter ${docs.length} items by name`} aria-label="Filter knowledge by name" />
+              {find && <button type="button" aria-label="Clear filter" onClick={() => setFind('')}><X size={14} /></button>}
+            </div>
+          )}
           <Card className="adm-table">
             <div className="adm-table-head" aria-hidden="true"><span>Name</span><span>Added</span><span>Use it</span><span /></div>
             <ul>
-              {docs.map(d => {
+              {shown.length === 0 && <li className="adm-kb-none">Nothing matches “{find.trim()}”.</li>}
+              {shown.map(d => {
                 const on = over[d.id] ?? d.enabled;
                 return (
                   <li key={d.id} className={on ? '' : 'is-off'}>

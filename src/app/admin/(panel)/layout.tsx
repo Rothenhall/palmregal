@@ -1,10 +1,18 @@
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
+import { PaletteButton } from '../_ui/CommandPalette';
 import { auth, signOut } from '@/auth';
 import { AdminNav, type NavGroup } from './AdminNav';
 import { AccountMenu } from './AccountMenu';
 import { ShellFrame } from './ShellFrame';
 import { getNeedsReply } from '../_lib/data';
 import { RESORT, initials } from '../_lib/format';
+
+/* The tab title carries the number of guests waiting, so a pinned tab shows it at a glance. */
+export async function generateMetadata(): Promise<Metadata> {
+  const waiting = (await getNeedsReply()).length;
+  return { title: { default: 'Admin', template: `${waiting ? `(${waiting}) ` : ''}%s · Palm Regal Admin` } };
+}
 
 /* Second line of defence behind the middleware: no session, no admin. */
 export default async function PanelLayout({ children }: { children: React.ReactNode }) {
@@ -37,6 +45,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
   const sidebar = (
     <>
       <div className="adm-brand"><span className="adm-mark" aria-hidden="true">PR</span><span className="adm-wordmark">{RESORT}</span></div>
+      <PaletteButton />
       <AdminNav groups={groups} />
       <div className="adm-side-foot">
         <AccountMenu email={email} initials={initials(email)} signOut={logout} />

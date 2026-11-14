@@ -1,14 +1,14 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Ban, CheckCheck, MoreHorizontal, RotateCcw, Trash2 } from 'lucide-react';
+import { Ban, CheckCheck, Copy, MoreHorizontal, RotateCcw, Trash2 } from 'lucide-react';
 import { Menu } from '../../_ui/Menu';
 import { ConfirmDialog } from '../../_ui/Dialog';
 import { useToast } from '../../_ui/Toast';
 import { btn } from '../../_ui/ui';
 import { blockGuest, markDone, removeConversation } from './actions';
 
-export function ConvActions({ id, done, canMark, blocked }: { id: string; done: boolean; canMark: boolean; blocked: boolean }) {
+export function ConvActions({ id, done, canMark, blocked, transcript }: { id: string; done: boolean; canMark: boolean; blocked: boolean; transcript: string }) {
   const [dlg, setDlg] = useState<null | 'block' | 'delete'>(null);
   const [network, setNetwork] = useState(false);
   const toast = useToast();
@@ -23,7 +23,7 @@ export function ConvActions({ id, done, canMark, blocked }: { id: string; done: 
   return (
     <>
       {canMark && (
-        <button type="button" className={btn(done ? 'secondary' : 'primary', 'sm')} onClick={toggleDone}>
+        <button type="button" className={btn(done ? 'secondary' : 'primary', 'sm')} onClick={toggleDone} data-key="done" title={done ? 'Reopen (E)' : 'Mark as done (E)'}>
           {done ? <RotateCcw size={14} aria-hidden="true" /> : <CheckCheck size={14} aria-hidden="true" />}{done ? 'Reopen' : 'Mark as done'}
         </button>
       )}
@@ -31,6 +31,9 @@ export function ConvActions({ id, done, canMark, blocked }: { id: string; done: 
         label="More actions"
         trigger={<MoreHorizontal size={16} aria-hidden="true" />}
         items={[
+          { label: 'Copy conversation', icon: <Copy size={16} aria-hidden="true" />, onSelect: () => {
+            navigator.clipboard.writeText(transcript).then(() => toast('Conversation copied. Paste it into WhatsApp, email or notes.'), () => toast('Could not copy. Please try again.', 'error'));
+          } },
           { label: blocked ? 'Guest is blocked' : 'Block guest', icon: <Ban size={16} aria-hidden="true" />, disabled: blocked, onSelect: () => setDlg('block') },
           { separator: true },
           { label: 'Delete conversation', icon: <Trash2 size={16} aria-hidden="true" />, danger: true, onSelect: () => setDlg('delete') },

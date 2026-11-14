@@ -10,6 +10,7 @@ import { Badge, Card, EmptyState, PageHeader, Section, StatTile, btn } from '../
 import { dayOf, firstGuestMessage, guestLabel, handoffText, n, timeAgo, RESORT } from '../_lib/format';
 import { getNeedsReply } from '../_lib/data';
 import { setAssistantOn } from './concierge/actions';
+import { LiveRefresh } from '../_ui/LiveRefresh';
 
 export const metadata = { title: 'Home' };
 export const dynamic = 'force-dynamic';
@@ -35,7 +36,7 @@ export default async function Home() {
       <PageHeader
         title={greeting}
         description={`Here is what is happening at ${RESORT} Resort.`}
-        actions={<a className={btn('primary')} href="/admin/editor/#/~/admin/preview/"><PenLine size={16} aria-hidden="true" />Edit website</a>}
+        actions={<><LiveRefresh /><a className={btn('primary')} href="/admin/editor/#/~/admin/preview/"><PenLine size={16} aria-hidden="true" />Edit website</a></>}
       />
 
       {(!connected || failed) && (

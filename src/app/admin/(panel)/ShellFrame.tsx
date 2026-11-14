@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import { ToastProvider } from '../_ui/Toast';
+import { CommandPalette, PaletteButton } from '../_ui/CommandPalette';
 
 /* Mobile: a slim top bar with a menu button opens the sidebar as a drawer. A drawer (not a bottom tab bar) because there
    are groups, an account menu and a badge to carry, and five tabs plus an account would not fit comfortably. */
@@ -27,10 +28,12 @@ export function ShellFrame({ sidebar, children, badge, resort }: { sidebar: Reac
           </button>
           <span className="adm-wordmark">{resort}</span>
           {badge > 0 && <b className="adm-nav-badge" aria-label={`${badge} waiting for a reply`}>{badge}</b>}
+          <PaletteButton compact />
         </header>
         <div className="adm-scrim" onClick={() => setOpen(false)} aria-hidden="true" />
         <aside id="adm-side" className="adm-side">{sidebar}</aside>
         <main className="adm-main" id="main">{children}</main>
+        <CommandPalette />
       </div>
     </ToastProvider>
   );

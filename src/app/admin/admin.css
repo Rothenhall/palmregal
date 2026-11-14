@@ -484,3 +484,75 @@
 
 /* 404 inside the admin */
 .adm-notfound { min-height: 60vh; display: grid; place-items: center }
+
+/* ===== Quick search (Ctrl+K), live updates, richer inbox, sign-in details ===== */
+.adm-cmd-btn { display: flex; align-items: center; gap: var(--s2); width: 100%; height: 36px; margin: var(--s3) 0 var(--s1); padding: 0 var(--s2) 0 var(--s3); border: 1px solid var(--border); border-radius: var(--r); background: var(--surface-2); color: var(--text-3); cursor: pointer; transition: border-color .15s, background .15s }
+.adm-cmd-btn:hover { border-color: var(--border-2); background: var(--surface); color: var(--text-2) }
+.adm-cmd-btn span { flex: 1; text-align: left }
+.adm kbd { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 5px; border: 1px solid var(--border-2); border-bottom-width: 2px; border-radius: 5px; background: var(--surface); color: var(--text-2); font-size: 11px; font-weight: 600; line-height: 1 }
+.adm-cmd { width: min(600px, calc(100vw - 24px)); margin-top: 12vh }
+.adm-cmd[open] { display: block }
+.adm-cmd-inner { display: flex; flex-direction: column; max-height: min(520px, 76vh) }
+.adm-cmd-input { display: flex; align-items: center; gap: var(--s3); padding: var(--s3) var(--s4); border-bottom: 1px solid var(--border); color: var(--text-3) }
+.adm-cmd-input input { flex: 1; height: 36px; border: 0; outline: 0; background: none; font-size: 16px; color: var(--text) }
+.adm-cmd-input input::placeholder { color: var(--text-3) }
+.adm-cmd-list { flex: 1; overflow-y: auto; padding: var(--s2) }
+.adm-cmd-group { padding: var(--s2) var(--s3) var(--s1); font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3) }
+.adm-cmd-item { display: flex; align-items: center; gap: var(--s3); min-height: 42px; padding: 0 var(--s3); border-radius: var(--r); cursor: pointer; color: var(--text) }
+.adm-cmd-item[aria-selected=true] { background: var(--teal-soft); color: var(--teal-text) }
+.adm-cmd-icon { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 7px; background: var(--surface-2); color: var(--text-2) }
+.adm-cmd-item[aria-selected=true] .adm-cmd-icon { background: var(--surface); color: var(--teal) }
+.adm-cmd-label { flex: 1; display: flex; align-items: baseline; gap: var(--s2); min-width: 0 }
+.adm-cmd-label small { font-size: 12px; color: var(--text-3) }
+.adm-cmd-enter { color: var(--teal-text) }
+.adm-cmd-foot { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s4); padding: var(--s3) var(--s4); border-top: 1px solid var(--border); background: var(--bg); font-size: 12px; color: var(--text-3) }
+.adm-cmd-foot span { display: inline-flex; align-items: center; gap: 4px }
+.adm-cmd-tip { margin-left: auto }
+
+/* the Live pill: data refreshes by itself; a click refreshes now */
+.adm-live { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); color: var(--text-2); font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap }
+.adm-live:hover { border-color: var(--border-2); background: var(--hover) }
+.adm-live i { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px rgba(46, 125, 91, .15) }
+.adm-live small { font-size: 12px; font-weight: 400; color: var(--text-3) }
+.adm-live svg { color: var(--text-3) }
+.adm-live[data-pending] svg { animation: adm-rot .8s linear infinite }
+.adm-pagehead-actions { align-items: center }
+@keyframes adm-rot { to { rotate: 360deg } }
+.adm-spin { animation: adm-rot .8s linear infinite }
+
+/* inbox: title row, day headings, guest colours, flagged edge, search highlights */
+.adm-inbox-title { display: flex; align-items: center; justify-content: space-between; gap: var(--s2) }
+.adm-inbox-title > span { display: flex; align-items: center; gap: var(--s1) }
+.adm-rows-day { padding: var(--s3) var(--s4) var(--s1); font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-3) }
+.adm-row--guest { display: grid; grid-template-columns: 34px minmax(0, 1fr); column-gap: var(--s3); row-gap: 4px }
+.adm-row--guest > :not(.adm-guest-av) { grid-column: 2 }
+.adm-row--guest .adm-guest-av { grid-row: 1 / span 3; margin-top: 1px }
+.adm-row.is-flagged:not([aria-current=true]) { border-left-color: var(--amber) }
+.adm-guest-av { display: inline-grid; place-items: center; flex: none; width: 34px; height: 34px; border-radius: 50%; font-size: 12px; font-weight: 700; letter-spacing: .02em; background: #e6f0ef; color: #1d5560 }
+.adm-guest-av--lg { width: 40px; height: 40px; font-size: 13px }
+.adm-guest-av[data-tone="1"] { background: #fcf1de; color: #86500a }
+.adm-guest-av[data-tone="2"] { background: #e8eefb; color: #2c4a8a }
+.adm-guest-av[data-tone="3"] { background: #f3e8f6; color: #6e3a80 }
+.adm-guest-av[data-tone="4"] { background: #e5f4ec; color: #22684a }
+.adm-guest-av[data-tone="5"] { background: #fbe9e6; color: #93392a }
+.adm-conv-head { align-items: center }
+.adm mark { padding: 0 2px; border-radius: 3px; background: #fde9b8; color: inherit }
+
+/* knowledge filter */
+.adm-kb-find { max-width: 360px; margin-bottom: var(--s3) }
+.adm-kb-none { padding: var(--s5) var(--s4); color: var(--text-2) }
+
+/* sign-in: show / hide password, Caps Lock */
+.adm-pass { position: relative; display: block }
+.adm-pass .adm-input { width: 100%; padding-right: 42px }
+.adm-pass button { position: absolute; top: 50%; right: 4px; translate: 0 -50%; display: grid; place-items: center; width: 32px; height: 32px; border: 0; border-radius: 6px; background: none; color: var(--text-3); cursor: pointer }
+.adm-pass button:hover { background: var(--surface-2); color: var(--text) }
+.adm-caps { display: block; margin-top: 6px; color: var(--amber-text) !important }
+.adm-btn--block { justify-content: center }
+
+@media (max-width: 760px) {
+  .adm-cmd { margin-top: 8px }
+  .adm-cmd-tip { display: none }
+  .adm-live small { display: none }
+}
+@media (prefers-reduced-motion: reduce) { .adm-live[data-pending] svg, .adm-spin { animation: none } }
