@@ -108,7 +108,7 @@ export function NightArrival() {
           <h2 id="arrival-title">Palm <em>Regal</em></h2>
           <p className="aerial-hero__lede">A home by the sea, <em>wrapped in green.</em></p>
           <div className="sh-cta">
-            <a className="btn btn--book" href={bookHref()}>Check availability</a>
+            <a className="btn btn--book" href={bookHref()} data-book="">Check availability</a>
             <Link className="btn btn--glass" href="/#suites">See the suites <Icon id="i-arrow" /></Link>
           </div>
         </div>

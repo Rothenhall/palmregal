@@ -28,6 +28,12 @@ export function sendLink(message: string) {
 /** Where every booking button leads: the resort's booking system once its URL is set, the enquiry form until then. */
 export const bookHref = () => site.bookingUrl || '/#contact';
 
+/** The booking engine with the guest's stay filled in, so they do not enter it again there. */
+export function bookingLink(o: { checkIn: string; checkOut: string; adults: number; children: number }) {
+  const q = new URLSearchParams({ checkin: o.checkIn, checkout: o.checkOut, adults: String(o.adults), children: String(o.children) });
+  return `${site.bookingUrl}?${q}`;
+}
+
 export function waHref() {
   return site.whatsapp ? `https://wa.me/${site.whatsapp}` : '/#contact';
 }

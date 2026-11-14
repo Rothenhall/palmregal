@@ -7,6 +7,7 @@ import { IconSprite, Icon } from '@/components/Icons';
 import { Motion } from '@/components/Motion';
 import { site } from '@/content/site';
 import { DRAFT, waHref } from '@/lib/book';
+import { BookingDialog } from '@/components/BookingDialog';
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
@@ -42,6 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main id="main">{children}</main>
         <Footer />
         <a className="wa" href={waHref()} aria-label="Chat with Palm Regal on WhatsApp"><span className="t">Chat with us</span><span className="b"><Icon id="i-wa" /></span></a>
+        <BookingDialog />
         <Motion />
       </body>
     </html>

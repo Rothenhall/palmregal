@@ -72,7 +72,7 @@ export function Header() {
           <div className="acts">
             <a className="ibtn opt" href={site.phoneHref} aria-label="Call Palm Regal"><Icon id="i-phone" /></a>
             <a className="ibtn opt" href={waHref()} aria-label="WhatsApp Palm Regal"><Icon id="i-wa" /></a>
-            <a className="btn btn--book" href={bookHref()}>Book direct</a>
+            <a className="btn btn--book" href={bookHref()} data-book="">Book direct</a>
             <button ref={openBtn} className="ibtn menu-btn" type="button" aria-label="Open menu" aria-expanded={open} aria-controls="mnav" onClick={() => setOpen(true)}><Icon id="i-menu" /></button>
           </div>
         </div>
@@ -87,7 +87,7 @@ export function Header() {
           {nav.map((n, i) => <Link key={n.href} href={n.href} onClick={() => setOpen(false)}><i>0{i + 1}</i>{n.label}</Link>)}
         </nav>
         <div className="mnav-foot">
-          <a className="btn btn--book" href={bookHref()} onClick={() => setOpen(false)}>Book direct</a>
+          <a className="btn btn--book" href={bookHref()} data-book="" onClick={() => setOpen(false)}>Book direct</a>
           <a className="btn btn--line" href={site.phoneHref} onClick={() => setOpen(false)}><Icon id="i-phone" />Call</a>
           <a className="btn btn--line" href={waHref()} onClick={() => setOpen(false)}><Icon id="i-wa" />WhatsApp</a>
         </div>

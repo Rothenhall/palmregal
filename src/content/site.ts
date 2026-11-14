@@ -12,8 +12,8 @@ export const site = {
   email: 'palmregalresort@gmail.com',
   /** WhatsApp Business number in international format, digits only. Empty until the resort confirms it. */
   whatsapp: '',
-  /** The resort's booking system (RPMS, payments by Razorpay). Every "Book direct" and "Check availability" link goes here. Empty until the resort shares the URL; until then they lead to the enquiry form. */
-  bookingUrl: '',
+  /** The resort's booking engine. Every "Book direct" and "Check availability" button opens the stay picker, then sends the guest here with checkin, checkout, adults and children filled in. Empty: the buttons lead to the enquiry form instead. */
+  bookingUrl: 'https://letsbook.me/booking/palmregalresort',
   address: '1 Park Avenue, Adjt. Zone by the Park, Gopalpur on Sea, Odisha 761002',
   instagram: 'https://www.instagram.com/palmregalresort/',
   checkIn: '12 PM',

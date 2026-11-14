@@ -90,7 +90,7 @@ export function Hero() {
           ))}
         </div>
         <div className="sh-cta">
-          <a className="btn btn--book" href={bookHref()}>Check availability</a>
+          <a className="btn btn--book" href={bookHref()} data-book="">Check availability</a>
           <Link className="btn btn--glass" href="/#suites">See the suites <Icon id="i-arrow" /></Link>
         </div>
       </div>

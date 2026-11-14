@@ -1043,3 +1043,20 @@ html.dsun-exit .dsun.held .dsun-stick { background: var(--teal-950) }
 html.dsun-exit .location-map { z-index: 1; margin-top: -200svh }
 html.dsun-exit .location-map .ctour.held { height: calc(var(--n) * 62svh + 200svh) }
 .dsun.is-through .dsun-stick { visibility: hidden }
+
+/* ===== Stay picker (BookingDialog.tsx): every Book direct / Check availability button opens it ===== */
+.bk { --c-text: var(--on-dark); --c-eyebrow: var(--aqua); color-scheme: dark; width: min(560px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); margin: auto; padding: 0; border: 1px solid var(--glass-edge); border-radius: var(--r-lg); background: var(--teal-night); color: var(--on-dark); box-shadow: 0 40px 90px -30px rgba(0, 0, 0, .7) }
+.bk::backdrop { background: rgba(11, 34, 40, .62); backdrop-filter: blur(6px) }
+.bk[open] { animation: bk-in .45s var(--ease) }
+@keyframes bk-in { from { opacity: 0; transform: translateY(14px) } }
+.bk-in { position: relative; display: grid; gap: 10px; padding: clamp(24px, 5vw, 40px) }
+.bk h2 { font-size: clamp(1.8rem, 4vw, 2.4rem); margin: 0 0 8px }
+.bk h2 em { color: var(--aqua) }
+.bk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px }
+.bk .err { min-height: 1.2em; margin: 0; font-size: .85rem }
+.bk .btn { justify-self: start; margin-top: 6px }
+.bk-note { margin: 0; font-size: .82rem; color: rgba(238, 245, 242, .7) }
+.bk-x { position: absolute; top: 12px; right: 12px; width: 44px; height: 44px; border: 0; border-radius: 50%; background: transparent; color: inherit; font-size: 1.8rem; line-height: 1; cursor: pointer }
+.bk-x:hover { background: var(--glass-fill) }
+@media (max-width: 420px) { .bk-grid { grid-template-columns: 1fr } .bk .btn { justify-self: stretch } }
+@media (prefers-reduced-motion: reduce) { .bk[open] { animation: none } }

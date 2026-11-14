@@ -152,7 +152,7 @@ export function SuiteJourney() {
         </ul>
         <div className="sj-ov-cta">
           <button type="button" className="btn btn--glass" onClick={explore} aria-controls="suites">Explore the suites <Icon id="i-arrow" /></button>
-          <a className="tlink" href={bookHref()}>Check availability <Icon id="i-arrow" /></a>
+          <a className="tlink" href={bookHref()} data-book="">Check availability <Icon id="i-arrow" /></a>
         </div>
       </div>
     </section>
@@ -185,7 +185,7 @@ export function SuiteJourney() {
                 </ul>
                 {(!s.guests || !s.size) && <p className="sj-detail-note">Ask reception about guest capacity and suite size.</p>}
                 <p className="sj-best"><small>Best for</small>{s.bestFor}</p>
-                <a className="tlink" href={bookHref()}>Check availability <Icon id="i-arrow" /></a>
+                <a className="tlink" href={bookHref()} data-book="">Check availability <Icon id="i-arrow" /></a>
               </div>
               {s.photos.length > 1 && (
                 <div className="sj-bits">
@@ -205,7 +205,7 @@ export function SuiteJourney() {
             <h3>The comforts<br /><em>of your own place.</em></h3>
             <ul className="sj-amenities">{inEverySuite.map(x => <li key={x}><Icon id={AMENITY_ICONS[x]} /><span>{x}</span></li>)}</ul>
             <div className="sj-outro-links">
-              <a className="tlink" href={bookHref()}>Check availability <Icon id="i-arrow" /></a>
+              <a className="tlink" href={bookHref()} data-book="">Check availability <Icon id="i-arrow" /></a>
             </div>
           </div>
         </div>
