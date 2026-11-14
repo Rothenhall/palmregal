@@ -9,13 +9,14 @@
      needs one). Reduced motion: nothing changes on its own and clips show their still frame. */
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { heroSlides as SLIDES, site } from '@/content/site';
+import type { Edit, SiteContent } from '@/content/types';
 import { bookHref } from '@/lib/book';
+import { noEdit } from '@/lib/edit';
 import { Icon } from './Icons';
 
-const N = SLIDES.length;
-
-export function Hero() {
+export function Hero({ content, f = noEdit }: { content: SiteContent; f?: Edit }) {
+  const site = content.general, buttons = content.buttons, copy = content.hero;
+  const SLIDES = copy.slides, N = SLIDES.length;
   const root = useRef<HTMLElement>(null);
   const clips = useRef<(HTMLVideoElement | null)[]>([]);
   const [at, setAt] = useState(0);
@@ -48,13 +49,13 @@ export function Hero() {
   useEffect(() => {
     clips.current.forEach((v, i) => {
       if (!v) return;
-      const s = SLIDES[i], want = phone && s.mobile ? s.mobile : s.src;
+      const s = SLIDES[i], want = (phone && s.videoMobile ? s.videoMobile : s.video) || '';
       const near = i === at || i === (at + 1) % N;
-      if (near && !still && v.getAttribute('src') !== want) { v.src = want; v.load(); }
+      if (want && near && !still && v.getAttribute('src') !== want) { v.src = want; v.load(); }
       if (i === at && running) { v.currentTime = 0; v.play().catch(() => {}); }
       else v.pause();
     });
-  }, [at, running, phone, still]);
+  }, [at, running, phone, still, SLIDES]);
 
   const go = useCallback((i: number) => setAt(((i % N) + N) % N), []);
 
@@ -63,15 +64,15 @@ export function Hero() {
       <div className="hs-screen">
       <div className="hs-stage">
         {SLIDES.map((s, i) => (
-          <div key={s.src} className={'hs-slide' + (i === at ? ' on' : '')} role="group" aria-roledescription="slide" aria-label={`${i + 1} of ${N}`} aria-hidden={i !== at}
+          <div key={i} className={'hs-slide' + (i === at ? ' on' : '')} role="group" aria-roledescription="slide" aria-label={`${i + 1} of ${N}`} aria-hidden={i !== at}
             style={{ ['--secs' as string]: `${s.seconds}s` }}>
-            {s.kind === 'image' ? (
-              <img className="hs-media" src={s.src} alt={s.alt} decoding="async" fetchPriority={i === 0 ? 'high' : 'low'} />
+            {!s.video ? (
+              <img className="hs-media" src={s.image || ''} alt={s.alt} {...f(s, 'image')} decoding="async" fetchPriority={i === 0 ? 'high' : 'low'} />
             ) : (
               <>
                 <picture className="hs-media hs-poster">
                   {s.posterMobile && <source media="(max-width: 760px)" srcSet={s.posterMobile} />}
-                  <img src={s.poster} alt={s.alt} decoding="async" fetchPriority={i === 0 ? 'high' : 'low'} />
+                  <img src={s.poster || ''} alt={s.alt} {...f(s, 'poster')} decoding="async" fetchPriority={i === 0 ? 'high' : 'low'} />
                 </picture>
                 <video ref={el => { clips.current[i] = el; }} className="hs-media hs-clip" muted playsInline loop preload="none" aria-hidden="true" tabIndex={-1} disablePictureInPicture
                   onPlaying={e => e.currentTarget.classList.add('ready')} />
@@ -83,23 +84,23 @@ export function Hero() {
       </div>
 
       <div className="hs-copy wrap">
-        <h1 className="eyebrow">{site.name} · Resort homestay, Gopalpur on Sea</h1>
+        <h1 className="eyebrow" {...f(copy, 'eyebrow')}>{copy.eyebrow}</h1>
         <div className="hs-captions" aria-live={running ? 'off' : 'polite'}>
           {SLIDES.map((s, i) => (
-            <p key={s.src} className={'hs-caption' + (i === at ? ' on' : '')} aria-hidden={i !== at}>{s.title} <em>{s.em}</em></p>
+            <p key={i} className={'hs-caption' + (i === at ? ' on' : '')} aria-hidden={i !== at} {...f(s, 'title')}>{s.title} <em {...f(s, 'em')}>{s.em}</em></p>
           ))}
         </div>
         <div className="sh-cta">
-          <a className="btn btn--book" href={bookHref()} data-book="">Check availability</a>
-          <Link className="btn btn--glass" href="/#suites">See the suites <Icon id="i-arrow" /></Link>
+          <a className="btn btn--book" href={bookHref(site)} data-book="" {...f(buttons, 'checkAvailability')}>{buttons.checkAvailability}</a>
+          <Link className="btn btn--glass" href="/#suites" {...f(buttons, 'seeSuites')}>{buttons.seeSuites} <Icon id="i-arrow" /></Link>
         </div>
       </div>
 
       <div className="hs-foot wrap">
-        <span className="hs-place">Gopalpur on Sea, Odisha</span>
+        <span className="hs-place" {...f(copy, 'place')}>{copy.place}</span>
         <div className="hs-dots" role="tablist" aria-label="Choose a view">
           {SLIDES.map((s, i) => (
-            <button key={s.src} type="button" role="tab" aria-selected={i === at} aria-label={`${s.title} ${s.em}`} className={i === at ? 'on' : ''} onClick={() => go(i)}>
+            <button key={i} type="button" role="tab" aria-selected={i === at} aria-label={`${s.title} ${s.em}`} className={i === at ? 'on' : ''} onClick={() => go(i)}>
               <i style={{ animationDuration: `${s.seconds}s` }} key={i === at ? `run-${at}` : 'idle'} />
             </button>
           ))}
@@ -109,7 +110,7 @@ export function Hero() {
             <span aria-hidden="true">{paused ? '▶' : '❚❚'}</span>
           </button>
         )}
-        <a className="hs-explore" href="#arrival">Explore your stay <span aria-hidden="true">↓</span></a>
+        <a className="hs-explore" href="#arrival" {...f(buttons, 'explore')}>{buttons.explore} <span aria-hidden="true">↓</span></a>
       </div>
 
       </div>

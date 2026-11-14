@@ -1,0 +1,14 @@
+/* Palm Regal colours for the Edit site editor: Tina orange (actions) -> site amber, Tina blue (links, focus) -> site teal. Loaded by the editor index.html (patched, see patches/). */
+.text-tina-orange,.text-orange-500{color:#d08a3c !important}
+.text-tina-orange-dark,.hover\:text-tina-orange-dark:hover{color:#b8742c !important}
+.bg-tina-orange,.hover\:bg-tina-orange:hover{background-color:#d08a3c !important}
+.bg-tina-orange-dark{background-color:#b8742c !important}
+.border-tina-orange{border-color:#d08a3c !important}
+.focus\:ring-tina-orange-dark:focus{--tw-ring-color:#b8742c !important}
+.text-blue-400,.text-blue-500,.text-blue-600,.text-blue-700,.text-blue-800{color:#193f47 !important}
+.hover\:text-blue-400:hover,.hover\:text-blue-500:hover,.hover\:text-blue-600:hover,.hover\:text-blue-800:hover,
+.group:hover .group-hover\:text-blue-500,.focus\:text-blue-500:focus{color:#24525c !important}
+.bg-blue-100{background-color:#d9f1f0 !important}
+.bg-blue-500{background-color:#193f47 !important}
+.border-blue-500,.border-blue-600,.focus\:border-blue-500:focus,.focus-within\:border-blue-500:focus-within{border-color:#193f47 !important}
+.focus\:ring-blue-500:focus,.ring-blue-100{--tw-ring-color:#193f47 !important}

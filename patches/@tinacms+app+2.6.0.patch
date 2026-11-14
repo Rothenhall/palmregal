@@ -1,0 +1,38 @@
+diff --git a/node_modules/@tinacms/app/index.html b/node_modules/@tinacms/app/index.html
+index ddea0aa..67186e3 100644
+--- a/node_modules/@tinacms/app/index.html
++++ b/node_modules/@tinacms/app/index.html
+@@ -2,9 +2,12 @@
+ <html lang="en">
+   <head>
+     <meta charset="UTF-8" />
+-    <link rel="icon" href="/favicon.svg" />
++    <link rel="icon" type="image/png" href="/img/emblem.png" />
++    <meta name="robots" content="noindex, nofollow" />
++    <meta name="theme-color" content="#193F47" />
++    <link rel="stylesheet" href="/brand/editor.css" />
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+-    <title>TinaCMS</title>
++    <title>Edit site · Palm Regal Admin</title>
+   </head>
+   <body class="tina-tailwind">
+     <div id="root"></div>
+@@ -45,15 +48,11 @@
+         }\
+         </style>\
+         <div id=\'no-assets-placeholder\'>\
+-          <h1>Failed loading TinaCMS assets</h1>\
++          <h1>The editor could not load</h1>\
+           <p>\
+-            Your TinaCMS configuration may be misconfigured, and we could not load\
+-            the assets for this page.\
++            Please refresh the page. If it keeps happening, tell the website developer.\
+           </p>\
+-          <p>\
+-            Please visit <a href="https://tina.io/docs/r/FAQ/#13-how-do-i-resolve-failed-loading-tinacms-assets-error">this doc</a> for help.\
+-          </p>\
+-        </div>'
++                  </div>'
+       }
+ 
+       // Check if #root has childen after 2 seconds

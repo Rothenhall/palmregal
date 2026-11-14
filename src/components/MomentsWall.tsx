@@ -1,13 +1,13 @@
 'use client';
 /* A wall of moments: tiles drift with the cursor, and a click opens one large with its caption */
 import { useEffect, useRef, useState } from 'react';
-import { gallery } from '@/content/site';
+import type { GalleryPhoto } from '@/content/types';
 import { Icon } from './Icons';
 
 const COLS = 9, ROWS = 6;
-const tiles = Array.from({ length: COLS * ROWS }, (_, i) => gallery[(i * 7) % gallery.length]);
 
-export function MomentsWall() {
+export function MomentsWall({ gallery }: { gallery: GalleryPhoto[] }) {
+  const tiles = Array.from({ length: COLS * ROWS }, (_, i) => gallery[(i * 7) % gallery.length]);
   const wall = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState<number | null>(null);
   const closeRef = useRef<HTMLButtonElement>(null);

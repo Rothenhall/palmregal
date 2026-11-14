@@ -2,13 +2,19 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { nav, site } from '@/content/site';
+import type { Edit, SiteContent } from '@/content/types';
 import { Icon } from './Icons';
-import { bookHref, waHref } from '@/lib/book';
+import { bookHref, telHref, waHref } from '@/lib/book';
+import { noEdit } from '@/lib/edit';
 
 const DARK = ['teal', 'canopy', 'night', 'dusk'];
 
-export function Header() {
+export function Header({ content, f = noEdit }: { content: SiteContent; f?: Edit }) {
+  const site = content.general, buttons = content.buttons;
+  const nav = [
+    { href: '/#suites', key: 'suites' }, { href: '/#facilities', key: 'facilities' }, { href: '/#gallery', key: 'gallery' },
+    { href: '/#location', key: 'location' }, { href: '/#contact', key: 'contact' },
+  ] as const;
   const path = usePathname();
   const ref = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(false);
@@ -60,19 +66,19 @@ export function Header() {
         <div className="wrap">
           <Link className="logo" href="/" aria-label="Palm Regal, home">
             <img src="/img/emblem.png" alt="" width={40} height={40} />
-            <span><b>{site.name}</b><small>{site.tagline}</small></span>
+            <span><b {...f(site, 'name')}>{site.name}</b><small {...f(site, 'tagline')}>{site.tagline}</small></span>
           </Link>
           <nav className="nav" aria-label="Main">
             {nav.map(n => (
-              <Link key={n.href} href={n.href}>
-                <span className="roll"><span>{n.label}</span><span aria-hidden="true">{n.label}</span></span>
+              <Link key={n.href} href={n.href} {...f(content.nav, n.key)}>
+                <span className="roll"><span>{content.nav[n.key]}</span><span aria-hidden="true">{content.nav[n.key]}</span></span>
               </Link>
             ))}
           </nav>
           <div className="acts">
-            <a className="ibtn opt" href={site.phoneHref} aria-label="Call Palm Regal"><Icon id="i-phone" /></a>
-            <a className="ibtn opt" href={waHref()} aria-label="WhatsApp Palm Regal"><Icon id="i-wa" /></a>
-            <a className="btn btn--book" href={bookHref()} data-book="">Book direct</a>
+            <a className="ibtn opt" href={telHref(site.phone)} aria-label="Call Palm Regal"><Icon id="i-phone" /></a>
+            <a className="ibtn opt" href={waHref(site)} aria-label="WhatsApp Palm Regal"><Icon id="i-wa" /></a>
+            <a className="btn btn--book" href={bookHref(site)} data-book="" {...f(buttons, 'bookDirect')}>{buttons.bookDirect}</a>
             <button ref={openBtn} className="ibtn menu-btn" type="button" aria-label="Open menu" aria-expanded={open} aria-controls="mnav" onClick={() => setOpen(true)}><Icon id="i-menu" /></button>
           </div>
         </div>
@@ -84,12 +90,12 @@ export function Header() {
         </div>
         <nav aria-label="Mobile">
           <Link href="/" onClick={() => setOpen(false)}><i>00</i>Home</Link>
-          {nav.map((n, i) => <Link key={n.href} href={n.href} onClick={() => setOpen(false)}><i>0{i + 1}</i>{n.label}</Link>)}
+          {nav.map((n, i) => <Link key={n.href} href={n.href} onClick={() => setOpen(false)}><i>0{i + 1}</i>{content.nav[n.key]}</Link>)}
         </nav>
         <div className="mnav-foot">
-          <a className="btn btn--book" href={bookHref()} data-book="" onClick={() => setOpen(false)}>Book direct</a>
-          <a className="btn btn--line" href={site.phoneHref} onClick={() => setOpen(false)}><Icon id="i-phone" />Call</a>
-          <a className="btn btn--line" href={waHref()} onClick={() => setOpen(false)}><Icon id="i-wa" />WhatsApp</a>
+          <a className="btn btn--book" href={bookHref(site)} data-book="" onClick={() => setOpen(false)}>{buttons.bookDirect}</a>
+          <a className="btn btn--line" href={telHref(site.phone)} onClick={() => setOpen(false)}><Icon id="i-phone" />Call</a>
+          <a className="btn btn--line" href={waHref(site)} onClick={() => setOpen(false)}><Icon id="i-wa" />WhatsApp</a>
         </div>
       </div>
     </>

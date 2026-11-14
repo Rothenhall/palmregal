@@ -1,10 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { suites } from '@/content/site';
-import { bookingMessage, sendLink, todayISO } from '@/lib/book';
+import { sendLink, todayISO } from '@/lib/book';
+import type { General } from '@/content/types';
 
 export const GUESTS = ['1 guest', '2 guests', '3 guests', '4 guests', '5 guests', '6+ guests'];
-export const SUITE_OPTS = ['Any suite', ...suites.map(s => s.name)];
 
 export function useDates() {
   const [min, setMin] = useState('');
@@ -17,8 +16,8 @@ export function useDates() {
   return { min, checkIn, checkOut, onIn, setOut };
 }
 
-export function send(message: string) {
-  const l = sendLink(message);
+export function send(message: string, site: Pick<General, 'whatsapp' | 'email'> & { bookingUrl: string }) {
+  const l = sendLink(message, site);
   if (l.via === 'WhatsApp') window.open(l.href, '_blank', 'noopener'); else window.location.href = l.href;
   return l.via;
 }

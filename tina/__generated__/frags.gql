@@ -1,0 +1,192 @@
+fragment HomeParts on Home {
+  __typename
+  seo {
+    __typename
+    title
+    description
+    image
+  }
+  general {
+    __typename
+    name
+    tagline
+    phone
+    email
+    whatsapp
+    bookingUrl
+    address
+    instagram
+    checkIn
+    checkOut
+  }
+  buttons {
+    __typename
+    bookDirect
+    checkAvailability
+    seeSuites
+    explore
+  }
+  nav {
+    __typename
+    suites
+    facilities
+    gallery
+    location
+    contact
+  }
+  hero {
+    __typename
+    eyebrow
+    place
+    slides {
+      __typename
+      ... on HomeHeroSlidesPhotoSlide {
+        image
+        title
+        em
+        alt
+        seconds
+      }
+      ... on HomeHeroSlidesVideoSlide {
+        poster
+        posterMobile
+        title
+        em
+        alt
+        seconds
+        video
+        videoMobile
+      }
+    }
+  }
+  arrival {
+    __typename
+    eyebrow
+    title
+    em
+    lede
+    ledeEm
+    place
+  }
+  suitesSection {
+    __typename
+    eyebrow
+    title
+    em
+    lede
+    exploreButton
+    suites {
+      __typename
+      name
+      long
+      guests
+      size
+      outdoor
+      bestFor
+      highlights
+      photos {
+        __typename
+        src
+        alt
+      }
+      pending
+    }
+    outroEyebrow
+    outroTitle
+    outroEm
+    inEverySuite {
+      __typename
+      label
+      icon
+    }
+  }
+  facilitiesSection {
+    __typename
+    eyebrow
+    title
+    em
+    lede
+    groups {
+      __typename
+      title
+      em
+      text
+      items {
+        __typename
+        name
+        tag
+        text
+        img
+        standIn
+      }
+    }
+  }
+  daySection {
+    __typename
+    eyebrow
+    moreLink
+    moments {
+      __typename
+      time
+      title
+      em
+      text
+      img
+      alt
+    }
+  }
+  locationSection {
+    __typename
+    eyebrow
+    title
+    em
+    lede
+  }
+  momentsSection {
+    __typename
+    eyebrow
+    title
+    em
+    lede
+    photos {
+      __typename
+      src
+      cap
+      alt
+      group
+    }
+  }
+  faqSection {
+    __typename
+    eyebrow
+    title
+    em
+    lede
+    moreLink
+    faqs {
+      __typename
+      q
+      answer
+      pending
+    }
+  }
+  contactSection {
+    __typename
+    eyebrow
+    title
+    em
+    lede
+    callLabel
+    writeLabel
+    formEyebrow
+    formTitle
+    formEm
+  }
+  footer {
+    __typename
+    aboutTitle
+    aboutText
+    followText
+    note
+  }
+}

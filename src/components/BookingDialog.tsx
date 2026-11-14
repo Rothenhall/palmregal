@@ -1,6 +1,5 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import { site } from '@/content/site';
 import { bookingLink, todayISO } from '@/lib/book';
 import { Icon } from './Icons';
 
@@ -18,14 +17,14 @@ function nextDay(iso: string) {
  * `data-book`). The guest picks dates and party size here, then goes to the booking engine with
  * those filled in. Without JavaScript the links still lead to the booking engine itself.
  */
-export function BookingDialog() {
+export function BookingDialog({ bookingUrl }: { bookingUrl: string }) {
   const ref = useRef<HTMLDialogElement>(null);
   const [min, setMin] = useState('');
   const [v, setV] = useState({ checkIn: '', checkOut: '', adults: 2, children: 0 });
   const [err, setErr] = useState('');
 
   useEffect(() => {
-    if (!site.bookingUrl) return;
+    if (!bookingUrl) return;
     const onClick = (e: MouseEvent) => {
       if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
       const a = (e.target as Element | null)?.closest?.('a[data-book]');
@@ -39,9 +38,9 @@ export function BookingDialog() {
     };
     document.addEventListener('click', onClick, true);
     return () => document.removeEventListener('click', onClick, true);
-  }, []);
+  }, [bookingUrl]);
 
-  if (!site.bookingUrl) return null;
+  if (!bookingUrl) return null;
 
   const onIn = (checkIn: string) => {
     setErr('');
@@ -55,7 +54,7 @@ export function BookingDialog() {
         if (!v.checkIn) return setErr('Choose a check-in date.');
         if (v.checkIn < min) return setErr('Check-in cannot be in the past.');
         if (!v.checkOut || v.checkOut <= v.checkIn) return setErr('Choose a check-out date after check-in.');
-        window.location.href = bookingLink(v);
+        window.location.href = bookingLink(v, bookingUrl);
       }}>
         <button type="button" className="bk-x" aria-label="Close" onClick={() => ref.current?.close()}>×</button>
         <p className="eyebrow">Book direct</p>

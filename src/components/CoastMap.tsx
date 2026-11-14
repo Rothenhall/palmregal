@@ -17,7 +17,9 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import geo from '@/content/coastGeo.json';
-import { coast } from '@/content/site';
+import { coast } from '@/content/coast';
+import type { Edit } from '@/content/types';
+import { noEdit } from '@/lib/edit';
 import { hasMotion } from '@/lib/env';
 import { DRAFT } from '@/lib/book';
 import { Todo } from './Todo';
@@ -86,8 +88,10 @@ const PINS = ['pr', 'beach', ...places.map(p => p.id)];
 const pinName = (id: string) => (id === 'pr' ? 'Palm Regal' : coast.find(c => c.id === id)!.name);
 const pinStop = (id: string) => Math.max(1, STOPS.findIndex(s => s.id === id));
 
-export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'location-title' }: {
+export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'location-title', copy, f = noEdit }: {
   immersive?: boolean; headingAs?: 'h1' | 'h2'; headingId?: string;
+  /** the heading block above the map (the map itself is drawn from src/content/coast.ts) */
+  copy: { eyebrow: string; title: string; em: string; lede: string }; f?: Edit;
 }) {
   const MapHeading = headingAs;
   const root = useRef<HTMLDivElement>(null);
@@ -294,9 +298,9 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
       <div className="ctour-stick">
         <div className="ctour-grid">
           {immersive && <header className="ctour-heading">
-            <p className="eyebrow">Location · Gopalpur on Sea</p>
-            <MapHeading className="ctour-title" id={headingId}>Gopalpur, and<br /><em>all around it.</em></MapHeading>
-            <p className="ctour-heading-copy">A short walk to the sea. A little further to discover Odisha.</p>
+            <p className="eyebrow" {...f(copy, 'eyebrow')}>{copy.eyebrow}</p>
+            <MapHeading className="ctour-title" id={headingId} {...f(copy, 'title')}>{copy.title}<br /><em {...f(copy, 'em')}>{copy.em}</em></MapHeading>
+            <p className="ctour-heading-copy" {...f(copy, 'lede')}>{copy.lede}</p>
           </header>}
           <div className="ctour-stage" ref={stage} data-near="0">
             <div className="ctour-back" ref={back} aria-hidden="true" />

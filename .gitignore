@@ -4,3 +4,15 @@ out
 *.tsbuildinfo
 next-env.d.ts
 data/geo/
+
+# local secrets
+.env
+.env*.local
+
+# Edit site (Tina): the editor is built into public/admin/editor by `npm run build` / `npm run dev`
+public/admin/
+tina/__generated__/.cache
+
+.vercel
+.env*
+!.env.example

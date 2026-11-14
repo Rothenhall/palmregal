@@ -4,14 +4,15 @@
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { facilities, facilityGroups } from '@/content/site';
+import type { Edit, FacilityGroup } from '@/content/types';
+import { noEdit } from '@/lib/edit';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const TONES = ['teal', 'dusk', 'paper', 'canopy'];
-const NUM = ['I', 'II', 'III', 'IV'];
+const NUM = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
 
-export function DelightsStack() {
+export function DelightsStack({ groups, f = noEdit }: { groups: FacilityGroup[]; f?: Edit }) {
   const root = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -77,28 +78,28 @@ export function DelightsStack() {
       document.fonts?.removeEventListener('loadingdone', fontsReady);
       context?.revert(); delete el.dataset.stacking;
     };
-  }, []);
+  }, [groups.length]);
 
   return (
     <div className="dstack-wrap" ref={root}>
       <div className="dstack">
-        {facilityGroups.map((g, gi) => {
-          const list = facilities.filter(f => f.group === g.id);
-          const pics = list.filter(f => f.img && !f.standIn).slice(0, 2);
+        {groups.map((g, gi) => {
+          const list = g.items;
+          const pics = list.filter(x => x.img && !x.standIn).slice(0, 2);
           return (
-            <article className={'dcard dcard--' + TONES[gi]} key={g.id}>
+            <article className={'dcard dcard--' + TONES[gi % TONES.length]} key={gi}>
               <span className="dcard-veil" aria-hidden="true" />
               <div className="dcard-body">
-                <span className="dcard-no">{NUM[gi]}</span>
-                <h3>{g.title} <em>{g.em}</em></h3>
-                <p className="dcard-lede">{g.text}</p>
+                <span className="dcard-no">{NUM[gi % NUM.length]}</span>
+                <h3 {...f(g, 'title')}>{g.title} <em {...f(g, 'em')}>{g.em}</em></h3>
+                <p className="dcard-lede" {...f(g, 'text')}>{g.text}</p>
                 <ul>
-                  {list.map(f => <li key={f.name}><b>{f.name}{f.tag && <i> {f.tag}</i>}</b><span>{f.text}</span></li>)}
+                  {list.map((x, xi) => <li key={xi} {...f(x, 'name')}><b>{x.name}{x.tag && <i> {x.tag}</i>}</b><span {...f(x, 'text')}>{x.text}</span></li>)}
                 </ul>
               </div>
               <div className="dcard-media">
-                {pics[0] && <div className="dcard-main"><img src={pics[0].img} alt={pics[0].name} loading="lazy" decoding="async" /></div>}
-                {pics[1] && <div className="dcard-small"><img src={pics[1].img} alt={pics[1].name} loading="lazy" decoding="async" /></div>}
+                {pics[0] && <div className="dcard-main"><img src={pics[0].img!} alt={pics[0].name} loading="lazy" decoding="async" {...f(pics[0], 'img')} /></div>}
+                {pics[1] && <div className="dcard-small"><img src={pics[1].img!} alt={pics[1].name} loading="lazy" decoding="async" {...f(pics[1], 'img')} /></div>}
               </div>
             </article>
           );

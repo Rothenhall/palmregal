@@ -17,7 +17,6 @@
 'use client';
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { day } from "@/content/site";
 
 /* ── inlined from lab/spring ──────────────────────── */
 /* ── one spring, for everything that settles ───────────────
@@ -146,11 +145,6 @@ const stillness = () =>
 /* Palm Regal: pointed at this project's own photos, taken from the one list of the day in
    content/site.ts (morning to night), so the strip and the words beside it cannot drift apart. */
 type Shot = { name: string; src: string; alt: string };
-const SHOTS: Shot[] = day.map((d) => ({
-  name: d.time.toLowerCase().replace(/\s+/g, "-"),
-  src: d.img,
-  alt: d.alt,
-}));
 
 /* ══ Image accordion ═══════════════════════════════════════
    A row of pictures cropped to slivers. Point at one and it
@@ -241,8 +235,6 @@ const H = 300;
    change what is in the strip or how many. */
 /* Palm Regal: the five moments of the day, by name. The photos are landscape rather than
    portrait; `cover` crops them to the tall slivers just the same. */
-const KEEP = ["morning", "late-morning", "afternoon", "evening", "night"];
-const PICS = KEEP.map((name) => SHOTS.find((s) => s.name === name)!);
 
 /* ── the corner, and it FOLLOWS THE GAP ────────────────────
    A rounded picture next to a rounded picture with no air
@@ -323,7 +315,7 @@ export function ImageAccordion({
      `undefined` leaves the block as it was. */
   active,
   /* Palm Regal: the five pictures; defaults to the day in content/site.ts */
-  pics = PICS,
+  pics,
   /* Palm Regal: a line drawn UNDER each picture (never over it, see below) */
   label,
   /* Palm Regal: called when a picture is chosen by click, tap or Enter */
@@ -336,10 +328,10 @@ export function ImageAccordion({
   width?: number | string;
   height?: number | string;
   active?: number | null;
-  pics?: Shot[];
+  pics: Shot[];
   label?: (i: number, isOpen: boolean) => ReactNode;
   onPick?: (i: number) => void;
-} = {}) {
+}) {
   /* which picture the pointer is on, by index. Null rather
      than -1 so "none" cannot be confused with the first. */
   const [pointed, setAt] = useState<number | null>(null);

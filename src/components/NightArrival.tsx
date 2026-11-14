@@ -6,15 +6,17 @@ import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { site } from '@/content/site';
+import type { Edit, SiteContent } from '@/content/types';
 import { bookHref } from '@/lib/book';
+import { noEdit } from '@/lib/edit';
 import { Icon } from './Icons';
 
 gsap.registerPlugin(ScrollTrigger);
 const MEDIA = '/media/palm-regal-night-arrival-v4-';
 const FPS = 30;
 
-export function NightArrival() {
+export function NightArrival({ content, f = noEdit }: { content: SiteContent; f?: Edit }) {
+  const site = content.general, buttons = content.buttons, copy = content.arrival;
   const root = useRef<HTMLElement>(null);
   const film = useRef<HTMLVideoElement>(null);
 
@@ -104,18 +106,18 @@ export function NightArrival() {
           muted playsInline preload="none" aria-hidden="true" tabIndex={-1} disablePictureInPicture />
         <div className="aerial-hero__shade" aria-hidden="true" />
         <div className="aerial-hero__copy wrap">
-          <p className="eyebrow">Resort homestay · Gopalpur on Sea</p>
-          <h2 id="arrival-title">Palm <em>Regal</em></h2>
-          <p className="aerial-hero__lede">A home by the sea, <em>wrapped in green.</em></p>
+          <p className="eyebrow" {...f(copy, 'eyebrow')}>{copy.eyebrow}</p>
+          <h2 id="arrival-title" {...f(copy, 'title')}>{copy.title} <em {...f(copy, 'em')}>{copy.em}</em></h2>
+          <p className="aerial-hero__lede" {...f(copy, 'lede')}>{copy.lede} <em {...f(copy, 'ledeEm')}>{copy.ledeEm}</em></p>
           <div className="sh-cta">
-            <a className="btn btn--book" href={bookHref()} data-book="">Check availability</a>
-            <Link className="btn btn--glass" href="/#suites">See the suites <Icon id="i-arrow" /></Link>
+            <a className="btn btn--book" href={bookHref(site)} data-book="" {...f(buttons, 'checkAvailability')}>{buttons.checkAvailability}</a>
+            <Link className="btn btn--glass" href="/#suites" {...f(buttons, 'seeSuites')}>{buttons.seeSuites} <Icon id="i-arrow" /></Link>
           </div>
         </div>
         <div className="aerial-hero__footer wrap">
-          <span className="aerial-hero__location">Gopalpur on Sea, Odisha</span>
+          <span className="aerial-hero__location" {...f(copy, 'place')}>{copy.place}</span>
           <span className="aerial-hero__progress" aria-hidden="true"><i /></span>
-          <a className="aerial-hero__explore" href="#suites">Explore your stay <span aria-hidden="true">↓</span></a>
+          <a className="aerial-hero__explore" href="#suites" {...f(buttons, 'explore')}>{buttons.explore} <span aria-hidden="true">↓</span></a>
         </div>
       </div>
       <span className="sr">Check-in {site.checkIn}, check-out {site.checkOut}.</span>

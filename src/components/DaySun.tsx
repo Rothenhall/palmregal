@@ -6,19 +6,19 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { day } from '@/content/site';
+import type { Edit, Moment } from '@/content/types';
 import { hasMotion } from '@/lib/env';
+import { noEdit } from '@/lib/edit';
 import { grid, order, turned, TILE, type Tile } from '@/lib/tiles';
 import { ImageAccordion } from './ImageAccordion';
 import { Icon } from './Icons';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const N = day.length;
 const pad = (n: number) => String(n).padStart(2, '0');
 
 const LIGHT = [[210, 190, 151], [176, 198, 179], [139, 182, 185], [210, 158, 112], [100, 143, 158]];
-const paint = (els: HTMLElement[], progress: number) => {
+const paint = (els: HTMLElement[], progress: number, N: number) => {
   // Each selected chapter's midpoint lands exactly on its time-rail marker.
   const p = Math.max(0, Math.min(1, (progress * N - .5) / Math.max(1, N - 1)));
   const tone = p * (LIGHT.length - 1), lo = Math.floor(tone), hi = Math.min(LIGHT.length - 1, lo + 1);
@@ -31,7 +31,9 @@ const paint = (els: HTMLElement[], progress: number) => {
   }
 };
 
-export function DaySun() {
+export function DaySun({ copy, f = noEdit }: { copy: { eyebrow: string; moreLink: string; moments: Moment[] }; f?: Edit }) {
+  const day = copy.moments, N = day.length;
+  const pics = day.map(d => ({ name: d.time, src: d.img, alt: d.alt }));
   const root = useRef<HTMLElement>(null);
   const trig = useRef<ScrollTrigger | null>(null);
   const sky = useRef<HTMLDivElement>(null);
@@ -50,18 +52,18 @@ export function DaySun() {
   /* the light only touches the two elements that use it (the glow and the time rail), never the
      whole section, so a scroll frame restyles two small boxes instead of every photograph */
   const lit = () => [sky.current, rail.current].filter(Boolean) as HTMLElement[];
-  useEffect(() => { if (!held) paint(lit(), (i + .5) / N); }, [i, held]);
+  useEffect(() => { if (!held) paint(lit(), (i + .5) / N, N); }, [i, held, N]);
 
   /* measured once the section has its scrolling height, or start and end would be wrong.
      The last viewport of the section is the way out (below), so the day itself ends one viewport early. */
   useEffect(() => {
     if (!held) return;
     const el = root.current!, targets = lit();
-    paint(targets, 0);
+    paint(targets, 0, N);
     const st = ScrollTrigger.create({
       trigger: el, start: 'top top', end: () => `bottom-=${innerHeight} bottom`,
       onUpdate: self => {
-        paint(targets, self.progress);
+        paint(targets, self.progress, N);
         const n = Math.min(N - 1, Math.floor(self.progress * N * .999));
         setI(c => (c === n ? c : n));
       },
@@ -69,7 +71,7 @@ export function DaySun() {
     trig.current = st;
     ScrollTrigger.refresh();
     return () => { st.kill(); trig.current = null; };
-  }, [held]);
+  }, [held, N]);
 
   /* The way out into the coast map (after lucid's tiles). The map section sits pinned underneath this
      one's last viewport; while that viewport scrolls, the day's screen is cut away square by square in
@@ -127,19 +129,19 @@ export function DaySun() {
         <div className="dsun-sky" ref={sky} aria-hidden="true" />
         <div className="wrap dsun-grid">
           <div className="dsun-copy">
-            <p className="eyebrow" id="dsun-h">A day at Palm Regal</p>
+            <p className="eyebrow" id="dsun-h" {...f(copy, 'eyebrow')}>{copy.eyebrow}</p>
             <div className="dsun-num num" aria-hidden="true"><span key={i}>{pad(i + 1)}</span><b>/ {pad(N)}</b></div>
             <div className="dsun-words">
               {day.map((d, n) => (
-                <article key={d.time} className={'dsun-step' + (n === i ? ' on' : '')} aria-hidden={held && n !== i ? true : undefined}>
-                  <time>{d.time}</time>
-                  <h3>{d.title} <em>{d.em}</em></h3>
-                  <p>{d.text}</p>
+                <article key={n} className={'dsun-step' + (n === i ? ' on' : '')} aria-hidden={held && n !== i ? true : undefined}>
+                  <time {...f(d, 'time')}>{d.time}</time>
+                  <h3 {...f(d, 'title')}>{d.title} <em {...f(d, 'em')}>{d.em}</em></h3>
+                  <p {...f(d, 'text')}>{d.text}</p>
                 </article>
               ))}
             </div>
             <div className="dsun-foot">
-              <Link className="tlink" href="/#moments">More moments <Icon id="i-arrow" /></Link>
+              <Link className="tlink" href="/#moments" {...f(copy, 'moreLink')}>{copy.moreLink} <Icon id="i-arrow" /></Link>
             </div>
           </div>
 
@@ -147,7 +149,7 @@ export function DaySun() {
             <nav className="dsun-timeline" ref={rail} aria-label="Choose a moment in the day">
               <span className="dsun-timeline-line" aria-hidden="true" />
               <span className="dsun-timeline-orb" aria-hidden="true" />
-              {day.map((d, n) => <button key={d.time} type="button" onClick={() => pick(n)} aria-current={n === i ? 'step' : undefined}>
+              {day.map((d, n) => <button key={n} type="button" onClick={() => pick(n)} aria-current={n === i ? 'step' : undefined}>
                 <span className="dsun-timeline-point" aria-hidden="true" />{d.time}
               </button>)}
             </nav>
@@ -155,6 +157,7 @@ export function DaySun() {
               <ImageAccordion
                 width="100%" height="100%" gap={6} open={74} reach={42} bounce={5}
                 active={i}
+                pics={pics}
                 onPick={pick}
               />
             </div>

@@ -1,23 +1,27 @@
 import Link from 'next/link';
-import { nav, site } from '@/content/site';
+import type { Edit, SiteContent } from '@/content/types';
+import { telHref } from '@/lib/book';
+import { noEdit } from '@/lib/edit';
 import { Icon } from './Icons';
 import { LiquidLayer } from './LiquidLayer';
 
-export function Footer() {
+export function Footer({ content, f = noEdit }: { content: SiteContent; f?: Edit }) {
+  const site = content.general, ft = content.footer;
+  const nav = [['suites', '/#suites'], ['facilities', '/#facilities'], ['gallery', '/#gallery'], ['location', '/#location']] as const;
   return (
     <footer className="foot foot--home">
       <div className="wrap">
         <div className="foot-grid">
-          <div className="foot-about"><h4>At home by the sea</h4><p>Living rooms, kitchenettes and private balconies. Palms outside, the sea a short walk away. A little more room to make Gopalpur your own.</p></div>
-          <div><h4>Explore</h4><ul><li><Link href="/">Home</Link></li>{nav.filter(n => n.href !== '/#contact').map(n => <li key={n.href}><Link href={n.href}>{n.label}</Link></li>)}<li><a href="/#faq">FAQs</a></li></ul></div>
-          <div><h4>Find us</h4><address><span>{site.address}</span><a href="/#contact">Plan your stay <Icon id="i-arrow" /></a><a className="num" href={site.phoneHref}>{site.phone}</a><a href={`mailto:${site.email}`}>{site.email}</a></address></div>
-          <div><h4>Follow</h4><p>The sea, the gardens and life at the resort.</p>
+          <div className="foot-about"><h4 {...f(ft, 'aboutTitle')}>{ft.aboutTitle}</h4><p {...f(ft, 'aboutText')}>{ft.aboutText}</p></div>
+          <div><h4>Explore</h4><ul><li><Link href="/">Home</Link></li>{nav.map(([k, href]) => <li key={href}><Link href={href} {...f(content.nav, k)}>{content.nav[k]}</Link></li>)}<li><a href="/#faq">FAQs</a></li></ul></div>
+          <div><h4>Find us</h4><address><span {...f(site, 'address')}>{site.address}</span><a href="/#contact">Plan your stay <Icon id="i-arrow" /></a><a className="num" href={telHref(site.phone)} {...f(site, 'phone')}>{site.phone}</a><a href={`mailto:${site.email}`} {...f(site, 'email')}>{site.email}</a></address></div>
+          <div><h4>Follow</h4><p {...f(ft, 'followText')}>{ft.followText}</p>
             <div className="socials">
-              <a href={site.instagram} target="_blank" rel="noopener" aria-label="Instagram @palmregalresort"><Icon id="i-ig" /></a>
+              <a href={site.instagram} target="_blank" rel="noopener" aria-label="Instagram @palmregalresort" {...f(site, 'instagram')}><Icon id="i-ig" /></a>
             </div>
           </div>
         </div>
-        <div className="foot-note"><span>Resort homestay · Gopalpur on Sea</span><a href="#main">Back to the top <span aria-hidden="true">↑</span></a></div>
+        <div className="foot-note"><span {...f(ft, 'note')}>{ft.note}</span><a href="#main">Back to the top <span aria-hidden="true">↑</span></a></div>
       </div>
       <div className="water"><LiquidLayer /><Fireflies /><div className="bigword" aria-hidden="true" data-speed=".28" data-ptrigger=".foot"><img src="/img/emblem.png" alt="" />Palm <em>Regal</em></div></div>
       <div className="foot-bottom"><span>© {new Date().getFullYear()} Palm Regal Resort Homestay, Gopalpur</span><span>Website by Rothenhall</span></div>

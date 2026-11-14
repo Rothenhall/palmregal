@@ -13,31 +13,26 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { inEverySuite, suites, type Suite } from '@/content/site';
+import type { Edit, SiteContent, Suite } from '@/content/types';
 import { hasMotion } from '@/lib/env';
 import { bookHref } from '@/lib/book';
+import { noEdit } from '@/lib/edit';
 import { Icon } from './Icons';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const N = suites.length;
 const pad = (n: number) => String(n).padStart(2, '0');
-const AMENITY_ICONS: Record<string, string> = {
-  'Kitchenette': 'i-kitchen', 'Private balcony': 'i-balcony', 'Living room': 'i-sofa',
-  'Home comforts': 'p-home', 'Air conditioning': 'i-ac', 'Wi-Fi': 'i-wifi',
-  'Parking': 'i-parking', 'Pets welcome': 'i-pet',
-};
 
-function SuitePhotos({ suite }: { suite: Suite }) {
+function SuitePhotos({ suite, f }: { suite: Suite; f: Edit }) {
   const [index, setIndex] = useState(0);
   const photo = suite.photos[index];
   const count = suite.photos.length;
   return (
     <figure className="sj-hero" aria-label={`${suite.name} photographs`}>
-      <img src={photo.src} alt={photo.alt} decoding="async" />
-      {suite.todo && <span className="stand">Photo to confirm</span>}
+      <img src={photo.src} alt={photo.alt} decoding="async" {...f(photo, 'src')} />
+      {suite.pending && <span className="stand">Photo to confirm</span>}
       <figcaption className="sj-photo-caption">
-        <span aria-live="polite"><small>{pad(index + 1)} / {pad(count)}</small>{photo.alt}</span>
+        <span aria-live="polite"><small>{pad(index + 1)} / {pad(count)}</small><span {...f(photo, 'alt')}>{photo.alt}</span></span>
         {count > 1 && <div className="sj-photo-controls">
           <button type="button" className="sj-photo-prev" aria-label={`Previous photograph of ${suite.name}`} onClick={() => setIndex(n => (n + count - 1) % count)}><Icon id="i-arrow" /></button>
           <button type="button" aria-label={`Next photograph of ${suite.name}`} onClick={() => setIndex(n => (n + 1) % count)}><Icon id="i-arrow" /></button>
@@ -52,7 +47,8 @@ const title = (name: string) => {
   return <>{w.slice(0, -k).join(' ')} <em>{w.slice(-k).join(' ')}</em></>;
 };
 
-export function SuiteJourney() {
+export function SuiteJourney({ content, f = noEdit }: { content: SiteContent; f?: Edit }) {
+  const site = content.general, sc = content.suitesSection, suites = sc.suites, N = suites.length;
   const root = useRef<HTMLElement>(null);
   const track = useRef<HTMLDivElement>(null);
   const [held, setHeld] = useState(false);
@@ -123,36 +119,34 @@ export function SuiteJourney() {
   /* a walk that has just opened or closed changes the page height: every trigger below must re-measure */
   useEffect(() => { requestAnimationFrame(() => ScrollTrigger.refresh()); }, [walk]);
 
-  const lede = `${N === 3 ? 'Three' : N} suite categories, with room to settle in. Living rooms, kitchenettes and balconies, with the resort around you.`;
-
   if (!walk) return (
     <section ref={root} className="sj sj--overview" data-bg="night" id="suites" aria-labelledby="suites-h">
       <div className="wrap">
         <div className="sj-ov-head">
           <div>
-            <p className="eyebrow">Our suites</p>
-            <h2 id="suites-h" data-split>Room to live, <em>not just sleep.</em></h2>
+            <p className="eyebrow" {...f(sc, 'eyebrow')}>{sc.eyebrow}</p>
+            <h2 id="suites-h" data-split {...f(sc, 'title')}>{sc.title} <em {...f(sc, 'em')}>{sc.em}</em></h2>
           </div>
-          <p className="lede">{lede}</p>
+          <p className="lede" {...f(sc, 'lede')}>{sc.lede}</p>
         </div>
         <ul className="sj-ov-grid">
-          {suites.map(s => (
-            <li className="sj-card" key={s.slug}>
-              <figure className="sj-card-ph"><img src={s.photos[0].src} alt={s.photos[0].alt} loading="lazy" decoding="async" /></figure>
-              <p className="sj-kicker">Suite {s.no} <span>/ {pad(N)}</span></p>
-              <h3>{title(s.name)}</h3>
+          {suites.map((s, i) => (
+            <li className="sj-card" key={i}>
+              <figure className="sj-card-ph">{s.photos[0] && <img src={s.photos[0].src} alt={s.photos[0].alt} loading="lazy" decoding="async" {...f(s.photos[0], 'src')} />}</figure>
+              <p className="sj-kicker">Suite {pad(i + 1)} <span>/ {pad(N)}</span></p>
+              <h3 {...f(s, 'name')}>{title(s.name)}</h3>
               <ul className="sj-facts">
-                {s.guests && <li><Icon id="i-guests" />{s.guests}</li>}
-                {s.size && <li><Icon id="i-size" />{s.size}</li>}
-                <li><Icon id="i-balcony" />{s.outdoor}</li>
+                {s.guests && <li {...f(s, 'guests')}><Icon id="i-guests" />{s.guests}</li>}
+                {s.size && <li {...f(s, 'size')}><Icon id="i-size" />{s.size}</li>}
+                <li {...f(s, 'outdoor')}><Icon id="i-balcony" />{s.outdoor}</li>
               </ul>
-              <p className="sj-best"><small>Best for</small>{s.bestFor}</p>
+              <p className="sj-best" {...f(s, 'bestFor')}><small>Best for</small>{s.bestFor}</p>
             </li>
           ))}
         </ul>
         <div className="sj-ov-cta">
-          <button type="button" className="btn btn--glass" onClick={explore} aria-controls="suites">Explore the suites <Icon id="i-arrow" /></button>
-          <a className="tlink" href={bookHref()} data-book="">Check availability <Icon id="i-arrow" /></a>
+          <button type="button" className="btn btn--glass" onClick={explore} aria-controls="suites" {...f(sc, 'exploreButton')}>{sc.exploreButton} <Icon id="i-arrow" /></button>
+          <a className="tlink" href={bookHref(site)} data-book="" {...f(content.buttons, 'checkAvailability')}>{content.buttons.checkAvailability} <Icon id="i-arrow" /></a>
         </div>
       </div>
     </section>
@@ -163,36 +157,36 @@ export function SuiteJourney() {
       <div className="sj-stick">
         <div className="sj-track" ref={track} data-lenis-prevent-horizontal>
           <div className="sj-intro" data-chapter="-1">
-            <p className="eyebrow">Our suites</p>
-            <h2 id="suites-h" tabIndex={-1}>Room to live, <em>not just sleep.</em></h2>
-            <p className="lede">{lede}</p>
+            <p className="eyebrow" {...f(sc, 'eyebrow')}>{sc.eyebrow}</p>
+            <h2 id="suites-h" tabIndex={-1} {...f(sc, 'title')}>{sc.title} <em {...f(sc, 'em')}>{sc.em}</em></h2>
+            <p className="lede" {...f(sc, 'lede')}>{sc.lede}</p>
             {holding && <span className="sj-cue" aria-hidden="true"><i />Scroll to walk through</span>}
           </div>
 
           {suites.map((s, i) => (
-            <article className="sj-ch" data-chapter={i} key={s.slug} aria-labelledby={`sj-${s.slug}`}>
-              <div className="sj-num num" aria-hidden="true"><span>{s.no}</span></div>
-              <SuitePhotos suite={s} />
+            <article className="sj-ch" data-chapter={i} key={i} aria-labelledby={`sj-${i}`}>
+              <div className="sj-num num" aria-hidden="true"><span>{pad(i + 1)}</span></div>
+              <SuitePhotos suite={s} f={f} />
               <div className="sj-copy">
-                <p className="sj-kicker">Suite {s.no} <span>/ {pad(N)}</span></p>
-                <h3 id={`sj-${s.slug}`}>{title(s.name)}</h3>
-                <p className="sj-long">{s.long}</p>
-                <ul className="sj-highlights">{s.highlights.map(h => <li key={h}>{h}</li>)}</ul>
+                <p className="sj-kicker">Suite {pad(i + 1)} <span>/ {pad(N)}</span></p>
+                <h3 id={`sj-${i}`} {...f(s, 'name')}>{title(s.name)}</h3>
+                <p className="sj-long" {...f(s, 'long')}>{s.long}</p>
+                <ul className="sj-highlights" {...f(s, 'highlights')}>{s.highlights.map((h, k) => <li key={k}>{h}</li>)}</ul>
                 <ul className="sj-facts">
-                  {s.guests && <li><Icon id="i-guests" />{s.guests}</li>}
-                  {s.size && <li><Icon id="i-size" />{s.size}</li>}
-                  <li><Icon id="i-balcony" />{s.outdoor}</li>
+                  {s.guests && <li {...f(s, 'guests')}><Icon id="i-guests" />{s.guests}</li>}
+                  {s.size && <li {...f(s, 'size')}><Icon id="i-size" />{s.size}</li>}
+                  <li {...f(s, 'outdoor')}><Icon id="i-balcony" />{s.outdoor}</li>
                 </ul>
                 {(!s.guests || !s.size) && <p className="sj-detail-note">Ask reception about guest capacity and suite size.</p>}
-                <p className="sj-best"><small>Best for</small>{s.bestFor}</p>
-                <a className="tlink" href={bookHref()} data-book="">Check availability <Icon id="i-arrow" /></a>
+                <p className="sj-best" {...f(s, 'bestFor')}><small>Best for</small>{s.bestFor}</p>
+                <a className="tlink" href={bookHref(site)} data-book="" {...f(content.buttons, 'checkAvailability')}>{content.buttons.checkAvailability} <Icon id="i-arrow" /></a>
               </div>
               {s.photos.length > 1 && (
                 <div className="sj-bits">
                   {s.photos.slice(1, 3).map((p, k) => (
-                    <figure key={p.src + k} className={'sj-bit b' + k} data-drift={k ? -.45 : .35}>
-                      <span className="sj-bit-ph"><img src={p.src} alt={p.alt} decoding="async" /></span>
-                      <figcaption>{p.alt}</figcaption>
+                    <figure key={k} className={'sj-bit b' + k} data-drift={k ? -.45 : .35}>
+                      <span className="sj-bit-ph"><img src={p.src} alt={p.alt} decoding="async" {...f(p, 'src')} /></span>
+                      <figcaption {...f(p, 'alt')}>{p.alt}</figcaption>
                     </figure>
                   ))}
                 </div>
@@ -201,11 +195,11 @@ export function SuiteJourney() {
           ))}
 
           <div className="sj-outro" data-chapter={N}>
-            <p className="eyebrow">Why stay with us</p>
-            <h3>The comforts<br /><em>of your own place.</em></h3>
-            <ul className="sj-amenities">{inEverySuite.map(x => <li key={x}><Icon id={AMENITY_ICONS[x]} /><span>{x}</span></li>)}</ul>
+            <p className="eyebrow" {...f(sc, 'outroEyebrow')}>{sc.outroEyebrow}</p>
+            <h3 {...f(sc, 'outroTitle')}>{sc.outroTitle}<br /><em {...f(sc, 'outroEm')}>{sc.outroEm}</em></h3>
+            <ul className="sj-amenities">{sc.inEverySuite.map((x, k) => <li key={k} {...f(x, 'label')}><Icon id={x.icon || 'p-home'} /><span>{x.label}</span></li>)}</ul>
             <div className="sj-outro-links">
-              <a className="tlink" href={bookHref()} data-book="">Check availability <Icon id="i-arrow" /></a>
+              <a className="tlink" href={bookHref(site)} data-book="" {...f(content.buttons, 'checkAvailability')}>{content.buttons.checkAvailability} <Icon id="i-arrow" /></a>
             </div>
           </div>
         </div>

@@ -1,13 +1,14 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Icon } from '@/components/Icons';
-import { nav, site } from '@/content/site';
+import { content, navOf } from '@/content/site';
 import { bookHref } from '@/lib/book';
 
 export const metadata: Metadata = { title: 'Page not found' };
 
 /* A wrong turn still arrives somewhere: the night garden from the hero, and a way back to every part of the stay */
 export default function NotFound() {
+  const site = content.general, nav = navOf(content);
   return (
     <section className="lost" data-bg="night" data-dark="1" aria-labelledby="lost-h">
       <picture className="lost-photo" aria-hidden="true">
@@ -21,7 +22,7 @@ export default function NotFound() {
         <p className="lede">The page you were looking for isn&apos;t here. The garden, the suites and the beach are just this way.</p>
         <div className="sh-cta">
           <Link className="btn btn--book" href="/">Back to {site.name}</Link>
-          <a className="btn btn--glass" href={bookHref()} data-book="">Check availability <Icon id="i-arrow" /></a>
+          <a className="btn btn--glass" href={bookHref(site)} data-book="">Check availability <Icon id="i-arrow" /></a>
         </div>
         <nav className="lost-links" aria-label="Parts of the stay">
           {nav.map(n => <Link key={n.href} className="tlink" href={n.href}>{n.label}</Link>)}
