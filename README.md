@@ -40,13 +40,14 @@ The page needs an internet connection for Google Fonts.
 | Coast map places (geography, so kept in code) | `src/content/coast.ts` |
 | Colours, type, layout | `src/app/globals.css` (tokens at the top) |
 | Homepage sections | `src/components/SiteBody.tsx`, rendered by `src/app/(site)/page.tsx` |
+| Guest testimonials (hidden until switched on in Edit site) | `src/components/Testimonials.tsx`, styles `src/components/testimonials.css` |
 | Homepage navigation anchors | `navOf` in `src/content/site.ts`, section ids in `src/components/SiteBody.tsx` |
 | Scroll-controlled aerial hero | `src/components/Hero.tsx`, styles under `.aerial-hero` in `src/app/globals.css` |
 | Footer water (WebGL) | `src/components/LiquidLayer.tsx`, shader in `src/lib/shaders.ts` |
 | Smooth scroll, heading reveals, parallax and colour shifts | `src/components/Motion.tsx` |
 | Photos | `public/img/` |
 
-The homepage ends with ten FAQs and a short enquiry form, on the same deep-teal ground as the footer. Enquiries currently open the visitor's email app; they are not submitted to a delivery service. The WhatsApp number remains empty by request.
+The homepage ends with ten FAQs and a short enquiry form, on the same deep-teal ground as the footer. Enquiries currently open the visitor's email app; they are not submitted to a delivery service. The WhatsApp number is 917205980222 (editable under Resort details).
 
 Current decisions and deferred map photographs: [experience follow-ups](docs/experience-follow-ups.md). Official API options and the proposed five-review section: [Google reviews plan](docs/google-reviews-plan.md). No live Google review feed is connected yet.
 
@@ -60,7 +61,6 @@ Matching WebP posters render immediately. Reduced-motion preferences, data savin
 
 Items marked `pending` in `content/site/home.json`. Set `NEXT_PUBLIC_DRAFT=true` to show them on the page as orange "to confirm" tags while reviewing; they are hidden by default.
 
-- WhatsApp Business number: set the WhatsApp number under Resort details in Edit site. Until then, Book Direct opens an email.
 - Booking engine or WhatsApp enquiry (Book Direct)
 - Host photo and a few words from Jahnavi
 - Book Direct offer

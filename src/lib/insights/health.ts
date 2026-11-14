@@ -43,6 +43,9 @@ export function checkContent(c: Record<string, Json>): HealthItem[] {
   if (desc.length < 70 || desc.length > 170) items.push({ id: 'seo-desc', severity: 'tip', title: desc ? `Google description is ${desc.length < 70 ? 'short' : 'long'} (${desc.length} letters)` : 'Google description is empty', detail: 'Aim for about 80 to 160 letters: a friendly sentence about the resort.' });
   const faqs = isObj(c.faqSection) && Array.isArray(c.faqSection.faqs) ? c.faqSection.faqs : [];
   if (faqs.length < 5) items.push({ id: 'faq', severity: 'tip', count: faqs.length, title: `Only ${faqs.length} questions in the FAQ`, detail: 'Most guests read the FAQ before booking. Five to ten of the questions you hear most is a good number.' });
+  const tm = isObj(c.testimonials) ? c.testimonials : {};
+  const shown = tm.show === true && Array.isArray(tm.items) && tm.items.length > 0;
+  if (!shown) items.push({ id: 'reviews', severity: 'tip', title: 'No guest reviews shown yet', detail: 'A few real guest words build trust. Add them under Guest testimonials in the editor and switch the section on.' });
   return items;
 }
 

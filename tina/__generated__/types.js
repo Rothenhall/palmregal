@@ -164,6 +164,24 @@ export const HomePartsFragmentDoc = gql`
       group
     }
   }
+  testimonials {
+    __typename
+    show
+    eyebrow
+    heading
+    intro
+    items {
+      __typename
+      quote
+      name
+      from
+      stayed
+      rating
+      source
+      link
+      photo
+    }
+  }
   faqSection {
     __typename
     eyebrow

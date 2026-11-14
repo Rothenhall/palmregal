@@ -119,16 +119,30 @@ export async function daily(scope: string, id: string, limit: number): Promise<V
 
 /* ---------- whole-site daily spend caps (circuit breaker) ---------- */
 
-export const globalKeys = () => { const d = istDay().key; return { req: k('global', 'req', d), tok: k('global', 'tok', d) }; };
+export const globalKeys = () => { const d = istDay().key; return { req: k('global', 'req', d), tok: k('global', 'tok', d), spend: k('global', 'spend', d) }; };
+
+/* Daily rupee budget for the assistant (whole site, India-time day). Spend is counted in micro-rupees (₹ / 1,000,000)
+   from the token counts Sarvam reports. Prices are ₹ per 1M tokens (Sarvam 105B); override with env if Sarvam changes them. */
+const num = (v: string | undefined, d: number) => (Number.isFinite(Number(v)) && Number(v) > 0 ? Number(v) : d);
+export const DAILY_BUDGET_INR = num(process.env.CHAT_DAILY_BUDGET_INR, 100);
+const PRICE_IN = num(process.env.SARVAM_PRICE_INPUT_PER_M, 15);
+const PRICE_OUT = num(process.env.SARVAM_PRICE_OUTPUT_PER_M, 60);
+/** Cost of one reply in micro-rupees: ₹ per 1M tokens equals micro-rupees per token. */
+export const replyCostMicro = (inputTokens: number, outputTokens: number) =>
+  Math.max(0, Math.round(inputTokens * PRICE_IN + outputTokens * PRICE_OUT));
 
 export async function globalUsage() {
   const g = globalKeys();
-  const [req, tok] = await pipeline([['GET', g.req], ['GET', g.tok]]);
-  return { requests: Number(req ?? 0), tokens: Number(tok ?? 0) };
+  const [req, tok, spend] = await pipeline([['GET', g.req], ['GET', g.tok], ['GET', g.spend]]);
+  return { requests: Number(req ?? 0), tokens: Number(tok ?? 0), spendInr: Number(spend ?? 0) / 1_000_000 };
 }
-export async function noteGlobal(tokens: number, requests = 1) {
+export async function noteGlobal(tokens: number, requests = 1, costMicro = 0) {
   const g = globalKeys();
-  await pipeline([['INCRBY', g.req, requests], ['EXPIRE', g.req, 172800], ['INCRBY', g.tok, Math.max(0, Math.round(tokens))], ['EXPIRE', g.tok, 172800]]);
+  await pipeline([
+    ['INCRBY', g.req, requests], ['EXPIRE', g.req, 172800],
+    ['INCRBY', g.tok, Math.max(0, Math.round(tokens))], ['EXPIRE', g.tok, 172800],
+    ['INCRBY', g.spend, Math.max(0, Math.round(costMicro))], ['EXPIRE', g.spend, 172800],
+  ]);
 }
 /** Tokens allowed per day = replies cap x a generous average reply; stops a few giant prompts from draining credits. */
 export const tokenCap = (dailyCap: number) => dailyCap * 1200;

@@ -9,7 +9,7 @@
     "tagline": "Resort Homestay · Gopalpur",
     "phone": "+91 72059 70222",
     "email": "palmregalresort@gmail.com",
-    "whatsapp": "",
+    "whatsapp": "917205980222",
     "bookingUrl": "https://letsbook.me/booking/palmregalresort",
     "address": "1 Park Avenue, Adjt. Zone by the Park, Gopalpur on Sea, Odisha 761002",
     "instagram": "https://www.instagram.com/palmregalresort/",
@@ -488,6 +488,13 @@
         "group": "Grounds"
       }
     ]
+  },
+  "testimonials": {
+    "show": false,
+    "eyebrow": "Guest words",
+    "heading": "What our guests say",
+    "intro": "",
+    "items": []
   },
   "faqSection": {
     "eyebrow": "Before you arrive",

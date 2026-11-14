@@ -134,15 +134,26 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
   const topic = [...msgs].reverse().find(m => m.r === 'u')?.t.replace(/\s+/g, ' ').slice(0, 120);
   const hi = `Hi Palm Regal, I was chatting on your website${topic ? ` about: ${topic}` : ''}`;
   const hasUser = msgs.some(m => m.r === 'u');
+  const waLink = wa ? `https://wa.me/${wa}?text=${encodeURIComponent(hi)}` : '';
+  // With a WhatsApp number, "Talk to our team" goes straight to WhatsApp; without one it shows the call and email card.
+  const talk = () => { if (waLink) window.open(waLink, '_blank', 'noopener,noreferrer'); else setHandoff(true); };
 
   return (
     <div ref={root} className="chat" role="dialog" aria-modal="true" aria-labelledby="chat-title" data-open={open} hidden={!open} onKeyDown={onKey}>
       <header className="chat-head">
-        <div><h2 id="chat-title">{cfg?.name || 'Concierge'}</h2><p>AI assistant for Palm Regal</p></div>
+        <div className="chat-title"><h2 id="chat-title">{cfg?.name || 'Concierge'}</h2><p>AI assistant for Palm Regal</p></div>
         <div className="chat-head-actions">
-          <button type="button" onClick={() => setHandoff(true)} className="chat-link">Talk to our team</button>
-          {hasUser && <button type="button" onClick={reset} className="chat-link">New chat</button>}
-          <button type="button" onClick={onClose} className="chat-x" aria-label="Close chat">
+          {hasUser && (
+            <button type="button" onClick={reset} className="chat-ico" aria-label="Start a new chat" title="Start a new chat">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-6" /><path d="M17.5 3.5a1.8 1.8 0 0 1 2.5 2.5L12 14l-3.5 1L9.5 11.5z" /></svg>
+            </button>
+          )}
+          <button type="button" onClick={talk} className="chat-ico" aria-label={waLink ? 'Talk to our team on WhatsApp' : 'Talk to our team'} title={waLink ? 'Talk to our team on WhatsApp' : 'Talk to our team'}>
+            {waLink
+              ? <svg width="22" height="22" fill="currentColor" aria-hidden="true"><use href="#i-wa" /></svg>
+              : <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 14v-2a8 8 0 0 1 16 0v2" /><rect x="3" y="14" width="4" height="6" rx="1.5" /><rect x="17" y="14" width="4" height="6" rx="1.5" /><path d="M19 20c0 1.2-1.5 2-4 2h-2" /></svg>}
+          </button>
+          <button type="button" onClick={onClose} className="chat-x" aria-label="Close chat" title="Close">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
           </button>
         </div>
@@ -155,7 +166,7 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
         {cfg?.enabled && !hasUser && (
           <div className="chat-chips">
             {CHIPS.map(t => <button key={t} type="button" onClick={() => send(t)} disabled={blocked}>{t}</button>)}
-            <button type="button" onClick={() => setHandoff(true)}>Talk to our team</button>
+            <button type="button" onClick={talk}>Talk to our team</button>
           </div>
         )}
         {msgs.map((m, i) => (m.r === 'a' && !m.t) ? null : (
@@ -176,7 +187,7 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
           <div className="chat-handoff" role="group" aria-label="Contact our team">
             <p><strong>Talk to our team</strong><br />We are glad to help directly.</p>
             <div>
-              {wa && <a className="chat-cta chat-cta--wa" href={`https://wa.me/${wa}?text=${encodeURIComponent(hi)}`} target="_blank" rel="noopener noreferrer">WhatsApp</a>}
+              {wa && <a className="chat-cta chat-cta--wa" href={waLink} target="_blank" rel="noopener noreferrer">WhatsApp</a>}
               {c?.phone && <a className="chat-cta" href={`tel:${c.phone.replace(/[^\d+]/g, '')}`}>Call</a>}
               {c?.email && <a className="chat-cta" href={`mailto:${c.email}?subject=${encodeURIComponent('Enquiry from the website')}&body=${encodeURIComponent(hi)}`}>Email</a>}
             </div>
@@ -199,7 +210,7 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
           </button>
         </div>
-        <p className="chat-note">AI answers can be wrong. We keep this chat for 90 days to improve the service. Please do not share cards or passwords. For rates and availability, use Book direct.</p>
+        <p className="chat-note">AI can make mistakes. Chats are kept 90 days. Never share card details.</p>
       </form>
     </div>
   );

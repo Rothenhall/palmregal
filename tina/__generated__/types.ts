@@ -352,6 +352,27 @@ export type HomeMomentsSection = {
   photos?: Maybe<Array<Maybe<HomeMomentsSectionPhotos>>>;
 };
 
+export type HomeTestimonialsItems = {
+  __typename?: 'HomeTestimonialsItems';
+  quote: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  from?: Maybe<Scalars['String']['output']>;
+  stayed?: Maybe<Scalars['String']['output']>;
+  rating?: Maybe<Scalars['Float']['output']>;
+  source?: Maybe<Scalars['String']['output']>;
+  link?: Maybe<Scalars['String']['output']>;
+  photo?: Maybe<Scalars['String']['output']>;
+};
+
+export type HomeTestimonials = {
+  __typename?: 'HomeTestimonials';
+  show?: Maybe<Scalars['Boolean']['output']>;
+  eyebrow?: Maybe<Scalars['String']['output']>;
+  heading?: Maybe<Scalars['String']['output']>;
+  intro?: Maybe<Scalars['String']['output']>;
+  items?: Maybe<Array<Maybe<HomeTestimonialsItems>>>;
+};
+
 export type HomeFaqSectionFaqs = {
   __typename?: 'HomeFaqSectionFaqs';
   q?: Maybe<Scalars['String']['output']>;
@@ -403,6 +424,7 @@ export type Home = Node & Document & {
   daySection?: Maybe<HomeDaySection>;
   locationSection?: Maybe<HomeLocationSection>;
   momentsSection?: Maybe<HomeMomentsSection>;
+  testimonials?: Maybe<HomeTestimonials>;
   faqSection?: Maybe<HomeFaqSection>;
   contactSection?: Maybe<HomeContactSection>;
   footer?: Maybe<HomeFooter>;
@@ -608,6 +630,25 @@ export type HomeMomentsSectionFilter = {
   photos?: InputMaybe<HomeMomentsSectionPhotosFilter>;
 };
 
+export type HomeTestimonialsItemsFilter = {
+  quote?: InputMaybe<StringFilter>;
+  name?: InputMaybe<StringFilter>;
+  from?: InputMaybe<StringFilter>;
+  stayed?: InputMaybe<StringFilter>;
+  rating?: InputMaybe<NumberFilter>;
+  source?: InputMaybe<StringFilter>;
+  link?: InputMaybe<StringFilter>;
+  photo?: InputMaybe<ImageFilter>;
+};
+
+export type HomeTestimonialsFilter = {
+  show?: InputMaybe<BooleanFilter>;
+  eyebrow?: InputMaybe<StringFilter>;
+  heading?: InputMaybe<StringFilter>;
+  intro?: InputMaybe<StringFilter>;
+  items?: InputMaybe<HomeTestimonialsItemsFilter>;
+};
+
 export type HomeFaqSectionFaqsFilter = {
   q?: InputMaybe<StringFilter>;
   answer?: InputMaybe<StringFilter>;
@@ -654,6 +695,7 @@ export type HomeFilter = {
   daySection?: InputMaybe<HomeDaySectionFilter>;
   locationSection?: InputMaybe<HomeLocationSectionFilter>;
   momentsSection?: InputMaybe<HomeMomentsSectionFilter>;
+  testimonials?: InputMaybe<HomeTestimonialsFilter>;
   faqSection?: InputMaybe<HomeFaqSectionFilter>;
   contactSection?: InputMaybe<HomeContactSectionFilter>;
   footer?: InputMaybe<HomeFooterFilter>;
@@ -905,6 +947,25 @@ export type HomeMomentsSectionMutation = {
   photos?: InputMaybe<Array<InputMaybe<HomeMomentsSectionPhotosMutation>>>;
 };
 
+export type HomeTestimonialsItemsMutation = {
+  quote?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  from?: InputMaybe<Scalars['String']['input']>;
+  stayed?: InputMaybe<Scalars['String']['input']>;
+  rating?: InputMaybe<Scalars['Float']['input']>;
+  source?: InputMaybe<Scalars['String']['input']>;
+  link?: InputMaybe<Scalars['String']['input']>;
+  photo?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type HomeTestimonialsMutation = {
+  show?: InputMaybe<Scalars['Boolean']['input']>;
+  eyebrow?: InputMaybe<Scalars['String']['input']>;
+  heading?: InputMaybe<Scalars['String']['input']>;
+  intro?: InputMaybe<Scalars['String']['input']>;
+  items?: InputMaybe<Array<InputMaybe<HomeTestimonialsItemsMutation>>>;
+};
+
 export type HomeFaqSectionFaqsMutation = {
   q?: InputMaybe<Scalars['String']['input']>;
   answer?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
@@ -951,6 +1012,7 @@ export type HomeMutation = {
   daySection?: InputMaybe<HomeDaySectionMutation>;
   locationSection?: InputMaybe<HomeLocationSectionMutation>;
   momentsSection?: InputMaybe<HomeMomentsSectionMutation>;
+  testimonials?: InputMaybe<HomeTestimonialsMutation>;
   faqSection?: InputMaybe<HomeFaqSectionMutation>;
   contactSection?: InputMaybe<HomeContactSectionMutation>;
   footer?: InputMaybe<HomeFooterMutation>;
@@ -1153,6 +1215,25 @@ export type HomeMomentsSectionFilter = {
   photos?: HomeMomentsSectionPhotosFilter | null | undefined;
 };
 
+export type HomeTestimonialsItemsFilter = {
+  quote?: StringFilter | null | undefined;
+  name?: StringFilter | null | undefined;
+  from?: StringFilter | null | undefined;
+  stayed?: StringFilter | null | undefined;
+  rating?: NumberFilter | null | undefined;
+  source?: StringFilter | null | undefined;
+  link?: StringFilter | null | undefined;
+  photo?: ImageFilter | null | undefined;
+};
+
+export type HomeTestimonialsFilter = {
+  show?: BooleanFilter | null | undefined;
+  eyebrow?: StringFilter | null | undefined;
+  heading?: StringFilter | null | undefined;
+  intro?: StringFilter | null | undefined;
+  items?: HomeTestimonialsItemsFilter | null | undefined;
+};
+
 export type HomeFaqSectionFaqsFilter = {
   q?: StringFilter | null | undefined;
   answer?: StringFilter | null | undefined;
@@ -1199,6 +1280,7 @@ export type HomeFilter = {
   daySection?: HomeDaySectionFilter | null | undefined;
   locationSection?: HomeLocationSectionFilter | null | undefined;
   momentsSection?: HomeMomentsSectionFilter | null | undefined;
+  testimonials?: HomeTestimonialsFilter | null | undefined;
   faqSection?: HomeFaqSectionFilter | null | undefined;
   contactSection?: HomeContactSectionFilter | null | undefined;
   footer?: HomeFooterFilter | null | undefined;
@@ -1207,7 +1289,7 @@ export type HomeFilter = {
 export type HomePartsFragment = { __typename: 'Home', seo: { __typename: 'HomeSeo', title: string | null, description: string | null, image: string | null } | null, general: { __typename: 'HomeGeneral', name: string | null, tagline: string | null, phone: string | null, email: string | null, whatsapp: string | null, bookingUrl: string | null, address: string | null, instagram: string | null, checkIn: string | null, checkOut: string | null } | null, buttons: { __typename: 'HomeButtons', bookDirect: string | null, checkAvailability: string | null, seeSuites: string | null, explore: string | null } | null, nav: { __typename: 'HomeNav', suites: string | null, facilities: string | null, gallery: string | null, location: string | null, contact: string | null } | null, hero: { __typename: 'HomeHero', eyebrow: string | null, place: string | null, slides: Array<
       | { __typename: 'HomeHeroSlidesPhotoSlide', image: string | null, title: string | null, em: string | null, alt: string | null, seconds: number | null }
       | { __typename: 'HomeHeroSlidesVideoSlide', poster: string | null, posterMobile: string | null, title: string | null, em: string | null, alt: string | null, seconds: number | null, video: string | null, videoMobile: string | null }
-     | null> | null } | null, arrival: { __typename: 'HomeArrival', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, ledeEm: string | null, place: string | null } | null, suitesSection: { __typename: 'HomeSuitesSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, exploreButton: string | null, outroEyebrow: string | null, outroTitle: string | null, outroEm: string | null, suites: Array<{ __typename: 'HomeSuitesSectionSuites', name: string | null, long: string | null, guests: string | null, size: string | null, outdoor: string | null, bestFor: string | null, highlights: Array<string | null> | null, pending: boolean | null, photos: Array<{ __typename: 'HomeSuitesSectionSuitesPhotos', src: string | null, alt: string | null } | null> | null } | null> | null, inEverySuite: Array<{ __typename: 'HomeSuitesSectionInEverySuite', label: string | null, icon: string | null } | null> | null } | null, facilitiesSection: { __typename: 'HomeFacilitiesSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, groups: Array<{ __typename: 'HomeFacilitiesSectionGroups', title: string | null, em: string | null, text: string | null, items: Array<{ __typename: 'HomeFacilitiesSectionGroupsItems', name: string | null, tag: string | null, text: string | null, img: string | null, standIn: boolean | null } | null> | null } | null> | null } | null, daySection: { __typename: 'HomeDaySection', eyebrow: string | null, moreLink: string | null, moments: Array<{ __typename: 'HomeDaySectionMoments', time: string | null, title: string | null, em: string | null, text: string | null, img: string | null, alt: string | null } | null> | null } | null, locationSection: { __typename: 'HomeLocationSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null } | null, momentsSection: { __typename: 'HomeMomentsSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, photos: Array<{ __typename: 'HomeMomentsSectionPhotos', src: string | null, cap: string | null, alt: string | null, group: string | null } | null> | null } | null, faqSection: { __typename: 'HomeFaqSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, moreLink: string | null, faqs: Array<{ __typename: 'HomeFaqSectionFaqs', q: string | null, answer: Array<string | null> | null, pending: string | null } | null> | null } | null, contactSection: { __typename: 'HomeContactSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, callLabel: string | null, writeLabel: string | null, formEyebrow: string | null, formTitle: string | null, formEm: string | null } | null, footer: { __typename: 'HomeFooter', aboutTitle: string | null, aboutText: string | null, followText: string | null, note: string | null } | null };
+     | null> | null } | null, arrival: { __typename: 'HomeArrival', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, ledeEm: string | null, place: string | null } | null, suitesSection: { __typename: 'HomeSuitesSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, exploreButton: string | null, outroEyebrow: string | null, outroTitle: string | null, outroEm: string | null, suites: Array<{ __typename: 'HomeSuitesSectionSuites', name: string | null, long: string | null, guests: string | null, size: string | null, outdoor: string | null, bestFor: string | null, highlights: Array<string | null> | null, pending: boolean | null, photos: Array<{ __typename: 'HomeSuitesSectionSuitesPhotos', src: string | null, alt: string | null } | null> | null } | null> | null, inEverySuite: Array<{ __typename: 'HomeSuitesSectionInEverySuite', label: string | null, icon: string | null } | null> | null } | null, facilitiesSection: { __typename: 'HomeFacilitiesSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, groups: Array<{ __typename: 'HomeFacilitiesSectionGroups', title: string | null, em: string | null, text: string | null, items: Array<{ __typename: 'HomeFacilitiesSectionGroupsItems', name: string | null, tag: string | null, text: string | null, img: string | null, standIn: boolean | null } | null> | null } | null> | null } | null, daySection: { __typename: 'HomeDaySection', eyebrow: string | null, moreLink: string | null, moments: Array<{ __typename: 'HomeDaySectionMoments', time: string | null, title: string | null, em: string | null, text: string | null, img: string | null, alt: string | null } | null> | null } | null, locationSection: { __typename: 'HomeLocationSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null } | null, momentsSection: { __typename: 'HomeMomentsSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, photos: Array<{ __typename: 'HomeMomentsSectionPhotos', src: string | null, cap: string | null, alt: string | null, group: string | null } | null> | null } | null, testimonials: { __typename: 'HomeTestimonials', show: boolean | null, eyebrow: string | null, heading: string | null, intro: string | null, items: Array<{ __typename: 'HomeTestimonialsItems', quote: string, name: string, from: string | null, stayed: string | null, rating: number | null, source: string | null, link: string | null, photo: string | null } | null> | null } | null, faqSection: { __typename: 'HomeFaqSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, moreLink: string | null, faqs: Array<{ __typename: 'HomeFaqSectionFaqs', q: string | null, answer: Array<string | null> | null, pending: string | null } | null> | null } | null, contactSection: { __typename: 'HomeContactSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, callLabel: string | null, writeLabel: string | null, formEyebrow: string | null, formTitle: string | null, formEm: string | null } | null, footer: { __typename: 'HomeFooter', aboutTitle: string | null, aboutText: string | null, followText: string | null, note: string | null } | null };
 
 export type HomeQueryVariables = Exact<{
   relativePath: string;
@@ -1217,7 +1299,7 @@ export type HomeQueryVariables = Exact<{
 export type HomeQuery = { home: { __typename: 'Home', id: string, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, seo: { __typename: 'HomeSeo', title: string | null, description: string | null, image: string | null } | null, general: { __typename: 'HomeGeneral', name: string | null, tagline: string | null, phone: string | null, email: string | null, whatsapp: string | null, bookingUrl: string | null, address: string | null, instagram: string | null, checkIn: string | null, checkOut: string | null } | null, buttons: { __typename: 'HomeButtons', bookDirect: string | null, checkAvailability: string | null, seeSuites: string | null, explore: string | null } | null, nav: { __typename: 'HomeNav', suites: string | null, facilities: string | null, gallery: string | null, location: string | null, contact: string | null } | null, hero: { __typename: 'HomeHero', eyebrow: string | null, place: string | null, slides: Array<
         | { __typename: 'HomeHeroSlidesPhotoSlide', image: string | null, title: string | null, em: string | null, alt: string | null, seconds: number | null }
         | { __typename: 'HomeHeroSlidesVideoSlide', poster: string | null, posterMobile: string | null, title: string | null, em: string | null, alt: string | null, seconds: number | null, video: string | null, videoMobile: string | null }
-       | null> | null } | null, arrival: { __typename: 'HomeArrival', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, ledeEm: string | null, place: string | null } | null, suitesSection: { __typename: 'HomeSuitesSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, exploreButton: string | null, outroEyebrow: string | null, outroTitle: string | null, outroEm: string | null, suites: Array<{ __typename: 'HomeSuitesSectionSuites', name: string | null, long: string | null, guests: string | null, size: string | null, outdoor: string | null, bestFor: string | null, highlights: Array<string | null> | null, pending: boolean | null, photos: Array<{ __typename: 'HomeSuitesSectionSuitesPhotos', src: string | null, alt: string | null } | null> | null } | null> | null, inEverySuite: Array<{ __typename: 'HomeSuitesSectionInEverySuite', label: string | null, icon: string | null } | null> | null } | null, facilitiesSection: { __typename: 'HomeFacilitiesSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, groups: Array<{ __typename: 'HomeFacilitiesSectionGroups', title: string | null, em: string | null, text: string | null, items: Array<{ __typename: 'HomeFacilitiesSectionGroupsItems', name: string | null, tag: string | null, text: string | null, img: string | null, standIn: boolean | null } | null> | null } | null> | null } | null, daySection: { __typename: 'HomeDaySection', eyebrow: string | null, moreLink: string | null, moments: Array<{ __typename: 'HomeDaySectionMoments', time: string | null, title: string | null, em: string | null, text: string | null, img: string | null, alt: string | null } | null> | null } | null, locationSection: { __typename: 'HomeLocationSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null } | null, momentsSection: { __typename: 'HomeMomentsSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, photos: Array<{ __typename: 'HomeMomentsSectionPhotos', src: string | null, cap: string | null, alt: string | null, group: string | null } | null> | null } | null, faqSection: { __typename: 'HomeFaqSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, moreLink: string | null, faqs: Array<{ __typename: 'HomeFaqSectionFaqs', q: string | null, answer: Array<string | null> | null, pending: string | null } | null> | null } | null, contactSection: { __typename: 'HomeContactSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, callLabel: string | null, writeLabel: string | null, formEyebrow: string | null, formTitle: string | null, formEm: string | null } | null, footer: { __typename: 'HomeFooter', aboutTitle: string | null, aboutText: string | null, followText: string | null, note: string | null } | null } };
+       | null> | null } | null, arrival: { __typename: 'HomeArrival', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, ledeEm: string | null, place: string | null } | null, suitesSection: { __typename: 'HomeSuitesSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, exploreButton: string | null, outroEyebrow: string | null, outroTitle: string | null, outroEm: string | null, suites: Array<{ __typename: 'HomeSuitesSectionSuites', name: string | null, long: string | null, guests: string | null, size: string | null, outdoor: string | null, bestFor: string | null, highlights: Array<string | null> | null, pending: boolean | null, photos: Array<{ __typename: 'HomeSuitesSectionSuitesPhotos', src: string | null, alt: string | null } | null> | null } | null> | null, inEverySuite: Array<{ __typename: 'HomeSuitesSectionInEverySuite', label: string | null, icon: string | null } | null> | null } | null, facilitiesSection: { __typename: 'HomeFacilitiesSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, groups: Array<{ __typename: 'HomeFacilitiesSectionGroups', title: string | null, em: string | null, text: string | null, items: Array<{ __typename: 'HomeFacilitiesSectionGroupsItems', name: string | null, tag: string | null, text: string | null, img: string | null, standIn: boolean | null } | null> | null } | null> | null } | null, daySection: { __typename: 'HomeDaySection', eyebrow: string | null, moreLink: string | null, moments: Array<{ __typename: 'HomeDaySectionMoments', time: string | null, title: string | null, em: string | null, text: string | null, img: string | null, alt: string | null } | null> | null } | null, locationSection: { __typename: 'HomeLocationSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null } | null, momentsSection: { __typename: 'HomeMomentsSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, photos: Array<{ __typename: 'HomeMomentsSectionPhotos', src: string | null, cap: string | null, alt: string | null, group: string | null } | null> | null } | null, testimonials: { __typename: 'HomeTestimonials', show: boolean | null, eyebrow: string | null, heading: string | null, intro: string | null, items: Array<{ __typename: 'HomeTestimonialsItems', quote: string, name: string, from: string | null, stayed: string | null, rating: number | null, source: string | null, link: string | null, photo: string | null } | null> | null } | null, faqSection: { __typename: 'HomeFaqSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, moreLink: string | null, faqs: Array<{ __typename: 'HomeFaqSectionFaqs', q: string | null, answer: Array<string | null> | null, pending: string | null } | null> | null } | null, contactSection: { __typename: 'HomeContactSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, callLabel: string | null, writeLabel: string | null, formEyebrow: string | null, formTitle: string | null, formEm: string | null } | null, footer: { __typename: 'HomeFooter', aboutTitle: string | null, aboutText: string | null, followText: string | null, note: string | null } | null } };
 
 export type HomeConnectionQueryVariables = Exact<{
   before?: string | null | undefined;
@@ -1232,7 +1314,7 @@ export type HomeConnectionQueryVariables = Exact<{
 export type HomeConnectionQuery = { homeConnection: { totalCount: number, pageInfo: { hasPreviousPage: boolean, hasNextPage: boolean, startCursor: string, endCursor: string }, edges: Array<{ cursor: string, node: { __typename: 'Home', id: string, _sys: { filename: string, basename: string, hasReferences: boolean | null, breadcrumbs: Array<string>, path: string, relativePath: string, extension: string }, seo: { __typename: 'HomeSeo', title: string | null, description: string | null, image: string | null } | null, general: { __typename: 'HomeGeneral', name: string | null, tagline: string | null, phone: string | null, email: string | null, whatsapp: string | null, bookingUrl: string | null, address: string | null, instagram: string | null, checkIn: string | null, checkOut: string | null } | null, buttons: { __typename: 'HomeButtons', bookDirect: string | null, checkAvailability: string | null, seeSuites: string | null, explore: string | null } | null, nav: { __typename: 'HomeNav', suites: string | null, facilities: string | null, gallery: string | null, location: string | null, contact: string | null } | null, hero: { __typename: 'HomeHero', eyebrow: string | null, place: string | null, slides: Array<
             | { __typename: 'HomeHeroSlidesPhotoSlide', image: string | null, title: string | null, em: string | null, alt: string | null, seconds: number | null }
             | { __typename: 'HomeHeroSlidesVideoSlide', poster: string | null, posterMobile: string | null, title: string | null, em: string | null, alt: string | null, seconds: number | null, video: string | null, videoMobile: string | null }
-           | null> | null } | null, arrival: { __typename: 'HomeArrival', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, ledeEm: string | null, place: string | null } | null, suitesSection: { __typename: 'HomeSuitesSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, exploreButton: string | null, outroEyebrow: string | null, outroTitle: string | null, outroEm: string | null, suites: Array<{ __typename: 'HomeSuitesSectionSuites', name: string | null, long: string | null, guests: string | null, size: string | null, outdoor: string | null, bestFor: string | null, highlights: Array<string | null> | null, pending: boolean | null, photos: Array<{ __typename: 'HomeSuitesSectionSuitesPhotos', src: string | null, alt: string | null } | null> | null } | null> | null, inEverySuite: Array<{ __typename: 'HomeSuitesSectionInEverySuite', label: string | null, icon: string | null } | null> | null } | null, facilitiesSection: { __typename: 'HomeFacilitiesSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, groups: Array<{ __typename: 'HomeFacilitiesSectionGroups', title: string | null, em: string | null, text: string | null, items: Array<{ __typename: 'HomeFacilitiesSectionGroupsItems', name: string | null, tag: string | null, text: string | null, img: string | null, standIn: boolean | null } | null> | null } | null> | null } | null, daySection: { __typename: 'HomeDaySection', eyebrow: string | null, moreLink: string | null, moments: Array<{ __typename: 'HomeDaySectionMoments', time: string | null, title: string | null, em: string | null, text: string | null, img: string | null, alt: string | null } | null> | null } | null, locationSection: { __typename: 'HomeLocationSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null } | null, momentsSection: { __typename: 'HomeMomentsSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, photos: Array<{ __typename: 'HomeMomentsSectionPhotos', src: string | null, cap: string | null, alt: string | null, group: string | null } | null> | null } | null, faqSection: { __typename: 'HomeFaqSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, moreLink: string | null, faqs: Array<{ __typename: 'HomeFaqSectionFaqs', q: string | null, answer: Array<string | null> | null, pending: string | null } | null> | null } | null, contactSection: { __typename: 'HomeContactSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, callLabel: string | null, writeLabel: string | null, formEyebrow: string | null, formTitle: string | null, formEm: string | null } | null, footer: { __typename: 'HomeFooter', aboutTitle: string | null, aboutText: string | null, followText: string | null, note: string | null } | null } | null } | null> | null } };
+           | null> | null } | null, arrival: { __typename: 'HomeArrival', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, ledeEm: string | null, place: string | null } | null, suitesSection: { __typename: 'HomeSuitesSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, exploreButton: string | null, outroEyebrow: string | null, outroTitle: string | null, outroEm: string | null, suites: Array<{ __typename: 'HomeSuitesSectionSuites', name: string | null, long: string | null, guests: string | null, size: string | null, outdoor: string | null, bestFor: string | null, highlights: Array<string | null> | null, pending: boolean | null, photos: Array<{ __typename: 'HomeSuitesSectionSuitesPhotos', src: string | null, alt: string | null } | null> | null } | null> | null, inEverySuite: Array<{ __typename: 'HomeSuitesSectionInEverySuite', label: string | null, icon: string | null } | null> | null } | null, facilitiesSection: { __typename: 'HomeFacilitiesSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, groups: Array<{ __typename: 'HomeFacilitiesSectionGroups', title: string | null, em: string | null, text: string | null, items: Array<{ __typename: 'HomeFacilitiesSectionGroupsItems', name: string | null, tag: string | null, text: string | null, img: string | null, standIn: boolean | null } | null> | null } | null> | null } | null, daySection: { __typename: 'HomeDaySection', eyebrow: string | null, moreLink: string | null, moments: Array<{ __typename: 'HomeDaySectionMoments', time: string | null, title: string | null, em: string | null, text: string | null, img: string | null, alt: string | null } | null> | null } | null, locationSection: { __typename: 'HomeLocationSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null } | null, momentsSection: { __typename: 'HomeMomentsSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, photos: Array<{ __typename: 'HomeMomentsSectionPhotos', src: string | null, cap: string | null, alt: string | null, group: string | null } | null> | null } | null, testimonials: { __typename: 'HomeTestimonials', show: boolean | null, eyebrow: string | null, heading: string | null, intro: string | null, items: Array<{ __typename: 'HomeTestimonialsItems', quote: string, name: string, from: string | null, stayed: string | null, rating: number | null, source: string | null, link: string | null, photo: string | null } | null> | null } | null, faqSection: { __typename: 'HomeFaqSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, moreLink: string | null, faqs: Array<{ __typename: 'HomeFaqSectionFaqs', q: string | null, answer: Array<string | null> | null, pending: string | null } | null> | null } | null, contactSection: { __typename: 'HomeContactSection', eyebrow: string | null, title: string | null, em: string | null, lede: string | null, callLabel: string | null, writeLabel: string | null, formEyebrow: string | null, formTitle: string | null, formEm: string | null } | null, footer: { __typename: 'HomeFooter', aboutTitle: string | null, aboutText: string | null, followText: string | null, note: string | null } | null } | null } | null> | null } };
 
 export const HomePartsFragmentDoc = gql`
     fragment HomeParts on Home {
@@ -1391,6 +1473,24 @@ export const HomePartsFragmentDoc = gql`
       cap
       alt
       group
+    }
+  }
+  testimonials {
+    __typename
+    show
+    eyebrow
+    heading
+    intro
+    items {
+      __typename
+      quote
+      name
+      from
+      stayed
+      rating
+      source
+      link
+      photo
     }
   }
   faqSection {

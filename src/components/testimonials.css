@@ -1,0 +1,41 @@
+/* Guest testimonials. Calm, quiet cards on the dusk ground; all colours come from the site's tokens. */
+.tm { padding-block: var(--sec-y) }
+.tm-head { display: grid; gap: 18px; justify-items: center; text-align: center; margin-bottom: var(--head-gap) }
+.tm-head h2 { max-width: 20ch }
+.tm-head .lede { margin-inline: auto }
+.tm-wrap { position: relative }
+.tm-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--gap) }
+.tm--1 .tm-list { max-width: 46rem; margin-inline: auto }
+.tm--grid .tm-list { grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)) }
+.tm--row .tm-list {
+  display: flex; gap: var(--gap); overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain;
+  padding: 4px var(--gl) 18px; margin-inline: calc(var(--gl) * -1); scroll-padding-inline: var(--gl); scrollbar-width: thin;
+}
+.tm--row .tm-list:focus-visible { outline: 2px solid var(--teal-200); outline-offset: 2px }
+.tm--row .tm-card { flex: 0 0 min(86vw, 24rem); scroll-snap-align: start }
+.tm-card {
+  position: relative; margin: 0; display: flex; flex-direction: column; gap: 22px; padding: clamp(26px, 3vw, 40px);
+  border: 1px solid var(--c-line); border-radius: var(--r-lg); background: var(--c-surface);
+}
+.tm-card::before {
+  content: "\201C"; font-family: var(--display); font-size: 5.5rem; line-height: .7; height: .45em; color: var(--c-em); opacity: .7;
+}
+.tm--1 .tm-card { text-align: center; align-items: center }
+.tm-quote { margin: 0; font-family: var(--display); font-size: clamp(1.1rem, 1.5vw, 1.32rem); line-height: 1.55; color: var(--c-text); white-space: pre-line; overflow-wrap: anywhere }
+.tm--1 .tm-quote { font-size: clamp(1.3rem, 2.4vw, 1.8rem) }
+.tm-by { margin-top: auto; display: flex; align-items: center; gap: 14px; font-size: var(--t-small); color: var(--c-muted) }
+.tm--1 .tm-by { justify-content: center; text-align: left }
+.tm-photo { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; flex: none }
+.tm-name { display: block; font-weight: 600; font-size: 1rem; color: var(--c-text) }
+.tm-meta { display: block }
+.tm-stars { display: inline-block; letter-spacing: .12em; color: var(--sun-2); font-size: .95rem; margin-right: 8px }
+.tm-src { display: inline-block; margin-top: 4px }
+.tm-nav { display: flex; justify-content: center; gap: 12px; margin-top: 18px }
+.tm-nav button {
+  width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--c-line); background: transparent; color: var(--c-text);
+  font-size: 1.15rem; line-height: 1; cursor: pointer; transition: background var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
+}
+.tm-nav button:hover { background: var(--c-surface-2); border-color: var(--teal-200) }
+.tm-nav button:focus-visible { outline: 2px solid var(--teal-200); outline-offset: 3px }
+@media (prefers-reduced-motion: reduce) { .tm--row .tm-list { scroll-behavior: auto } .tm-nav button { transition: none } }
+@media (max-width: 600px) { .tm-nav { display: none } .tm-card::before { font-size: 4.5rem } }

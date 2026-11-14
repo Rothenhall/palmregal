@@ -2,10 +2,15 @@
 .chat { position: fixed; z-index: 70; right: calc(20px + env(safe-area-inset-right, 0px)); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); width: min(400px, calc(100vw - 24px)); height: min(640px, calc(100dvh - 40px)); display: flex; flex-direction: column; background: var(--c-surface); color: var(--c-text); border: 1px solid var(--c-line); border-radius: var(--r-lg); box-shadow: var(--shadow-float); overflow: hidden; font-family: var(--body); animation: chat-in .45s var(--ease) both }
 .chat[hidden] { display: none }
 @keyframes chat-in { from { opacity: 0; transform: translateY(14px) scale(.98) } }
-.chat-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .9rem 1rem; background: var(--teal-800); color: var(--on-dark) }
+.chat-head { display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding: .7rem .6rem .7rem 1rem; background: var(--teal-800); color: var(--on-dark) }
 .chat-head h2 { margin: 0; font: 400 1.2rem/1.2 var(--display) }
 .chat-head p { margin: 0; font-size: .75rem; letter-spacing: .06em; color: var(--teal-200) }
-.chat-head-actions { display: flex; align-items: center; gap: .5rem }
+.chat-head-actions { display: flex; align-items: center; gap: .25rem; flex: none }
+.chat-title { min-width: 0; flex: 1 }
+.chat-head h2 { white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+.chat-ico { background: none; border: 0; color: var(--on-dark); cursor: pointer; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50% }
+.chat-ico:hover { background: rgba(255, 255, 255, .12) }
+.chat-head button:focus-visible { outline: 2px solid var(--amber-500); outline-offset: 0 }
 .chat-link { background: none; border: 0; color: inherit; font: inherit; font-size: .82rem; text-decoration: underline; cursor: pointer; padding: .4rem }
 .chat-form .chat-link { color: var(--c-link) }
 .chat-x { background: none; border: 0; color: inherit; cursor: pointer; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50% }

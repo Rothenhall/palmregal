@@ -275,7 +275,7 @@ var config_default = defineConfig({
             text("tagline", "Tagline under the logo"),
             text("phone", "Phone number", "As guests should read it, e.g. +91 72059 70222. The call button uses it too."),
             text("email", "Email address"),
-            text("whatsapp", "WhatsApp number", "Digits only with the country code, e.g. 917205970222. Leave empty until the resort has a WhatsApp Business number."),
+            text("whatsapp", "WhatsApp number", "Digits only with the country code, no + or spaces, e.g. 917205980222. Used by the WhatsApp buttons and the Talk to our team chat button."),
             text("bookingUrl", "Booking page link", 'Where "Book direct" and "Check availability" send guests. Leave empty to send them to the enquiry form instead.'),
             long("address", "Address"),
             text("instagram", "Instagram link"),
@@ -472,6 +472,30 @@ var config_default = defineConfig({
                 text("cap", "Caption"),
                 text("alt", "Describe the photo"),
                 { type: "string", name: "group", label: "Kind of photo", options: ["Grounds", "Suites", "Facilities", "Sea"] }
+              ]
+            }
+          ]),
+          group("testimonials", "Guest testimonials", "Real words from guests. Hidden until you switch it on and add at least one; only add reviews guests have actually given.", [
+            { type: "boolean", name: "show", label: "Show this section on the website", description: "It also stays hidden while the list below is empty." },
+            text("eyebrow", "Small line above the heading"),
+            text("heading", "Heading"),
+            long("intro", "Introduction (optional)"),
+            {
+              type: "object",
+              name: "items",
+              label: "Testimonials",
+              list: true,
+              description: "One entry per guest. Use the guest words as they wrote them.",
+              ui: { itemProps: (item) => word(item, "name", "New testimonial") },
+              fields: [
+                { ...long("quote", "What the guest said"), required: true },
+                { ...text("name", "Guest name", "First name and initial is fine, e.g. Anita R."), required: true },
+                text("from", "Where they are from (optional)", "City or country, e.g. Kolkata."),
+                text("stayed", "When they stayed (optional)", "e.g. March 2026."),
+                { type: "number", name: "rating", label: "Star rating, 1 to 5 (optional)", description: "Leave empty to show no stars." },
+                { type: "string", name: "source", label: "Where it was posted (optional)", options: ["Google", "Booking.com", "Airbnb", "MakeMyTrip", "TripAdvisor", "Direct / guest book", "Other"] },
+                text("link", "Link to the original review (optional)", "A full web address starting with https://"),
+                photo("photo", "Guest photo (optional)", "Only with the guest permission.")
               ]
             }
           ]),

@@ -32,6 +32,27 @@ const PERSON_CUES = /person|human|manager|owner|team|staff|someone|agent|call|ph
 /* A genuine handoff reply points the guest to the team (the prompt asks for it), in any script. An answer does not. */
 const TEAM_WORD = /team|staff|टीम|స్టాఫ్|టీమ్|టీం|ଟିମ|টিম|குழு|அணி|ടീം|ತಂಡ|ટીમ/i;
 const SUBSTANTIVE = 280; // a reply longer than this that says "unknown" almost certainly answered the question
+/* The reply plainly says it does NOT have the information (English, Hindi, Telugu, Odia, Bengali, Tamil, Kannada, Malayalam; native and romanized). */
+const NO_INFO = new RegExp([
+  String.raw`\b(do\s?n.?t|do\s+not|does\s?n.?t|did\s?n.?t|cannot|can.?t|could\s?n.?t|unable\s+to)\s+(have|know|find|confirm|say|share|provide)\b`,
+  String.raw`\bnot\s+(sure|certain|aware)\b`, String.raw`\bno\s+(information|details?|idea)\b`,
+  String.raw`\b(pata|patta|jaankari|jankari|suchna)\s+nahi\b`, String.raw`\bnahi\s+pata\b`, String.raw`\bmere\s+paas\b.{0,40}\bnahi\b`, String.raw`\b(pakka|sure)\s+nahi\b`,
+  String.raw`\b(teliyadu|teliyadhu|telidu|samacharam\s+ledu|vivaralu\s+levu|naa?\s+daggara\b.{0,30}\bledu|naku\s+teliyadu)\b`,
+  String.raw`\b(janini|jani\s+nahi|jane\s+nahi|janenahi|mu\s+jani\s+nahi|tathya\s+nahi|suchana\s+nahi|mo\s+pakhare\b.{0,30}\bnahi)\b`,
+  String.raw`\b(jani\s+na|jana\s+nei|tothyo\s+nei|tathya\s+nei|amar\s+kache\b.{0,30}\bnei)\b`,
+  String.raw`\b(theriyavillai|theriyathu|theriyadhu|therila|thagaval\s+illai|thakaval\s+illai|ennidam\b.{0,30}\billai)\b`,
+  String.raw`\b(gottilla|gothilla|ariyilla)\b`,
+  String.raw`जानकारी\s+(मेरे\s+पास\s+)?नहीं|पता\s+नहीं|नहीं\s+पता|मेरे\s+पास.{0,40}नहीं|निश्चित\s+नहीं`,
+  String.raw`తెలియదు|తెలియ(దు|టం\s*లేదు)|సమాచారం\s+(నా\s+వద్ద\s+)?లేదు|వివరాలు\s+లేవు|నా\s+వద్ద.{0,30}లేదు|నాకు.{0,20}తెలియ`,
+  String.raw`ଜାଣି\s*ନାହିଁ|ଜାଣେ\s*ନାହିଁ|ଜଣା\s*ନାହିଁ|ସୂଚନା\s*ନାହିଁ|ତଥ୍ୟ\s*ନାହିଁ|ମୋ\s*ପାଖରେ.{0,30}ନାହିଁ`,
+  String.raw`জানি\s*না|জানা\s*নেই|তথ্য\s*(আমার\s+কাছে\s+)?নেই|আমার\s+কাছে.{0,30}নেই`,
+  String.raw`தெரியவில்லை|தெரியாது|தகவல்\s+இல்லை|என்னிடம்.{0,30}இல்லை`,
+  String.raw`ಗೊತ್ತಿಲ್ಲ|ಮಾಹಿತಿ\s+ಇಲ್ಲ`, String.raw`അറിയില്ല|വിവരം\s+ഇല്ല`,
+].join('|'), 'iu');
+/* Concrete resort facts in a reply (a time, a distance, a phone number, the address): the question was answered. */
+const FACTS = /\b\d{1,2}(:\d\d)?\s*(am|pm)\b|\b\d+(\.\d+)?\s*(km|kms|kilometres|kilometers|minutes?|mins?|hours?|sq\.?\s?ft|sft)\b|\b\d{10}\b|\b761002\b|park\s+avenue|basement\s+parking/i;
+/* Asks only the team can settle: discounts, negotiation, custom or group quotes. */
+const NEGOTIATE = /discount|negotiat|bargain|custom\s+(quote|package)|special\s+(rate|price|deal|arrangement)|bulk|group\s+(rate|booking|discount)|concession|cheaper|best\s+price|lower\s+(the\s+)?price|తగ్గింపు|डिस्काउंट|छूट/i;
 
 /** The same wording for a guest who asks the identical thing twice in a row: they did not get an answer. */
 export function repeated(prev: string | undefined, text: string) {
@@ -55,9 +76,11 @@ export function decideHandoff(o: { text: string; reply: string; model: HandoffRe
   if (o.model === 'human') return nonLatin || PERSON_CUES.test(o.text) ? 'human' : null;
   if (o.model === 'frustrated') return null; // real frustration is caught by the phrases and the repeat check above
   if (o.model === 'unknown') {
+    if (NEGOTIATE.test(o.text) && TEAM_WORD.test(o.reply)) return 'unknown'; // only the team can decide these
     if (o.kbMatched) return null; // answered from an uploaded document
     if (o.reply.length > SUBSTANTIVE) return null;
-    return TEAM_WORD.test(o.reply) ? 'unknown' : null; // no mention of the team: it answered
+    if (FACTS.test(o.reply)) return null; // concrete facts (address, time, distance, phone): it answered
+    return NO_INFO.test(o.reply) && TEAM_WORD.test(o.reply) ? 'unknown' : null; // only an explicit "I do not have that information" counts, not a mere mention of the team
   }
   return null;
 }

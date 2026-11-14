@@ -1,7 +1,7 @@
 'use client';
 import { useActionState, useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { ChatSettings } from '@/lib/chat/config';
-import { Badge, Field, Input, PageHeader, Progress, Section, Switch, Textarea, btn } from '../../_ui/ui';
+import { Field, Input, PageHeader, Section, Switch, Textarea, btn } from '../../_ui/ui';
 import { useToast } from '../../_ui/Toast';
 import { ChatPreview } from './ChatPreview';
 import { saveChatSettings } from './actions';
@@ -59,14 +59,13 @@ export function SettingsForm({ initial, bounds, numKeys, tones, usage, children 
     return e;
   }, [v, bounds, numKeys]);
   const invalid = Object.keys(errors).length > 0;
-  const pct = (usage.requests / Number(base.dailyCap)) * 100;
   const on = v.enabled === true;
 
   return (
     <div className="adm-page adm-page--settings">
       <PageHeader title="Assistant settings" description="How the chat assistant introduces itself and behaves on your website. Changes apply within a minute." />
       <nav className="adm-jump" aria-label="On this page">
-        {[['identity', 'Identity'], ['personality', 'Personality'], ['bubble', 'Greeting bubble'], ['limits', 'Limits and usage'], ['blocked', 'Blocked guests']].map(([id, l]) => <a key={id} href={`#${id}`}>{l}</a>)}
+        {[['identity', 'Identity'], ['personality', 'Personality'], ['bubble', 'Greeting bubble'], ['blocked', 'Blocked guests']].map(([id, l]) => <a key={id} href={`#${id}`}>{l}</a>)}
       </nav>
 
       <div className="adm-settings">
@@ -117,23 +116,6 @@ export function SettingsForm({ initial, bounds, numKeys, tones, usage, children 
               <Switch label="Show it on phones" help="Off by default because phones have little room." name="teaserMobile" checked={v.teaserMobile === true} onChange={e => set('teaserMobile', e.target.checked)} />
             </Section>
 
-            <Section id="limits" title="Limits and usage" badge={<Badge>Advanced</Badge>} description="Keeps your AI credits under control. The defaults suit most resorts.">
-              <div className="adm-usage">
-                <div><b>{usage.requests.toLocaleString('en-IN')}</b> of {Number(base.dailyCap).toLocaleString('en-IN')} replies used today</div>
-                <Progress value={pct} label="Replies used today" tone={pct >= 90 ? 'red' : pct >= 70 ? 'amber' : undefined} />
-                <small>The count resets at midnight India time.</small>
-              </div>
-              <details className="adm-details adm-details--box">
-                <summary>Change limits</summary>
-                <div className="adm-grid2">
-                  {numKeys.map(k => (
-                    <Field key={k} label={bounds[k][2]} htmlFor={k} error={errors[k]} help={`${bounds[k][3]}${bounds[k][3] ? ' ' : ''}(${bounds[k][0].toLocaleString('en-IN')} to ${bounds[k][1].toLocaleString('en-IN')})`}>
-                      <Input id={k} name={k} type="number" inputMode="numeric" min={bounds[k][0]} max={bounds[k][1]} value={String(v[k])} onChange={e => set(k, e.target.value)} />
-                    </Field>
-                  ))}
-                </div>
-              </details>
-            </Section>
           </form>
           {children}
         </div>

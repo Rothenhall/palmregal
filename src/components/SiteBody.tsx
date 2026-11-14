@@ -11,6 +11,7 @@ import { DaySun } from '@/components/DaySun';
 import { Todo } from '@/components/Todo';
 import { CoastMap } from '@/components/CoastMap';
 import { MomentsWall } from '@/components/MomentsWall';
+import { Testimonials } from '@/components/Testimonials';
 import { Faq } from '@/components/Faq';
 import { EnquiryForm } from '@/components/EnquiryForm';
 import { Icon } from '@/components/Icons';
@@ -57,6 +58,9 @@ export function SiteBody({ content, f }: { content: SiteContent; f?: Edit }) {
           <p className="lede" {...e(mom, 'lede')}>{mom.lede} <Todo>Guest photos, with permission</Todo></p>
         </div>
       </section>
+
+      {/* Guest words sit after the photo wall and before the questions: proof first, then the practical answers and the enquiry. */}
+      <Testimonials content={content} f={f} />
 
       <div className="stay-close" data-bg="night">
         <section className="wrap stay-faq" id="faq" aria-labelledby="faq-h">

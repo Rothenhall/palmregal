@@ -5,9 +5,17 @@ import { systemPrompt, scriptNote } from '@/lib/chat/prompt';
 import { DEFAULTS } from '@/lib/chat/config';
 import { decideHandoff, humanIntent, markerStripper, type HandoffReason } from '@/lib/chat/handoff';
 import { scriptOf } from '@/lib/chat/store';
+import { knowledgeFor, NO_MATCH } from '@/lib/chat/kb';
 
 type Row = { say: string; expect: 'none' | 'any' | HandoffReason; prev?: [string, string] };
 const ROWS: Row[] = [
+  { say: 'where is palm regal?', expect: 'none' },
+  { say: 'hi, how many pets can i get?', expect: 'none' },
+  { say: 'what time is check-in?', expect: 'none' },
+  { say: 'is there parking?', expect: 'none' },
+  { say: 'is there a doctor on call?', expect: 'none' }, // knowledge doc
+  { say: 'how far is Cuttack?', expect: 'none' }, // knowledge doc
+  { say: 'what adventure activities are nearby?', expect: 'none' }, // knowledge doc
   { say: 'who are you?', expect: 'none' },
   { say: 'nuvvu evaru?', expect: 'none' },
   { say: 'hi', expect: 'none' },
@@ -23,11 +31,13 @@ const ROWS: Row[] = [
 ];
 
 const only = process.argv[2] === 'before' ? 'before' : 'after';
-const system = systemPrompt(DEFAULTS);
 let calls = 0;
 const out: string[] = [];
 for (const r of ROWS) {
   const { script } = scriptOf(r.say);
+  const knowledge = await knowledgeFor(r.say).catch(() => '');
+  const kbMatched = !!knowledge && !knowledge.startsWith(NO_MATCH);
+  const system = systemPrompt(DEFAULTS, knowledge);
   const history: { role: string; content: string }[] = [];
   if (r.prev) history.push({ role: 'user', content: r.prev[0] }, { role: 'assistant', content: r.prev[1] });
   history.push({ role: 'user', content: `${r.say}\n\n${scriptNote(script, r.say)}` });
@@ -40,10 +50,10 @@ for (const r of ROWS) {
   const m = markerStripper(); const reply = (m.push(raw) + m.flush()).trim();
   const modelReason = m.reason();
   const oldWay: HandoffReason | null = modelReason ?? humanIntent(r.say); // what the server did before the filter
-  const newWay = decideHandoff({ text: r.say, reply, model: modelReason, kbMatched: false, prevUser: r.prev?.[0] });
+  const newWay = decideHandoff({ text: r.say, reply, model: modelReason, kbMatched, prevUser: r.prev?.[0] });
   const shown = only === 'before' ? oldWay : newWay;
   const ok = r.expect === 'none' ? shown === null : r.expect === 'any' ? shown !== null : shown === r.expect;
-  out.push(`${ok ? 'OK  ' : 'FAIL'} | ${r.say.padEnd(40)} | expect ${String(r.expect).padEnd(10)} | model ${String(modelReason).padEnd(10)} | before ${String(oldWay).padEnd(10)} | after ${String(newWay).padEnd(10)} | ${reply.replace(/\s+/g, ' ').slice(0, 90)}`);
+  out.push(`${ok ? 'OK  ' : 'FAIL'} | ${r.say.padEnd(40)} | expect ${String(r.expect).padEnd(10)} | model ${String(modelReason).padEnd(10)} | before ${String(oldWay).padEnd(10)} | after ${String(newWay).padEnd(10)} | ${reply.replace(/\s+/g, ' ').slice(0, 230)}`);
 }
 console.log(out.join('\n'));
 console.log(`\nSarvam calls: ${calls}`);

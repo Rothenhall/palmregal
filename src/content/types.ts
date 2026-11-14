@@ -32,6 +32,11 @@ export type Moment = { time: string; title: string; em: string; text: string; im
 export type GalleryPhoto = { src: string; alt: string; cap: string; group: string };
 export type Faq = { q: string; answer: string[]; pending?: string | null };
 
+export type Testimonial = {
+  quote: string; name: string; from?: string | null; stayed?: string | null; rating?: number | null;
+  source?: string | null; link?: string | null; photo?: string | null;
+};
+
 export type SiteContent = {
   seo: { title: string; description: string; image: string };
   general: General;
@@ -47,6 +52,7 @@ export type SiteContent = {
   daySection: { eyebrow: string; moreLink: string; moments: Moment[] };
   locationSection: { eyebrow: string; title: string; em: string; lede: string };
   momentsSection: { eyebrow: string; title: string; em: string; lede: string; photos: GalleryPhoto[] };
+  testimonials: { show: boolean; eyebrow: string; heading: string; intro?: string | null; items: Testimonial[] };
   faqSection: { eyebrow: string; title: string; em: string; lede: string; moreLink: string; faqs: Faq[] };
   contactSection: {
     eyebrow: string; title: string; em: string; lede: string; callLabel: string; writeLabel: string;

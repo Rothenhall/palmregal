@@ -150,17 +150,12 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 
 /* Floating Book Direct pill */
 
-.wa { position: fixed; z-index: 58; right: calc(20px + env(safe-area-inset-right, 0px)); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: 10px; text-decoration: none }
-.wa .b { width: 58px; height: 58px; border-radius: 50%; background: #25a35a; color: var(--white); display: grid; place-items: center; box-shadow: 0 14px 30px -10px rgba(16, 46, 55, .6) }
-.wa svg { width: 29px; height: 29px }
-.wa .t { background: var(--white); color: var(--c-text); font-size: .82rem; font-weight: 600; padding: 9px 14px; border-radius: 999px; box-shadow: 0 10px 24px -12px rgba(16, 46, 55, .5); opacity: 0; transform: translateX(10px); transition: opacity .4s var(--ease), transform .4s var(--ease) }
-.wa:hover .t { opacity: 1; transform: none }
-/* chat launcher: sits directly above the WhatsApp button; its panel and styles load on first click */
-.chat-fab { position: fixed; z-index: 58; right: calc(20px + env(safe-area-inset-right, 0px)); bottom: calc(90px + env(safe-area-inset-bottom, 0px)); width: 58px; height: 58px; border-radius: 50%; border: 0; background: var(--teal-800); color: var(--white); display: grid; place-items: center; cursor: pointer; box-shadow: 0 14px 30px -10px rgba(16, 46, 55, .6); transition: transform .4s var(--ease) }
+/* chat launcher: the only floating button, bottom-right; its panel and styles load on first click */
+.chat-fab { position: fixed; z-index: 58; right: calc(20px + env(safe-area-inset-right, 0px)); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); width: 58px; height: 58px; border-radius: 50%; border: 0; background: var(--teal-800); color: var(--white); display: grid; place-items: center; cursor: pointer; box-shadow: 0 14px 30px -10px rgba(16, 46, 55, .6); transition: transform .4s var(--ease) }
 .chat-fab:hover { transform: translateY(-2px) }
 .chat-fab:focus-visible { outline: 2px solid var(--amber-500); outline-offset: 3px }
 .chat-fab[hidden] { display: none }
-.chat-tease { position: fixed; z-index: 58; right: calc(90px + env(safe-area-inset-right, 0px)); bottom: calc(96px + env(safe-area-inset-bottom, 0px)); max-width: min(270px, calc(100vw - 130px)); display: flex; align-items: flex-start; background: var(--white); color: var(--c-text); border-radius: 14px 14px 4px 14px; box-shadow: 0 14px 30px -12px rgba(16, 46, 55, .5); animation: chat-tease-in .6s var(--ease) both }
+.chat-tease { position: fixed; z-index: 58; right: calc(90px + env(safe-area-inset-right, 0px)); bottom: calc(26px + env(safe-area-inset-bottom, 0px)); max-width: min(270px, calc(100vw - 130px)); display: flex; align-items: flex-start; background: var(--white); color: var(--c-text); border-radius: 14px 14px 4px 14px; box-shadow: 0 14px 30px -12px rgba(16, 46, 55, .5); animation: chat-tease-in .6s var(--ease) both }
 .chat-tease-text { background: none; border: 0; font: inherit; font-size: .92rem; line-height: 1.4; text-align: left; padding: .75rem .4rem .75rem .95rem; cursor: pointer; color: inherit }
 .chat-tease-x { background: none; border: 0; color: var(--c-muted); cursor: pointer; width: 32px; height: 32px; display: grid; place-items: center; flex: none; margin: 2px 2px 0 0 }
 .chat-tease button:focus-visible { outline: 2px solid var(--amber-500); outline-offset: 1px }
@@ -909,21 +904,61 @@ html:not(.motion) .dcard { position: relative; top: 0 }
   .stay-close .q .a, .stay-close .q button i { transition: none }
 }
 
-/* ===== Not found: the night garden, and a way back ===== */
-.lost { position: relative; min-height: 100svh; display: grid; align-items: end; overflow: hidden; color: var(--on-dark); background: var(--teal-950) }
-.lost-photo, .lost-shade { position: absolute; inset: 0 }
-.lost-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 54% 50% }
-html.motion .lost-photo img { animation: lost-settle 2.8s var(--ease) both }
-@keyframes lost-settle { from { opacity: 0; scale: 1.06 } to { opacity: 1; scale: 1 } }
-.lost-shade { background: linear-gradient(180deg, rgba(11, 34, 40, .55), rgba(11, 34, 40, .1) 30%, rgba(11, 34, 40, .45) 60%, rgba(11, 34, 40, .92) 100%) }
-.lost-copy { padding-block: calc(var(--hdr) + 40px) clamp(56px, 11svh, 120px) }
-.lost .eyebrow { color: var(--teal-200) }
-.lost h1 { font-size: clamp(3.2rem, 8vw, 7.6rem); line-height: .96; letter-spacing: -.04em; max-width: 12ch; margin: 22px 0 22px; color: var(--on-dark) }
-.lost h1 em { color: var(--teal-200) }
-.lost .lede { color: rgba(238, 245, 242, .82); max-width: 44ch; text-shadow: 0 2px 16px rgba(11, 34, 40, .6) }
-.lost-links { display: flex; flex-wrap: wrap; gap: 14px 28px; margin-top: clamp(36px, 6svh, 56px); padding-top: 22px; border-top: 1px solid var(--line-d); max-width: 640px }
-.lost-links .tlink { color: var(--teal-100) }
-@media (prefers-reduced-motion: reduce) { .lost-photo img { animation: none } }
+/* ===== Not found: a boat adrift, with clear ways back to shore ===== */
+.nf { min-height: 100svh; display: grid; align-items: center; background: var(--mint-100); color: var(--c-text); overflow: hidden }
+.nf-inner { padding-block: calc(var(--hdr) + 16px) 56px; text-align: center; display: grid; justify-items: center }
+.nf-code { font-family: var(--display, "Fraunces", Georgia, serif); font-size: clamp(5rem, 18vw, 10rem); line-height: .9; letter-spacing: -.05em; margin: 0; color: var(--teal-800); font-variant-numeric: lining-nums }
+.nf-scene { width: min(760px, 100%, 104svh); height: auto; max-height: 34svh; margin-top: 4px; display: block;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent), linear-gradient(to bottom, #000 78%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent), linear-gradient(to bottom, #000 78%, transparent);
+  mask-composite: intersect }
+.nf-eyebrow { margin: 10px 0 0; font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; color: var(--teal-700); font-weight: 600 }
+.nf-title { font-size: clamp(1.8rem, 4.2vw, 2.6rem); line-height: 1.1; letter-spacing: -.02em; margin: 10px 0 0; color: var(--c-text) }
+.nf-text { margin: 14px 0 0; max-width: 48ch; color: var(--c-muted); font-size: 1.05rem; line-height: 1.6 }
+.nf-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 28px; color: var(--teal-800) }
+.nf-links { margin-top: 36px; padding-top: 22px; border-top: 1px solid var(--line); width: min(560px, 100%) }
+.nf-links p { margin: 0 0 12px; font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; color: var(--c-muted) }
+.nf-links ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 26px }
+.nf-links .tlink { color: var(--teal-800) }
+.nf-help { margin: 24px 0 0; font-size: .95rem; color: var(--c-muted) }
+.nf-help a { color: var(--teal-800); font-weight: 600 }
+/* scene */
+.nf-sun { fill: var(--amber-500); opacity: .85 }
+.nf-cloud path { fill: #fff; opacity: .8 }
+.nf-bird path { stroke: var(--teal-700); stroke-width: 2; stroke-linecap: round }
+.nf-island path:first-child { fill: var(--teal-300) }
+.nf-trunk { stroke: var(--teal-700); stroke-width: 3; stroke-linecap: round }
+.nf-frond { fill: var(--teal-600) }
+.nf-horizon { fill: var(--teal-300) }
+.nf-sea--far path { fill: var(--teal-200) }
+.nf-sea--mid path { fill: var(--teal-300) }
+.nf-sea--near path { fill: var(--teal-600) }
+.nf-mast { stroke: var(--teal-800); stroke-width: 3; stroke-linecap: round }
+.nf-sail { fill: #fff; stroke: var(--teal-700); stroke-width: 1.5; stroke-linejoin: round }
+.nf-sail--b { fill: var(--mint-100) }
+.nf-flag { fill: var(--amber-500) }
+.nf-hull { fill: var(--teal-800) }
+.nf-lantern { fill: var(--amber-500) }
+.nf-bottle rect, .nf-bottle path { fill: var(--teal-700); opacity: .8 }
+.nf-boat, .nf-bottle, .nf-cloud, .nf-bird, .nf-wave { transform-box: fill-box; transform-origin: center }
+@media (prefers-reduced-motion: no-preference) {
+  .nf-boat { animation: nf-bob 5s ease-in-out infinite }
+  .nf-boat-tilt { transform-box: fill-box; transform-origin: 50% 100%; animation: nf-tilt 6s ease-in-out infinite }
+  .nf-wave--1 { animation: nf-drift 22s linear infinite }
+  .nf-wave--2 { animation: nf-drift 16s linear infinite reverse }
+  .nf-wave--3 { animation: nf-drift 11s linear infinite }
+  .nf-cloud { animation: nf-float 18s ease-in-out infinite alternate }
+  .nf-bird { animation: nf-float 12s ease-in-out infinite alternate-reverse }
+  .nf-bottle { animation: nf-bob 4.5s ease-in-out infinite reverse }
+  .nf-lantern { animation: nf-glow 3s ease-in-out infinite }
+}
+@keyframes nf-bob { 0%, 100% { transform: translateY(-3px) } 50% { transform: translateY(5px) } }
+@keyframes nf-tilt { 0%, 100% { transform: rotate(-2.5deg) } 50% { transform: rotate(2.5deg) } }
+@keyframes nf-drift { to { transform: translateX(-400px) } }
+@keyframes nf-float { to { transform: translateX(26px) } }
+@keyframes nf-glow { 0%, 100% { opacity: 1 } 50% { opacity: .55 } }
+@media (max-width: 560px) { .nf-scene { max-height: 26svh; width: min(760px, 100%, 80svh) } }
 
 /* ===== Suites overview: the three suites at a glance, the full walk on request ===== */
 .sj--overview { padding-block: var(--sec-y); background: var(--teal-950) }

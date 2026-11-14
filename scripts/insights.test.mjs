@@ -98,7 +98,7 @@ await t('checkContent', () => {
   const ids = items.map(i => i.id);
   for (const id of ['whatsapp', 'alt', 'pending', 'seo-title', 'seo-desc', 'faq']) assert.ok(ids.includes(id), id);
   assert.equal(items.find(i => i.id === 'alt').count, 1);
-  assert.deepEqual(m.checkContent({ general: { whatsapp: '9198' }, seo: { title: 'Palm Regal serviced suites by the sea', description: 'Serviced suites with a living room and balcony, five minutes from Gopalpur beach in Odisha.' }, faqSection: { faqs: [1, 2, 3, 4, 5] } }), []);
+  assert.deepEqual(m.checkContent({ general: { whatsapp: '9198' }, seo: { title: 'Palm Regal serviced suites by the sea', description: 'Serviced suites with a living room and balcony, five minutes from Gopalpur beach in Odisha.' }, faqSection: { faqs: [1, 2, 3, 4, 5] }, testimonials: { show: true, items: [{}] } }), []);
 });
 
 /* ---------- website status and undo (mocked GitHub) ---------- */

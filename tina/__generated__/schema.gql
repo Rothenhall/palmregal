@@ -255,6 +255,25 @@ type HomeMomentsSection {
   photos: [HomeMomentsSectionPhotos]
 }
 
+type HomeTestimonialsItems {
+  quote: String!
+  name: String!
+  from: String
+  stayed: String
+  rating: Float
+  source: String
+  link: String
+  photo: String
+}
+
+type HomeTestimonials {
+  show: Boolean
+  eyebrow: String
+  heading: String
+  intro: String
+  items: [HomeTestimonialsItems]
+}
+
 type HomeFaqSectionFaqs {
   q: String
   answer: [String]
@@ -301,6 +320,7 @@ type Home implements Node & Document {
   daySection: HomeDaySection
   locationSection: HomeLocationSection
   momentsSection: HomeMomentsSection
+  testimonials: HomeTestimonials
   faqSection: HomeFaqSection
   contactSection: HomeContactSection
   footer: HomeFooter
@@ -506,6 +526,25 @@ input HomeMomentsSectionFilter {
   photos: HomeMomentsSectionPhotosFilter
 }
 
+input HomeTestimonialsItemsFilter {
+  quote: StringFilter
+  name: StringFilter
+  from: StringFilter
+  stayed: StringFilter
+  rating: NumberFilter
+  source: StringFilter
+  link: StringFilter
+  photo: ImageFilter
+}
+
+input HomeTestimonialsFilter {
+  show: BooleanFilter
+  eyebrow: StringFilter
+  heading: StringFilter
+  intro: StringFilter
+  items: HomeTestimonialsItemsFilter
+}
+
 input HomeFaqSectionFaqsFilter {
   q: StringFilter
   answer: StringFilter
@@ -552,6 +591,7 @@ input HomeFilter {
   daySection: HomeDaySectionFilter
   locationSection: HomeLocationSectionFilter
   momentsSection: HomeMomentsSectionFilter
+  testimonials: HomeTestimonialsFilter
   faqSection: HomeFaqSectionFilter
   contactSection: HomeContactSectionFilter
   footer: HomeFooterFilter
@@ -755,6 +795,25 @@ input HomeMomentsSectionMutation {
   photos: [HomeMomentsSectionPhotosMutation]
 }
 
+input HomeTestimonialsItemsMutation {
+  quote: String
+  name: String
+  from: String
+  stayed: String
+  rating: Float
+  source: String
+  link: String
+  photo: String
+}
+
+input HomeTestimonialsMutation {
+  show: Boolean
+  eyebrow: String
+  heading: String
+  intro: String
+  items: [HomeTestimonialsItemsMutation]
+}
+
 input HomeFaqSectionFaqsMutation {
   q: String
   answer: [String]
@@ -801,6 +860,7 @@ input HomeMutation {
   daySection: HomeDaySectionMutation
   locationSection: HomeLocationSectionMutation
   momentsSection: HomeMomentsSectionMutation
+  testimonials: HomeTestimonialsMutation
   faqSection: HomeFaqSectionMutation
   contactSection: HomeContactSectionMutation
   footer: HomeFooterMutation

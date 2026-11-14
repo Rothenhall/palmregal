@@ -481,3 +481,6 @@
   .adm-health li .adm-btn { grid-column: 2; justify-self: start }
   .adm-cal-d { min-height: 44px; padding: 3px 4px }
 }
+
+/* 404 inside the admin */
+.adm-notfound { min-height: 60vh; display: grid; place-items: center }

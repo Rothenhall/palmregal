@@ -4,7 +4,7 @@ import { getSettings } from '@/lib/chat/config';
 import { redisConfigured } from '@/lib/chat/redis';
 import {
   VISITOR_COOKIE, clientIp, daily, fmtWait, globalUsage, hashFp, hashIp, isBlocked, maskIp, newVisitor, noteGlobal,
-  originOk, readVisitor, slide, tempBlock, tokenCap, type Verdict,
+  originOk, readVisitor, slide, tempBlock, tokenCap, DAILY_BUDGET_INR, replyCostMicro, type Verdict,
 } from '@/lib/chat/guard';
 import { getConv, saveConv, scriptOf, validCid, type Conv } from '@/lib/chat/store';
 import { scriptNote, systemPrompt } from '@/lib/chat/prompt';
@@ -86,7 +86,7 @@ export async function POST(req: Request) {
 
   // whole-site circuit breaker: reads only, counts after the reply
   const g = await globalUsage();
-  if (g.requests >= s.dailyCap || g.tokens >= tokenCap(s.dailyCap)) {
+  if (g.requests >= s.dailyCap || g.tokens >= tokenCap(s.dailyCap) || g.spendInr >= DAILY_BUDGET_INR) {
     return fail(503, 'paused', 'Our assistant has reached its limit for today and will be back tomorrow. Please call, WhatsApp or use Book direct and the team will help.');
   }
 
@@ -137,7 +137,7 @@ export async function POST(req: Request) {
 
   const stream = new ReadableStream({
     async start(controller) {
-      let reply = ''; let tokens = 0;
+      let reply = ''; let tokens = 0; let inTok = 0; let outTok = 0;
       const think = thinkStripper(); const marker = markerStripper();
       const emit = (out: string) => { if (out) { reply += out; controller.enqueue(line({ d: out })); } };
       const send = (chunk: string) => emit(marker.push(think(chunk)));
@@ -168,7 +168,11 @@ export async function POST(req: Request) {
               const j = JSON.parse(data);
               const piece = j.choices?.[0]?.delta?.content; // reasoning_content is deliberately ignored
               if (typeof piece === 'string' && piece) send(piece);
-              if (j.usage?.total_tokens) tokens = j.usage.total_tokens;
+              if (j.usage?.total_tokens) {
+                tokens = j.usage.total_tokens;
+                inTok = Number(j.usage.prompt_tokens) || 0;
+                outTok = Number(j.usage.completion_tokens) || Math.max(0, tokens - inTok);
+              }
             } catch {}
           }
         }
@@ -190,7 +194,9 @@ export async function POST(req: Request) {
             controller.enqueue(line({ mi: c.msgs.length - 1 }));
           }
           if (reply.trim() || reason) await saveConv(c);
-          await noteGlobal(tokens || Math.ceil((system.length + reply.length) / 3), 0);
+          // without usage from Sarvam, estimate ~3 characters per token for prompt (incl. history) and reply
+          if (!tokens) { inTok = Math.ceil(system.length / 3); outTok = Math.ceil(reply.length / 3); }
+          await noteGlobal(tokens || inTok + outTok, 0, replyCostMicro(inTok, outTok));
         } catch {}
         try { controller.enqueue(line({ end: true })); controller.close(); } catch {}
       }
