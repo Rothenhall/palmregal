@@ -9,6 +9,7 @@ import { convLangLabel } from '@/lib/insights/lang';
 import { Badge, Card, EmptyState, PageHeader, Section, StatTile, btn } from '../_ui/ui';
 import { dayOf, firstGuestMessage, guestLabel, handoffText, n, timeAgo, RESORT } from '../_lib/format';
 import { getNeedsReply } from '../_lib/data';
+import { SubmitButton } from '../_ui/SubmitButton';
 import { setAssistantOn } from './concierge/actions';
 
 export const metadata = { title: 'Home' };
@@ -83,7 +84,7 @@ export default async function Home() {
               <div className="adm-status-actions">
                 <form action={setAssistantOn}>
                   <input type="hidden" name="on" value={settings.enabled ? '0' : '1'} />
-                  <button className={btn('secondary', 'sm')} type="submit">Turn {settings.enabled ? 'off' : 'on'}</button>
+                  <SubmitButton className={btn('secondary', 'sm')} pendingLabel="Updating…">Turn {settings.enabled ? 'off' : 'on'}</SubmitButton>
                 </form>
                 <Link className={btn('ghost', 'sm')} href="/admin/concierge/">Settings</Link>
               </div>

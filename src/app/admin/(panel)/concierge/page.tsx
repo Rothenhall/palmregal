@@ -6,6 +6,7 @@ import { listBlocks, RETENTION_DAYS } from '@/lib/chat/store';
 import { EmptyState, PageHeader, Section, btn } from '../../_ui/ui';
 import { shortDate } from '../../_lib/format';
 import { SettingsForm } from './SettingsForm';
+import { SubmitButton } from '../../_ui/SubmitButton';
 import { unblock } from './actions';
 
 export const metadata = { title: 'Assistant settings' };
@@ -34,7 +35,7 @@ export default async function Page() {
             {blocks.map(b => (
               <li key={b.kind + b.hash}>
                 <span><b>{b.kind === 'ip' ? 'Wi-Fi network' : b.kind === 'fp' ? 'Device' : 'Guest'}</b><small>{b.masked} · blocked {shortDate(b.at)}</small></span>
-                <form action={unblock}><input type="hidden" name="kind" value={b.kind} /><input type="hidden" name="hash" value={b.hash} /><button className={btn('secondary', 'sm')} type="submit">Allow again</button></form>
+                <form action={unblock}><input type="hidden" name="kind" value={b.kind} /><input type="hidden" name="hash" value={b.hash} /><SubmitButton className={btn('secondary', 'sm')} pendingLabel="Allowing…">Allow again</SubmitButton></form>
               </li>
             ))}
           </ul>

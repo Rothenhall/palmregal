@@ -4,6 +4,7 @@ import { AuthError } from 'next-auth';
 import { CircleAlert } from 'lucide-react';
 import { signIn } from '@/auth';
 import { Field, Input, btn } from '../_ui/ui';
+import { SubmitButton } from '../_ui/SubmitButton';
 import { RESORT } from '../_lib/format';
 
 export const metadata: Metadata = { title: 'Sign in' };
@@ -33,7 +34,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           {error && <p className="adm-inline-error" role="alert"><CircleAlert size={16} aria-hidden="true" />That email or password is not right. Please try again.</p>}
           <Field label="Email" htmlFor="email"><Input id="email" name="email" type="email" autoComplete="username" required autoFocus /></Field>
           <Field label="Password" htmlFor="password"><Input id="password" name="password" type="password" autoComplete="current-password" required /></Field>
-          <button className={`${btn('primary')} adm-btn--block`} type="submit">Sign in</button>
+          <SubmitButton className={`${btn('primary')} adm-btn--block`} pendingLabel="Signing in…">Sign in</SubmitButton>
         </form>
         <a className="adm-credit adm-credit--login" href="https://rothenhall.com" target="_blank" rel="noopener" aria-label="Built by Rothenhall Partners (opens in a new tab)"><span>Built by</span><img src="/brand/rothenhall-wordmark-ink.png" alt="" width="640" height="112" loading="lazy" /></a>
       </div>

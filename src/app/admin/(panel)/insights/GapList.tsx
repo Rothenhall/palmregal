@@ -1,7 +1,7 @@
 'use client';
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { BookPlus, CheckCheck, X } from 'lucide-react';
+import { BookPlus, CheckCheck, Loader2, X } from 'lucide-react';
 import { AddKnowledge } from '../concierge/knowledge/AddKnowledge';
 import { useToast } from '../../_ui/Toast';
 import { Badge, EmptyState, btn } from '../../_ui/ui';
@@ -11,6 +11,7 @@ export type GapRow = { key: string; question: string; count: number; lastAsked: 
 
 export function GapList({ gaps, limits }: { gaps: GapRow[]; limits: { noteChars: number; fileMb: number } }) {
   const [active, setActive] = useState<GapRow | null>(null);
+  const [dismissing, setDismissing] = useState<string | null>(null);
   const router = useRouter();
   const toast = useToast();
   const defaults = useMemo(() => (active ? { tab: 'note' as const, title: active.question.slice(0, 80), hint: 'Write the answer guests should get. For example: “Yes, small pets are welcome with a refundable deposit.”' } : undefined), [active]);
@@ -28,7 +29,7 @@ export function GapList({ gaps, limits }: { gaps: GapRow[]; limits: { noteChars:
             </div>
             <div className="adm-gap-actions">
               <button type="button" className={btn('primary', 'sm')} onClick={() => setActive(g)}><BookPlus size={14} aria-hidden="true" />Add answer</button>
-              <button type="button" className={btn('ghost', 'sm')} onClick={async () => { await markGap(g.key, 'dismissed'); toast('Dismissed'); router.refresh(); }}><X size={14} aria-hidden="true" />Dismiss</button>
+              <button type="button" className={btn('ghost', 'sm')} disabled={dismissing !== null} onClick={async () => { setDismissing(g.key); try { await markGap(g.key, 'dismissed'); toast('Dismissed'); router.refresh(); } catch { toast('Could not dismiss this question. Please try again.', 'error'); } finally { setDismissing(null); } }}>{dismissing === g.key ? <><Loader2 size={14} className="adm-spin" aria-hidden="true" />Dismissing…</> : <><X size={14} aria-hidden="true" />Dismiss</>}</button>
             </div>
           </li>
         ))}
