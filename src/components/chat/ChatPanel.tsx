@@ -3,7 +3,11 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { fingerprint } from './fingerprint';
 import './chat.css';
 
-type Msg = { r: 'u' | 'a' | 'e'; t: string; i?: number; fb?: 1 | -1 };
+type Msg = { r: 'u' | 'a' | 'e'; t: string; i?: number; fb?: 1 | -1; at?: number };
+/* "Good morning / afternoon / evening" by the visitor's own clock */
+const hello = () => { const h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'; };
+const clock = (at?: number) => (at ? new Date(at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : '');
+const AV = '/img/emblem.png';
 type Contact = { phone: string; email: string; whatsapp: string };
 type Cfg = { enabled: boolean; name: string; greeting: string; maxInput: number; contact?: Contact; message?: string };
 
@@ -13,7 +17,18 @@ const store = {
   get: () => { try { return sessionStorage.getItem(CID_KEY) || undefined; } catch { return undefined; } },
   set: (v: string | null) => { try { v ? sessionStorage.setItem(CID_KEY, v) : sessionStorage.removeItem(CID_KEY); } catch {} },
 };
-const CHIPS = ['Suites and prices', 'Check availability', 'How to get here'];
+/* starter questions, each with a small line icon */
+const ICON = { width: 18, height: 18, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.6, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, 'aria-hidden': true };
+const CHIPS: { t: string; i: React.ReactNode }[] = [
+  { t: 'Suites and prices', i: <svg {...ICON}><path d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6M3 18h18M3 14h18M6 10V7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v3" /></svg> },
+  { t: 'Check availability', i: <svg {...ICON}><rect x="3.5" y="5" width="17" height="15" rx="2.5" /><path d="M3.5 10h17M8 3v4M16 3v4M9 14.5l2 2 4-4" /></svg> },
+  { t: 'How to get here', i: <svg {...ICON}><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z" /><circle cx="12" cy="10" r="2.4" /></svg> },
+];
+const Thumb = ({ down }: { down?: boolean }) => (
+  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={down ? { transform: 'rotate(180deg)' } : undefined}>
+    <path d="M7 10v10H4.5A1.5 1.5 0 0 1 3 18.5v-7A1.5 1.5 0 0 1 4.5 10zM7 10l4-7a2 2 0 0 1 2.6 2.4L12.5 9H19a2 2 0 0 1 2 2.3l-1.2 7A2 2 0 0 1 17.8 20H7" />
+  </svg>
+);
 
 export default function ChatPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [cfg, setCfg] = useState<Cfg | null>(null);
@@ -81,7 +96,7 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
     const text = (override ?? input).trim();
     if (!text || busy || wait > 0 || !cfg?.enabled) return;
     setInput(''); setBusy(true);
-    setMsgs(m => [...m, { r: 'u', t: text }]);
+    setMsgs(m => [...m, { r: 'u', t: text, at: Date.now() }]);
     const ac = new AbortController(); aborter.current = ac;
     try {
       cid.current ||= store.get();
@@ -95,10 +110,10 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
         if (j.retryAfter) setWait(Math.min(Number(j.retryAfter), 86400));
         if (j.newChat || ['paused', 'blocked', 'off'].includes(j.error)) setEnded(true);
         if (['paused', 'off', 'turns'].includes(j.error)) setHandoff(true);
-        setMsgs(m => [...m, { r: 'e', t: j.message || 'Sorry, something went wrong. Please try again.' }]);
+        setMsgs(m => [...m, { r: 'e', t: j.message || 'Sorry, something went wrong. Please try again.', at: Date.now() }]);
         return;
       }
-      setMsgs(m => [...m, { r: 'a', t: '' }]);
+      setMsgs(m => [...m, { r: 'a', t: '', at: Date.now() }]);
       const reader = res.body!.getReader(); const dec = new TextDecoder(); let buf = '';
       for (;;) {
         const { done, value } = await reader.read();
@@ -117,7 +132,7 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
         }
       }
     } catch (e) {
-      if ((e as Error).name !== 'AbortError') { setMsgs(m => [...m, { r: 'e', t: 'Connection problem. Please try again.' }]); setHandoff(true); }
+      if ((e as Error).name !== 'AbortError') { setMsgs(m => [...m, { r: 'e', t: 'Connection problem. Please try again.', at: Date.now() }]); setHandoff(true); }
     } finally { setBusy(false); setTimeout(() => field.current?.focus(), 0); }
   }
 
@@ -141,7 +156,8 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
   return (
     <div ref={root} className="chat" role="dialog" aria-modal="true" aria-labelledby="chat-title" data-open={open} hidden={!open} onKeyDown={onKey}>
       <header className="chat-head">
-        <div className="chat-title"><h2 id="chat-title">{cfg?.name || 'Concierge'}</h2><p>AI assistant for Palm Regal</p></div>
+        <span className="chat-av-wrap"><img className="chat-av" src={AV} alt="" width={40} height={40} />{cfg?.enabled !== false && <i className="chat-av-dot" aria-hidden="true" />}</span>
+        <div className="chat-title"><h2 id="chat-title">{cfg?.name || 'Concierge'}</h2><p><i className="chat-live" />{cfg?.enabled === false ? 'Away right now' : 'AI concierge · replies instantly'}</p></div>
         <div className="chat-head-actions">
           {hasUser && (
             <button type="button" onClick={reset} className="chat-ico" aria-label="Start a new chat" title="Start a new chat">
@@ -162,33 +178,46 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
       <div ref={log} className="chat-log" data-lenis-prevent role="log" aria-live="polite" aria-label="Conversation">
         {!cfg && <p className="chat-note">Connecting</p>}
         {cfg && !cfg.enabled && <p className="chat-msg chat-msg--e">{cfg.message}</p>}
-        {cfg?.enabled && <p className="chat-msg chat-msg--a">{cfg.greeting}</p>}
+        {cfg?.enabled && (
+          <div className="chat-welcome">
+            <img src={AV} alt="" width={52} height={52} />
+            <h3>{hello()}</h3>
+            <p>{cfg.greeting}</p>
+          </div>
+        )}
         {cfg?.enabled && !hasUser && (
-          <div className="chat-chips">
-            {CHIPS.map(t => <button key={t} type="button" onClick={() => send(t)} disabled={blocked}>{t}</button>)}
-            <button type="button" onClick={talk}>Talk to our team</button>
+          <div className="chat-chips" role="group" aria-label="Suggested questions">
+            {CHIPS.map(c => <button key={c.t} type="button" onClick={() => send(c.t)} disabled={blocked}>{c.i}<span>{c.t}</span></button>)}
+            <button type="button" className="chat-chip-team" onClick={talk}>
+              <svg {...ICON}><path d="M4 14v-2a8 8 0 0 1 16 0v2" /><rect x="3" y="14" width="4" height="6" rx="1.5" /><rect x="17" y="14" width="4" height="6" rx="1.5" /></svg>
+              <span>Talk to our team</span>
+            </button>
           </div>
         )}
         {msgs.map((m, i) => (m.r === 'a' && !m.t) ? null : (
-          <div key={i} className={`chat-turn chat-turn--${m.r}`}>
-            <p className={`chat-msg chat-msg--${m.r}`}>{m.t}</p>
+          <div key={i} className={`chat-turn chat-turn--${m.r}` + (m.r !== 'u' && msgs[i - 1]?.r !== 'u' && i > 0 ? ' chat-turn--cont' : '')}>
+            <div className="chat-bubble-row">
+              {m.r !== 'u' && <img className="chat-msg-av" src={AV} alt="" width={26} height={26} />}
+              <p className={`chat-msg chat-msg--${m.r}`}>{m.t}</p>
+            </div>
+            {m.at && <time className="chat-time" dateTime={new Date(m.at).toISOString()}>{clock(m.at)}</time>}
             {m.r === 'a' && m.i !== undefined && !busy && (
               <span className="chat-rate">
-                <button type="button" aria-label="Helpful" aria-pressed={m.fb === 1} onClick={() => rate(m.i!, 1)}>{m.fb === 1 ? '\u{1F44D}' : '\u{1F44D}︎'}</button>
-                <button type="button" aria-label="Not helpful" aria-pressed={m.fb === -1} onClick={() => rate(m.i!, -1)}>{m.fb === -1 ? '\u{1F44E}' : '\u{1F44E}︎'}</button>
+                <button type="button" aria-label="Helpful" title="Helpful" aria-pressed={m.fb === 1} onClick={() => rate(m.i!, 1)}><Thumb /></button>
+                <button type="button" aria-label="Not helpful" title="Not helpful" aria-pressed={m.fb === -1} onClick={() => rate(m.i!, -1)}><Thumb down /></button>
               </span>
             )}
           </div>
         ))}
         {busy && (msgs[msgs.length - 1]?.r !== 'a' || !msgs[msgs.length - 1].t) && (
-          <p className="chat-msg chat-msg--a chat-typing" aria-label="Typing"><i /><i /><i /></p>
+          <div className="chat-typing-row" role="status"><p className="chat-msg chat-msg--a chat-typing" aria-hidden="true"><i /><i /><i /></p><span>{cfg?.name || 'Concierge'} is typing</span></div>
         )}
         {handoff && (
           <div className="chat-handoff" role="group" aria-label="Contact our team">
-            <p><strong>Talk to our team</strong><br />We are glad to help directly.</p>
+            <p><strong>Talk to a person</strong><br />Reception is glad to help with anything, directly.</p>
             <div>
-              {wa && <a className="chat-cta chat-cta--wa" href={waLink} target="_blank" rel="noopener noreferrer">WhatsApp</a>}
-              {c?.phone && <a className="chat-cta" href={`tel:${c.phone.replace(/[^\d+]/g, '')}`}>Call</a>}
+              {wa && <a className="chat-cta chat-cta--wa" href={waLink} target="_blank" rel="noopener noreferrer"><svg width="16" height="16" fill="currentColor" aria-hidden="true"><use href="#i-wa" /></svg>WhatsApp</a>}
+              {c?.phone && <a className="chat-cta" href={`tel:${c.phone.replace(/[^\d+]/g, '')}`}><svg width="16" height="16" aria-hidden="true"><use href="#i-phone" /></svg>Call</a>}
               {c?.email && <a className="chat-cta" href={`mailto:${c.email}?subject=${encodeURIComponent('Enquiry from the website')}&body=${encodeURIComponent(hi)}`}>Email</a>}
             </div>
           </div>
@@ -202,15 +231,15 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
         {ended && wait === 0 && <button type="button" className="chat-link" onClick={reset}>Start a new chat</button>}
         <div className="chat-row">
           <textarea
-            ref={field} rows={1} value={input} maxLength={cfg?.maxInput ?? 500} placeholder="Type your question" aria-label="Your message"
+            ref={field} rows={1} value={input} maxLength={cfg?.maxInput ?? 500} placeholder="Ask about suites, dates, the beach…" aria-label="Your message"
             disabled={!cfg?.enabled} onChange={e => setInput(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }}
           />
           <button type="submit" className="chat-send" disabled={blocked || !input.trim()} aria-label="Send">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6" /></svg>
           </button>
         </div>
-        <p className="chat-note">AI can make mistakes. Chats are kept 90 days. Never share card details.</p>
+        <p className="chat-note">AI concierge · it can make mistakes. Chats are kept 90 days. Never share card details.</p>
       </form>
     </div>
   );

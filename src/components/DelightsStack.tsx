@@ -1,6 +1,7 @@
 'use client';
-/* Four facility chapters. Stack only when the actual content fits the viewport;
-   use untransformed flow measurements so the animation cannot feed back on itself. */
+/* Four facility chapters that stack: each card stays while the next slides over it, and the one
+   beneath recedes. Cards taller than the screen stick by their bottom edge (see measure). Measures
+   use untransformed flow sizes so the animation cannot feed back on itself. */
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -30,12 +31,16 @@ export function DelightsStack({ groups, f = noEdit }: { groups: FacilityGroup[];
       if (signature === nextSignature) return;
       signature = nextSignature;
       context?.revert();
-      const fits = !preference.matches && innerWidth > 900 && heights.every(height => height <= innerHeight + 1);
-      el.dataset.stacking = String(fits);
+      /* Every card stacks, whatever its height. A card that fits the screen sticks at the top; a taller
+         one scrolls until its bottom reaches the bottom of the screen and sticks there, so all of its
+         content has been read before the next card slides over it. */
+      const stacks = !preference.matches;
+      el.dataset.stacking = String(stacks);
+      cards.forEach((card, index) => { card.style.top = stacks ? `${Math.min(0, Math.round(innerHeight - heights[index]))}px` : ''; });
       if (preference.matches) { ScrollTrigger.refresh(); return; }
 
       context = gsap.context(() => {
-        if (fits) {
+        if (stacks) {
           const gap = parseFloat(getComputedStyle(stack).rowGap) || 0;
           let offset = 0;
           cards.slice(0, -1).forEach((card, index) => {
@@ -45,7 +50,7 @@ export function DelightsStack({ groups, f = noEdit }: { groups: FacilityGroup[];
             /* transform and an overlay's opacity only: both stay on the compositor, so the card's
                photos and text are never repainted while it recedes */
             const veil = card.querySelector<HTMLElement>('.dcard-veil');
-            gsap.timeline({ scrollTrigger: { trigger: stack, start: () => top() - innerHeight * .92, end: top, scrub: .9, invalidateOnRefresh: true } })
+            gsap.timeline({ scrollTrigger: { trigger: stack, start: () => top() - innerHeight * .92, end: top, scrub: true, invalidateOnRefresh: true } })
               .fromTo(card, { scale: 1, y: 0 }, { scale: .96, y: -8, ease: 'none', force3D: true }, 0)
               .fromTo(veil, { opacity: 0 }, { opacity: .16, ease: 'none' }, 0);
           });
@@ -76,7 +81,7 @@ export function DelightsStack({ groups, f = noEdit }: { groups: FacilityGroup[];
       alive = false; cancelAnimationFrame(frame); observer.disconnect();
       preference.removeEventListener('change', schedule); removeEventListener('resize', schedule);
       document.fonts?.removeEventListener('loadingdone', fontsReady);
-      context?.revert(); delete el.dataset.stacking;
+      context?.revert(); delete el.dataset.stacking; cards.forEach(card => { card.style.top = ''; });
     };
   }, [groups.length]);
 

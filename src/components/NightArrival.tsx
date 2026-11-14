@@ -1,22 +1,18 @@
 'use client';
-/* Section two: the night arrival. The camera's approach and the lighting follow the scroll
-   (restored as it was when it opened the page; the opening screen is now the changing hero). */
+/* The finale: the night arrival under the closing sections. The page runs from morning (the opening
+   slideshow) to night and ends here. The film is pinned behind this section and scrubbed by the
+   scroll: "Before you arrive" scrolls straight up over it (the page never pauses) and fades as
+   it leaves, and "Stay a little longer" fades in over the film's last frames to end the page. */
 
-import Link from 'next/link';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import type { Edit, SiteContent } from '@/content/types';
-import { bookHref } from '@/lib/book';
-import { noEdit } from '@/lib/edit';
-import { Icon } from './Icons';
 
 gsap.registerPlugin(ScrollTrigger);
 const MEDIA = '/media/palm-regal-night-arrival-v4-';
 const FPS = 30;
 
-export function NightArrival({ content, f = noEdit }: { content: SiteContent; f?: Edit }) {
-  const site = content.general, buttons = content.buttons, copy = content.arrival;
+export function NightArrival({ children }: { children: ReactNode }) {
   const root = useRef<HTMLElement>(null);
   const film = useRef<HTMLVideoElement>(null);
 
@@ -48,30 +44,44 @@ export function NightArrival({ content, f = noEdit }: { content: SiteContent; f?
       };
       const queue = () => { if (!frame && !disposed) frame = requestAnimationFrame(seek); };
       section.dataset.motion = 'true';
-      const bar = section.querySelector<HTMLElement>('.aerial-hero__progress i');
       const tween = gsap.to(cursor, {
         progress: 1, ease: 'none',
-        onUpdate: () => { if (bar) bar.style.transform = `scaleX(${cursor.progress})`; queue(); },
-        scrollTrigger: { trigger: section, start: 'top top', end: 'bottom bottom', scrub: .8, invalidateOnRefresh: true },
+        onUpdate: queue,
+        scrollTrigger: { trigger: section, start: 'top top', end: 'bottom bottom', scrub: true, invalidateOnRefresh: true },
       });
+      /* the words over the film: the veil darkens as the questions arrive; the questions fade as
+         they leave the top; the contact fades in as it comes up, and stays */
+      const veil = section.querySelector('.aerial-hero__veil'), faq = section.querySelector('.stay-faq'), contact = section.querySelector('.stay-contact');
+      const words = gsap.context(() => {
+        if (veil && faq) gsap.fromTo(veil, { opacity: 0 }, { opacity: 1, ease: 'none', scrollTrigger: { trigger: faq, start: 'top bottom', end: 'top 45%', scrub: true } });
+        if (faq) gsap.fromTo(faq, { opacity: 1 }, { opacity: 0, ease: 'none', immediateRender: false, scrollTrigger: { trigger: faq, start: 'bottom 70%', end: 'bottom 10%', scrub: true } });
+        if (contact) gsap.fromTo(contact, { opacity: 0 }, { opacity: 1, ease: 'none', scrollTrigger: { trigger: contact, start: 'top 95%', end: 'top 40%', scrub: true } });
+      }, section);
       const metadata = () => { ScrollTrigger.refresh(); queue(); };
       const ready = () => { section.dataset.videoReady = 'true'; queue(); };
       const fail = () => {
         tween.scrollTrigger?.kill(); tween.kill(); cancelAnimationFrame(frame);
         delete section.dataset.motion; delete section.dataset.videoReady;
-        if (bar) bar.style.transform = ''; ScrollTrigger.refresh();
+        ScrollTrigger.refresh();
       };
       video.addEventListener('loadedmetadata', metadata);
       video.addEventListener('loadeddata', ready);
       video.addEventListener('seeked', queue);
       video.addEventListener('error', fail);
       document.addEventListener('visibilitychange', queue);
-      video.preload = 'auto';
-      video.src = `${MEDIA}${mobile.matches ? 'mobile' : 'desktop'}.mp4`;
-      video.load();
+      /* the film sits near the end of the page: fetch it only when the visitor is a screen and a
+         half away, so it never competes with the sections above it */
+      const near = new IntersectionObserver(([entry]) => {
+        if (!entry.isIntersecting) return;
+        near.disconnect();
+        video.preload = 'auto';
+        video.src = `${MEDIA}${mobile.matches ? 'mobile' : 'desktop'}.mp4`;
+        video.load();
+      }, { rootMargin: '150% 0px' });
+      near.observe(section);
       dispose = () => {
-        disposed = true; cancelAnimationFrame(frame);
-        tween.scrollTrigger?.kill(); tween.kill();
+        disposed = true; cancelAnimationFrame(frame); near.disconnect();
+        tween.scrollTrigger?.kill(); tween.kill(); words.revert();
         video.removeEventListener('loadedmetadata', metadata);
         video.removeEventListener('loadeddata', ready);
         video.removeEventListener('seeked', queue);
@@ -79,7 +89,6 @@ export function NightArrival({ content, f = noEdit }: { content: SiteContent; f?
         document.removeEventListener('visibilitychange', queue);
         video.pause(); video.removeAttribute('src'); video.load();
         delete section.dataset.motion; delete section.dataset.videoReady;
-        if (bar) bar.style.transform = '';
       };
     };
     configure();
@@ -96,31 +105,21 @@ export function NightArrival({ content, f = noEdit }: { content: SiteContent; f?
   }, []);
 
   return (
-    <section className="aerial-hero" id="arrival" ref={root} aria-labelledby="arrival-title" data-dark="1">
-      <div className="aerial-hero__screen">
-        <picture className="aerial-hero__poster" aria-hidden="true">
+    <section className="aerial-hero" id="arrival" ref={root} data-dark="1">
+      {/* the film: pinned behind everything in this section, scrubbed by the scroll */}
+      <div className="aerial-hero__screen" aria-hidden="true">
+        <picture className="aerial-hero__poster">
           <source media="(max-width: 760px)" srcSet={`${MEDIA}poster-mobile.webp`} />
-          <img src={`${MEDIA}poster.webp`} alt="" width={1920} height={1080} fetchPriority="high" />
+          <img src={`${MEDIA}poster.webp`} alt="" width={1920} height={1080} loading="lazy" decoding="async" />
         </picture>
         <video ref={film} className="aerial-hero__video" width={1920} height={1080}
-          muted playsInline preload="none" aria-hidden="true" tabIndex={-1} disablePictureInPicture />
-        <div className="aerial-hero__shade" aria-hidden="true" />
-        <div className="aerial-hero__copy wrap">
-          <p className="eyebrow" {...f(copy, 'eyebrow')}>{copy.eyebrow}</p>
-          <h2 id="arrival-title" {...f(copy, 'title')}>{copy.title} <em {...f(copy, 'em')}>{copy.em}</em></h2>
-          <p className="aerial-hero__lede" {...f(copy, 'lede')}>{copy.lede} <em {...f(copy, 'ledeEm')}>{copy.ledeEm}</em></p>
-          <div className="sh-cta">
-            <a className="btn btn--book" href={bookHref(site)} data-book="" {...f(buttons, 'checkAvailability')}>{buttons.checkAvailability}</a>
-            <Link className="btn btn--glass" href="/#suites" {...f(buttons, 'seeSuites')}>{buttons.seeSuites} <Icon id="i-arrow" /></Link>
-          </div>
-        </div>
-        <div className="aerial-hero__footer wrap">
-          <span className="aerial-hero__location" {...f(copy, 'place')}>{copy.place}</span>
-          <span className="aerial-hero__progress" aria-hidden="true"><i /></span>
-          <a className="aerial-hero__explore" href="#suites" {...f(buttons, 'explore')}>{buttons.explore} <span aria-hidden="true">↓</span></a>
-        </div>
+          muted playsInline preload="none" tabIndex={-1} disablePictureInPicture />
+        <div className="aerial-hero__shade" />
+        {/* darkens the film once the words arrive over it, so they always read */}
+        <div className="aerial-hero__veil" />
       </div>
-      <span className="sr">Check-in {site.checkIn}, check-out {site.checkOut}.</span>
+      {/* the closing sections scroll up over the film straight away */}
+      <div className="aerial-hero__over">{children}</div>
     </section>
   );
 }

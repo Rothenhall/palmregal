@@ -28,7 +28,6 @@ export function SiteBody({ content, f }: { content: SiteContent; f?: Edit }) {
   return (
     <>
       <Hero content={content} f={f} />
-      <NightArrival content={content} f={f} />
 
       <SuiteJourney content={content} f={f} />
 
@@ -62,6 +61,9 @@ export function SiteBody({ content, f }: { content: SiteContent; f?: Edit }) {
       {/* Guest words sit after the photo wall and before the questions: proof first, then the practical answers and the enquiry. */}
       <Testimonials content={content} f={f} />
 
+      {/* The finale: the page runs from morning to night and ends on the night arrival. The film is the
+          background of the closing sections: the questions scroll up over it and fade, then the enquiry. */}
+      <NightArrival>
       <div className="stay-close" data-bg="night">
         <section className="wrap stay-faq" id="faq" aria-labelledby="faq-h">
           <div className="stay-intro">
@@ -86,6 +88,7 @@ export function SiteBody({ content, f }: { content: SiteContent; f?: Edit }) {
           <EnquiryForm content={content} f={f} />
         </section>
       </div>
+      </NightArrival>
     </>
   );
 }

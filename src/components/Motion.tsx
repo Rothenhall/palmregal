@@ -42,6 +42,12 @@ export function Motion() {
     const tick = (t: number) => lenis.raf(t * 1000);
     gsap.ticker.add(tick); gsap.ticker.lagSmoothing(0);
 
+    /* While the loading screen shows (Preloader.tsx), the scroll is held. When it lifts, every scroll
+       effect is measured once, against the finished page, and the scroll is let go. */
+    if (document.documentElement.classList.contains('pl-on')) lenis.stop();
+    const ready = () => { ScrollTrigger.refresh(); lenis.start(); };
+    addEventListener('pr:ready', ready);
+
     /* Links to a part of this page glide there with Lenis. Lenis's own `anchors` option scrolls but
        leaves the browser's (and Next's) instant jump in place, so the click is taken over here:
        Next's <Link> stands down when the click is already handled. */
@@ -59,7 +65,7 @@ export function Motion() {
       if (location.hash !== url.hash) history.pushState(null, '', url.hash);
     };
     addEventListener('click', glide, true);
-    return () => { removeEventListener('click', glide, true); gsap.ticker.remove(tick); lenis.destroy(); delete (window as any).__lenis; };
+    return () => { removeEventListener('pr:ready', ready); removeEventListener('click', glide, true); gsap.ticker.remove(tick); lenis.destroy(); delete (window as any).__lenis; };
   }, []);
 
   useEffect(() => {
@@ -92,7 +98,7 @@ export function Motion() {
         gsap.utils.toArray<HTMLElement>('[data-speed]').forEach(el => {
           const sp = parseFloat(el.dataset.speed || '0') * mob; if (!sp) return;
           const trig = (el.dataset.ptrigger && el.closest(el.dataset.ptrigger)) || el;
-          gsap.fromTo(el, { y: sp * 110 }, { y: -sp * 110, ease: 'none', scrollTrigger: { trigger: trig, start: 'top bottom', end: 'bottom top', scrub: 1.2 } });
+          gsap.fromTo(el, { y: sp * 110 }, { y: -sp * 110, ease: 'none', scrollTrigger: { trigger: trig, start: 'top bottom', end: 'bottom top', scrub: true } });
         });
         /* page colour follows the section in the middle of the screen */
         const secs = gsap.utils.toArray<HTMLElement>('main [data-bg]');

@@ -1,8 +1,9 @@
 'use client';
 /* Liquid Regal: the moving water under the footer, rippling where the pointer passes on desktop.
    The canvas lives inside the water strip and is sized to it, and it only draws while the strip is
-   on screen, so the rest of the page never pays for it. Weak devices and reduced motion keep the
-   CSS gradient underneath. */
+   on screen, so the rest of the page never pays for it. Three.js (a large library) is fetched only
+   after the loading screen has lifted and the footer is within two screens, so it never competes with
+   the page's first moments. Weak devices and reduced motion keep the CSS gradient underneath. */
 import { useEffect, useRef } from 'react';
 import { canLiquid, isFine } from '@/lib/env';
 
@@ -13,7 +14,7 @@ export function LiquidLayer() {
     if (!canLiquid()) return;
     const canvas = ref.current!, el = canvas.parentElement!;
     let alive = true, cleanup = () => {};
-    (async () => {
+    const start = async () => {
       const THREE = await import('three');
       const { gsap } = await import('gsap');
       const S = await import('@/lib/shaders');
@@ -63,8 +64,17 @@ export function LiquidLayer() {
         el.removeEventListener('pointermove', move); el.removeEventListener('pointerleave', leave);
         renderer.dispose(); canvas.classList.remove('on');
       };
-    })();
-    return () => { alive = false; cleanup(); };
+    };
+    /* after the loading screen (pr:ready), and only once the footer is near */
+    let near: IntersectionObserver | null = null;
+    const watch = () => {
+      if (!alive) return;
+      near = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) { near?.disconnect(); start(); } }, { rootMargin: '200% 0px' });
+      near.observe(el);
+    };
+    const loading = document.documentElement.classList.contains('pl-on');
+    if (loading) addEventListener('pr:ready', watch, { once: true }); else watch();
+    return () => { alive = false; near?.disconnect(); removeEventListener('pr:ready', watch); cleanup(); };
   }, []);
 
   return <canvas ref={ref} className="water-gl" aria-hidden="true" />;

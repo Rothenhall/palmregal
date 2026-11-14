@@ -37,20 +37,23 @@ export type Testimonial = {
   source?: string | null; link?: string | null; photo?: string | null;
 };
 
+/** the places on the coast map that can carry a photo (ids from src/content/coast.ts) */
+export type MapPlace = 'pr' | 'beach' | 'bam' | 'tt' | 'chilika' | 'sonpur' | 'jirang';
+
 export type SiteContent = {
   seo: { title: string; description: string; image: string };
   general: General;
   buttons: { bookDirect: string; checkAvailability: string; seeSuites: string; explore: string };
   nav: { suites: string; facilities: string; gallery: string; location: string; contact: string };
   hero: { eyebrow: string; place: string; slides: HeroSlide[] };
-  arrival: { eyebrow: string; title: string; em: string; lede: string; ledeEm: string; place: string };
   suitesSection: {
     eyebrow: string; title: string; em: string; lede: string; exploreButton: string; suites: Suite[];
     outroEyebrow: string; outroTitle: string; outroEm: string; inEverySuite: { label: string; icon?: string | null }[];
   };
   facilitiesSection: { eyebrow: string; title: string; em: string; lede: string; groups: FacilityGroup[] };
   daySection: { eyebrow: string; moreLink: string; moments: Moment[] };
-  locationSection: { eyebrow: string; title: string; em: string; lede: string };
+  /** photos: one per map place, keyed by the place id in src/content/coast.ts; empty means no photo card */
+  locationSection: { eyebrow: string; title: string; em: string; lede: string; photos?: Partial<Record<MapPlace, string | null>> };
   momentsSection: { eyebrow: string; title: string; em: string; lede: string; photos: GalleryPhoto[] };
   testimonials: { show: boolean; eyebrow: string; heading: string; intro?: string | null; items: Testimonial[] };
   faqSection: { eyebrow: string; title: string; em: string; lede: string; moreLink: string; faqs: Faq[] };

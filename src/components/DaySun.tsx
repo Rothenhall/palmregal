@@ -40,6 +40,9 @@ export function DaySun({ copy, f = noEdit }: { copy: { eyebrow: string; moreLink
   const rail = useRef<HTMLElement>(null);
   const stick = useRef<HTMLDivElement>(null);
   const [i, setI] = useState(0);
+  /* where the scroll is along the strip of photos, between pictures too, so the photos open and
+     close continuously with the scroll instead of switching at a threshold */
+  const [along, setAlong] = useState(0);
   const [held, setHeld] = useState(false);
 
   useEffect(() => {
@@ -66,6 +69,8 @@ export function DaySun({ copy, f = noEdit }: { copy: { eyebrow: string; moreLink
         paint(targets, self.progress, N);
         const n = Math.min(N - 1, Math.floor(self.progress * N * .999));
         setI(c => (c === n ? c : n));
+        const a = Math.round(Math.min(N - 1, Math.max(0, self.progress * N - .5)) * 100) / 100;
+        setAlong(c => (c === a ? c : a));
       },
     });
     trig.current = st;
@@ -156,7 +161,7 @@ export function DaySun({ copy, f = noEdit }: { copy: { eyebrow: string; moreLink
             <div className="dsun-strip">
               <ImageAccordion
                 width="100%" height="100%" gap={6} open={74} reach={42} bounce={5}
-                active={i}
+                active={held ? along : i}
                 pics={pics}
                 onPick={pick}
               />

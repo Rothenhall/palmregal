@@ -157,13 +157,6 @@ export default defineConfig({
               ],
             } as TinaField,
           ]),
-          group('arrival', 'Night film introduction', 'The opening words over the night-time film that plays as you scroll.', [
-            text('eyebrow', 'Small line above the heading'),
-            ...heading('', 'The first word of the big heading'),
-            text('lede', 'Sentence under the heading'),
-            text('ledeEm', 'Sentence, italic ending'),
-            text('place', 'Place line at the bottom'),
-          ]),
           group('suitesSection', 'Suites', 'The suites section: its heading, each suite and what comes in every suite.', [
             text('eyebrow', 'Small line above the heading'),
             ...heading(),
@@ -248,10 +241,23 @@ export default defineConfig({
               ],
             } as TinaField,
           ]),
-          group('locationSection', 'Location heading', 'The words above the map. The map itself is part of the design.', [
+          group('locationSection', 'Location and map', 'The words above the map, and a photo for each place on it. The map itself is part of the design.', [
             text('eyebrow', 'Small line above the heading'),
             ...heading(),
             text('lede', 'Sentence under the heading'),
+            {
+              type: 'object', name: 'photos', label: 'Photos on the map',
+              description: 'When the map reaches a place, its photo appears beside the pin. Landscape photos work best. Leave one empty and that place simply shows no photo.',
+              fields: [
+                photo('pr', 'Palm Regal'),
+                photo('beach', 'Gopalpur beach'),
+                photo('bam', 'Berhampur'),
+                photo('tt', 'Tara Tarini Temple'),
+                photo('chilika', 'Chilika Lake'),
+                photo('sonpur', 'Sonpur Blue Flag Beach'),
+                photo('jirang', 'Jirang Monastery'),
+              ],
+            } as TinaField,
           ]),
           group('momentsSection', 'Moments wall', 'The wall of photos that opens large when clicked.', [
             text('eyebrow', 'Small line above the heading'),

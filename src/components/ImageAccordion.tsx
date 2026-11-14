@@ -338,6 +338,9 @@ export function ImageAccordion({
   /* Palm Regal: the pointer peeks; otherwise a controlled `active` holds the strip open.
      The stability argument above still holds: the peeked picture is the one that grows. */
   const at = pointed !== null ? pointed : (active ?? null);
+  /* `active` may sit between two pictures (a scroll position): the widths follow it continuously,
+     and the picture counted as open is the nearest one */
+  const nearest = at === null ? null : Math.round(at);
   const still = stillness();
 
   /* ── one spring each, and NO stagger ───────────────────────
@@ -392,12 +395,12 @@ export function ImageAccordion({
           <div
             key={pic.name}
             className="acc-cell"
-            data-open={at === i || undefined}
+            data-open={nearest === i || undefined}
             /* Palm Regal: when choosing a picture does something, each cell is a real control */
             role={onPick ? "button" : undefined}
             tabIndex={onPick ? 0 : undefined}
             aria-label={onPick ? pic.alt : undefined}
-            aria-pressed={onPick ? at === i : undefined}
+            aria-pressed={onPick ? nearest === i : undefined}
             onClick={onPick ? () => onPick(i) : undefined}
             onKeyDown={onPick ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPick(i); } } : undefined}
             onFocus={onPick ? () => setAt(i) : undefined}
@@ -414,7 +417,7 @@ export function ImageAccordion({
               borderRadius: Math.min(RMAX, g),
             }}
             onPointerEnter={() => {
-              if (at === i) return;
+              if (nearest === i) return;
               setAt(i);
               /* the dock's note: a sound carrying `at` turns
                  running along a set into a scale rather than a
@@ -433,7 +436,7 @@ export function ImageAccordion({
             <img src={pic.src} alt={onPick ? "" : pic.alt} draggable={false} />
             {/* Palm Regal: the label lives BELOW the photograph, in its own band, so the
                 argument that follows still holds: nothing sits over the picture. */}
-            {label && <div className="acc-label">{label(i, at === i)}</div>}
+            {label && <div className="acc-label">{label(i, nearest === i)}</div>}
             {/* ── AND THERE IS NOTHING OVER THE PICTURE ──────
                 The filename sat here in the corner of whichever
                 one was open, on a scrim to keep it legible over

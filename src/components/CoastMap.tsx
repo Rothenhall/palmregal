@@ -90,8 +90,8 @@ const pinStop = (id: string) => Math.max(1, STOPS.findIndex(s => s.id === id));
 
 export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'location-title', copy, f = noEdit }: {
   immersive?: boolean; headingAs?: 'h1' | 'h2'; headingId?: string;
-  /** the heading block above the map (the map itself is drawn from src/content/coast.ts) */
-  copy: { eyebrow: string; title: string; em: string; lede: string }; f?: Edit;
+  /** the heading block above the map, and a photo per place (the map itself is drawn from src/content/coast.ts) */
+  copy: { eyebrow: string; title: string; em: string; lede: string; photos?: Partial<Record<string, string | null>> }; f?: Edit;
 }) {
   const MapHeading = headingAs;
   const root = useRef<HTMLDivElement>(null);
@@ -136,15 +136,38 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
       y: (y0 + y1) / 2 + (bottom - top) * w / sw / 2, w };
   };
 
+  /* The map is drawn crisply for one camera (`rest`) and, while the camera moves, slid and scaled to the
+     new one with a CSS transform, which the graphics card does without redrawing a single path. Once
+     the camera has been still for a moment the map is redrawn once, sharp, at the new framing.
+     (Changing the viewBox every frame redrew the whole coast, roads and borders on every scroll frame.) */
+  const rest = useRef<{ vx: number; vy: number; s: number } | null>(null);
+  const settle = useRef(0);
+  const commit = (vx: number, vy: number, w: number, h: number, s: number) => {
+    const el = svg.current; if (!el) return;
+    el.setAttribute('viewBox', `${vx} ${vy} ${w} ${h}`);
+    /* one screen pixel in map units, so the way keeps the same weight at every zoom */
+    el.style.setProperty('--u', (1 / s).toFixed(4));
+    el.style.transform = '';
+    /* the land texture thins as the camera comes close, so it never turns into big spots */
+    if (dots.current) dots.current.style.opacity = String(Math.min(1, Math.max(.2, (w - 100) / 420)));
+    rest.current = { vx, vy, s };
+  };
+
   /* draw every layer for a camera; `fly` (0 to 1) is how far into a flight we are, for the haze */
   const draw = (c: Cam, fly = 0) => {
     const { w: sw, h: sh } = size.current;
     if (!sw || !sh) return;
     cam.current = c;
     const h = c.w * sh / sw, s = sw / c.w, vx = c.x - c.w / 2, vy = c.y - h / 2;
-    svg.current?.setAttribute('viewBox', `${vx} ${vy} ${c.w} ${h}`);
-    /* one screen pixel in map units, so the way keeps the same weight at every zoom */
-    svg.current?.style.setProperty('--u', (1 / s).toFixed(4));
+    const r = rest.current;
+    clearTimeout(settle.current);
+    if (!r) commit(vx, vy, c.w, h, s);
+    else {
+      /* a point at screen p under the rest camera belongs at p * k + offset under this one */
+      const k = s / r.s;
+      if (svg.current) svg.current.style.transform = `translate3d(${((r.vx - vx) * s).toFixed(2)}px, ${((r.vy - vy) * s).toFixed(2)}px, 0) scale(${k.toFixed(5)})`;
+      settle.current = window.setTimeout(() => commit(vx, vy, c.w, h, s), 140);
+    }
     const at = (p: P) => `translate3d(${((p[0] - vx) * s).toFixed(1)}px, ${((p[1] - vy) * s).toFixed(1)}px, 0)`;
     /* a label near the right edge sits to the left of its pin, so it is never cut off */
     for (const id of PINS) {
@@ -152,6 +175,12 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
       el.style.transform = at(pts[id]);
       const labelEdge = immersive ? (sw <= 900 ? sw - 130 : sw - 520) : sw * .7;
       el.dataset.flip = id !== 'beach' && (pts[id][0] - vx) * s > labelEdge ? '1' : '0';
+      if (el.classList.contains('has-photo')) {
+        const px = (pts[id][0] - vx) * s, py = (pts[id][1] - vy) * s, half = sw <= 760 ? 95 : 130;
+        const card = py < (sw <= 760 ? 150 : 210) ? 'below' : 'above', edge = px < half ? 'l' : px > sw - half ? 'r' : '';
+        if (el.dataset.card !== card) el.dataset.card = card;
+        if (el.dataset.edge !== edge) el.dataset.edge = edge;
+      }
       if (immersive) {
         const x = (pts[id][0] - vx) * s, y = (pts[id][1] - vy) * s;
         const underHeading = x < (sw <= 900 ? sw : Math.min(sw * .45, 480) + 110) && y < (sw <= 900 ? 215 : 355);
@@ -174,8 +203,6 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
     }
     /* the beach shows once it has room to sit apart from the resort */
     stage.current!.dataset.near = Math.hypot(pts.beach[0] - HOME[0], pts.beach[1] - HOME[1]) * s > 36 ? '1' : '0';
-    /* the land texture thins as the camera comes close, so it never turns into big spots */
-    if (dots.current) dots.current.style.opacity = String(Math.min(1, Math.max(.2, (c.w - 100) / 420)));
     const mid = chip.current?.dataset.mid;
     if (mid && chip.current) { const [mx, my] = mid.split(',').map(Number); chip.current.style.transform = at([mx, my]); }
     /* parallax: the sea grid behind moves at about half the rate of the land, the haze in front faster */
@@ -194,25 +221,43 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
   };
 
   /* fly from wherever the camera is to a stop: ease across, easing out of and back into the zoom */
+  /* one point on the flight from one framing to another (t 0 → 1): eased across, rising a little
+     out of the zoom in the middle (the dip) and settling back into it */
+  const flight = (from: Cam, to: Cam, t: number, aspect: number) => {
+    const dist = Math.hypot(to.x - from.x, to.y - from.y);
+    const dip = Math.min(.7, dist / Math.max(from.w, to.w) * .55);
+    const lw0 = Math.log(from.w), lw1 = Math.log(to.w), maxW = immersive ? Math.max(W * 1.7, from.w, to.w) : Math.min(W, H * aspect);
+    const e = t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, arc = Math.sin(Math.PI * t);
+    const w = Math.min(maxW, Math.exp(lw0 + (lw1 - lw0) * e) * (1 + dip * arc));
+    const next = { x: from.x + (to.x - from.x) * e, y: from.y + (to.y - from.y) * e, w };
+    draw(immersive ? next : clamp(next, aspect), arc * Math.min(1, dip * 2.2));
+    return dip;
+  };
+
   const flyTo = (n: number, instant = false) => {
     const { w: sw, h: sh } = size.current;
     if (!sw || !sh) return;
     const aspect = sw / sh, to = destinationFrame(STOPS[n], sw, sh), from = cam.current;
     tween.current?.kill();
     if (instant || !from || !hasMotion()) { draw(to); return; }
-    const dist = Math.hypot(to.x - from.x, to.y - from.y);
-    const dip = Math.min(.7, dist / Math.max(from.w, to.w) * .55);
-    const lw0 = Math.log(from.w), lw1 = Math.log(to.w), maxW = immersive ? Math.max(W * 1.7, from.w, to.w) : Math.min(W, H * aspect);
+    const dist = Math.hypot(to.x - from.x, to.y - from.y), dip = Math.min(.7, dist / Math.max(from.w, to.w) * .55);
     const o = { t: 0 };
-    tween.current = gsap.to(o, {
-      t: 1, duration: 1.8 + dip * 1.3, ease: 'none',
-      onUpdate: () => {
-        const t = o.t, e = t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, arc = Math.sin(Math.PI * t);
-        const w = Math.min(maxW, Math.exp(lw0 + (lw1 - lw0) * e) * (1 + dip * arc));
-        const next = { x: from.x + (to.x - from.x) * e, y: from.y + (to.y - from.y) * e, w };
-        draw(immersive ? next : clamp(next, aspect), arc * Math.min(1, dip * 2.2));
-      },
-    });
+    tween.current = gsap.to(o, { t: 1, duration: 1.8 + dip * 1.3, ease: 'none', onUpdate: () => { flight(from, to, o.t, aspect); } });
+  };
+
+  /* While the tour is held, the camera is a function of the scroll: at `along` = k it frames stop k,
+     and in between it is part-way along the flight from k to k + 1. So it moves exactly as much as
+     the page does, all the way, instead of waiting at a stop and then flying on a timer. */
+  const along = useRef(-1);
+  const scrubTo = (p: number) => {
+    along.current = p;
+    const { w: sw, h: sh } = size.current;
+    if (!sw || !sh) return;
+    tween.current?.kill();
+    const k = Math.min(N - 1, Math.floor(p)), t = p - k;
+    const from = destinationFrame(STOPS[k], sw, sh);
+    if (t <= 0 || k >= N - 1) { draw(from); return; }
+    flight(from, destinationFrame(STOPS[k + 1], sw, sh), t, sw / sh);
   };
 
   /* keep the camera framed to the stage's size */
@@ -222,16 +267,17 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
     const ro = new ResizeObserver(() => {
       const r = el.getBoundingClientRect();
       size.current = { w: r.width, h: r.height };
-      flyTo(iRef.current, true);
+      if (along.current >= 0) scrubTo(along.current); else flyTo(iRef.current, true);
     });
     ro.observe(el);
-    return () => { ro.disconnect(); tween.current?.kill(); };
+    return () => { ro.disconnect(); tween.current?.kill(); clearTimeout(settle.current); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  /* a new stop: place its distance chip at the current camera, then fly there */
+  /* a new stop: place its distance chip at the current camera, then fly there (unless the scroll is
+     already carrying the camera, see scrubTo) */
   useEffect(() => {
     if (cam.current) draw(cam.current);
-    if (iRef.current !== i) { iRef.current = i; flyTo(i); }
+    if (iRef.current !== i) { iRef.current = i; if (along.current < 0) flyTo(i); }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [i]);
 
@@ -261,11 +307,14 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
     if (!held) return;
     const st = ScrollTrigger.create({
       trigger: root.current!, start: () => (immersive && document.documentElement.classList.contains('dsun-exit') ? `top+=${innerHeight} top` : 'top top'), end: 'bottom bottom',
-      onUpdate: self => { const n = Math.min(N - 1, Math.floor(self.progress * N * .999)); setI(c => (c === n ? c : n)); },
+      onUpdate: self => {
+        const n = Math.min(N - 1, Math.floor(self.progress * N * .999)); setI(c => (c === n ? c : n));
+        scrubTo(Math.min(N - 1, Math.max(0, self.progress * N - .5)));
+      },
     });
     trig.current = st;
     ScrollTrigger.refresh();
-    return () => { st.kill(); trig.current = null; };
+    return () => { st.kill(); trig.current = null; along.current = -1; };
   }, [held]);
 
   /* choosing a stop scrolls to the middle of its stretch, so the tour stays in step with the page */
@@ -356,14 +405,16 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
             <div className="ctour-pins">
               {PINS.map(id => {
                 const n = id === 'beach' ? 1 : pinStop(id), on = stop.id === id || (stop.id === 'pr' && id === 'beach'), kind = KIND[id] || 'city';
-                const s = STOPS[n];
+                const s = STOPS[n], photo = copy.photos?.[id], shows = !!photo && stop.id === id;
                 return (
                   <button key={id} ref={el => { pinEls.current[id] = el; }} type="button"
-                    className={'cpin k-' + kind + (on ? ' on' : '') + (id === 'pr' ? ' home' : '') + (id === 'beach' ? ' near' : '')}
+                    className={'cpin k-' + kind + (on ? ' on' : '') + (id === 'pr' ? ' home' : '') + (id === 'beach' ? ' near' : '') + (photo ? ' has-photo' : '') + (shows ? ' shows' : '')}
                     onClick={() => pick(n)} aria-label={`${pinName(id)}${s.chip && id !== 'beach' && id !== 'pr' ? `, ${s.chip} from Palm Regal` : ''}`}
                     aria-current={on ? 'location' : undefined}>
                     <i><svg aria-hidden="true"><use href={`#ck-${kind}`} /></svg></i>
                     <span className="cpin-tag"><b>{pinName(id)}</b>{id !== 'pr' && id !== 'beach' && <small className="num">{s.chip}</small>}{id === 'beach' && <small>5 min walk</small>}</span>
+                    {/* the place's photo, beside its pin while the map is on it (set in the editor: Photos on the map) */}
+                    {photo && <span className="cpin-photo" aria-hidden="true" {...(copy.photos ? f(copy.photos, id) : {})}><img src={photo} alt="" loading="lazy" decoding="async" /></span>}
                   </button>
                 );
               })}

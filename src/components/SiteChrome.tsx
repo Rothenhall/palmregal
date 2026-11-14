@@ -5,11 +5,15 @@ import { Motion } from '@/components/Motion';
 import { BookingDialog } from '@/components/BookingDialog';
 import type { Edit, SiteContent } from '@/content/types';
 import { ChatLauncher } from '@/components/ChatLauncher';
+import { Preloader } from '@/components/Preloader';
+import { contentPhotos } from '@/lib/preload';
 
-/* Header, the page, footer, the booking picker and motion. `f` is the editor's click-to-edit hook: absent on the public site. */
+/* The loading screen, header, the page, footer, the booking picker and motion. `f` is the editor's click-to-edit
+   hook: absent on the public site (the editor's preview shows no loading screen). */
 export function SiteChrome({ content, f, children }: { content: SiteContent; f?: Edit; children: React.ReactNode }) {
   return (
     <>
+      {!f && <Preloader photos={contentPhotos(content)} name={content.general.name} tagline={content.general.tagline} />}
       <a className="skip" href="#main">Skip to content</a>
       <IconSprite />
       <Header content={content} f={f} />

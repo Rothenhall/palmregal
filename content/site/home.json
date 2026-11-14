@@ -59,35 +59,8 @@
         "title": "The Bay of Bengal,",
         "em": "from the deck.",
         "seconds": 7
-      },
-      {
-        "_template": "photoSlide",
-        "image": "/img/main-banner.webp",
-        "alt": "The lamp-lit garden walkway at night",
-        "title": "Evenings in the garden,",
-        "em": "softly lit.",
-        "seconds": 7
-      },
-      {
-        "_template": "videoSlide",
-        "video": "/media/hero-night-aerial-desktop.mp4",
-        "videoMobile": "/media/hero-night-aerial-mobile.mp4",
-        "poster": "/media/hero-night-aerial-poster.webp",
-        "posterMobile": "/media/hero-night-aerial-poster-mobile.webp",
-        "alt": "Palm Regal from the air at night, the gardens and paths lit up",
-        "title": "And when night falls,",
-        "em": "the gardens glow.",
-        "seconds": 8
       }
     ]
-  },
-  "arrival": {
-    "eyebrow": "Resort homestay · Gopalpur on Sea",
-    "title": "Palm",
-    "em": "Regal",
-    "lede": "A home by the sea,",
-    "ledeEm": "wrapped in green.",
-    "place": "Gopalpur on Sea, Odisha"
   },
   "suitesSection": {
     "eyebrow": "Our suites",
@@ -371,7 +344,11 @@
     "eyebrow": "Location · Gopalpur on Sea",
     "title": "Gopalpur, and",
     "em": "all around it.",
-    "lede": "A short walk to the sea. A little further to discover Odisha."
+    "lede": "A short walk to the sea. A little further to discover Odisha.",
+    "photos": {
+      "pr": "/img/exterior-2.webp",
+      "beach": "/img/beach-evening.webp"
+    }
   },
   "momentsSection": {
     "eyebrow": "Moments at Palm Regal",

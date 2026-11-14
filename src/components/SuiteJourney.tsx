@@ -82,14 +82,15 @@ export function SuiteJourney({ content, f = noEdit }: { content: SiteContent; f?
     const sec = root.current!, tr = track.current!;
     const dist = () => Math.max(0, tr.scrollWidth - innerWidth);
     /* the section is as tall as the strip is wide, so one scroll step moves it one step sideways,
-       plus a short rest at each end so the opening and the close are read before it moves */
-    const lead = () => innerHeight * .35, tail = () => innerHeight * .25;
+       plus only a breath at each end: the strip starts moving almost as soon as it pins, so the scroll
+       never feels stopped */
+    const lead = () => innerHeight * .06, tail = () => innerHeight * .06;
     const setH = () => { sec.style.height = `${dist() + innerHeight + lead() + tail()}px`; };
     setH();
     const ctx = gsap.context(() => {
       const tween = gsap.to(tr, {
         x: () => -dist(), ease: 'none',
-        scrollTrigger: { trigger: sec, start: () => `top+=${lead()} top`, end: () => `bottom-=${tail()} bottom`, scrub: 1.4, invalidateOnRefresh: true },
+        scrollTrigger: { trigger: sec, start: () => `top+=${lead()} top`, end: () => `bottom-=${tail()} bottom`, scrub: true, invalidateOnRefresh: true },
       });
       const along = { containerAnimation: tween };
 

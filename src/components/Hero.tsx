@@ -110,7 +110,7 @@ export function Hero({ content, f = noEdit }: { content: SiteContent; f?: Edit }
             <span aria-hidden="true">{paused ? '▶' : '❚❚'}</span>
           </button>
         )}
-        <a className="hs-explore" href="#arrival" {...f(buttons, 'explore')}>{buttons.explore} <span aria-hidden="true">↓</span></a>
+        <a className="hs-explore" href="#suites" {...f(buttons, 'explore')}>{buttons.explore} <span aria-hidden="true">↓</span></a>
       </div>
 
       </div>

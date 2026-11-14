@@ -12,6 +12,15 @@ export function MomentsWall({ gallery }: { gallery: GalleryPhoto[] }) {
   const [open, setOpen] = useState<number | null>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
 
+  /* the wall drifts only while its section is on screen (data-live), so it costs nothing elsewhere */
+  useEffect(() => {
+    const host = wall.current!.closest<HTMLElement>('.moments-sec');
+    if (!host) return;
+    const io = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) host.dataset.live = ''; else delete host.dataset.live; });
+    io.observe(host);
+    return () => { io.disconnect(); delete host.dataset.live; };
+  }, []);
+
   useEffect(() => {
     const w = wall.current!; const sec = w.parentElement!;
     if (!matchMedia('(hover:hover) and (pointer:fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
