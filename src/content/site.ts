@@ -12,11 +12,44 @@ export const site = {
   email: 'palmregalresort@gmail.com',
   /** WhatsApp Business number in international format, digits only. Empty until the resort confirms it. */
   whatsapp: '',
+  /** The resort's booking system (RPMS, payments by Razorpay). Every "Book direct" and "Check availability" link goes here. Empty until the resort shares the URL; until then they lead to the enquiry form. */
+  bookingUrl: '',
   address: '1 Park Avenue, Adjt. Zone by the Park, Gopalpur on Sea, Odisha 761002',
   instagram: 'https://www.instagram.com/palmregalresort/',
   checkIn: '12 PM',
   checkOut: '10 AM',
 };
+
+/**
+ * The opening screen: backgrounds that change on their own, each with its own large caption.
+ * Real footage and real photos only (the resort asked for real over AI-generated). A clip has a
+ * 16:9 file for laptops and a portrait crop for phones, with a poster frame for each; a photo is
+ * one file. Order runs from day into night. Captions read as one line: title, then em in italics.
+ */
+export type HeroSlide = {
+  kind: 'video' | 'image';
+  src: string;
+  /** clips: the portrait version for phones */
+  mobile?: string;
+  /** clips: the first frame, shown until the clip plays (and instead of it with reduced motion) */
+  poster?: string;
+  posterMobile?: string;
+  alt: string;
+  title: string;
+  em: string;
+  /** seconds on screen */
+  seconds: number;
+};
+
+export const heroSlides: HeroSlide[] = [
+  { kind: 'video', src: '/media/hero-day-aerial-desktop.mp4', mobile: '/media/hero-day-aerial-mobile.mp4', poster: '/media/hero-day-aerial-poster.webp', posterMobile: '/media/hero-day-aerial-poster-mobile.webp',
+    alt: 'Flying in over Palm Regal by day: three white blocks around the garden and the children\'s play area', title: 'A home by the sea,', em: 'wrapped in green.', seconds: 9 },
+  { kind: 'image', src: '/img/exterior-2.webp', alt: 'The palm-lined garden path at Palm Regal', title: 'Palms and lawns,', em: 'all around your suite.', seconds: 7 },
+  { kind: 'image', src: '/img/sea-view-deck.webp', alt: 'The sea view deck looking out over the Bay of Bengal', title: 'The Bay of Bengal,', em: 'from the deck.', seconds: 7 },
+  { kind: 'image', src: '/img/main-banner.webp', alt: 'The lamp-lit garden walkway at night', title: 'Evenings in the garden,', em: 'softly lit.', seconds: 7 },
+  { kind: 'video', src: '/media/hero-night-aerial-desktop.mp4', mobile: '/media/hero-night-aerial-mobile.mp4', poster: '/media/hero-night-aerial-poster.webp', posterMobile: '/media/hero-night-aerial-poster-mobile.webp',
+    alt: 'Palm Regal from the air at night, the gardens and paths lit up', title: 'And when night falls,', em: 'the gardens glow.', seconds: 8 },
+];
 
 export const nav = [
   { href: '/#suites', label: 'Suites' },
@@ -99,8 +132,7 @@ export const facilities: Facility[] = [
   { group: 'eat', name: 'SHACK', tag: 'The Restaurant', text: 'Homestyle meals from our kitchen. Pre-order, or have a parcel sent to your suite.' },
   { group: 'play', name: 'GO PLAY', tag: 'The Gaming Lounge', text: 'Foosball, table tennis, a pool table, carrom, board games and a PS5.', img: '/img/game-room.webp' },
   { group: 'play', name: "Children's Play Area", text: 'A large outdoor garden with swings, slides and room to run.', img: '/img/children-play.webp' },
-  { group: 'eat', name: 'Amphitheatre', text: 'Enjoy or host a performance on the lawn, by day or under the stars.', img: '/img/amphitheatre.webp' },
-  { group: 'eat', name: 'EAT AGE', tag: 'The Banquet', text: 'A banquet hall for celebrations and gatherings.', img: '/img/banquet.webp' },
+  { group: 'eat', name: 'Amphitheatre', text: 'An open-air amphitheatre set into the lawn.', img: '/img/amphitheatre.webp' },
   { group: 'move', name: 'Yoga Lawn', text: 'An open lawn for morning yoga.', img: '/img/exterior-1.webp', standIn: true },
   { group: 'move', name: 'Jogging Track', text: 'A jogging track within the property.', img: '/img/main-banner.webp', standIn: true },
   { group: 'grounds', name: 'Pet Friendly', text: 'Bring your furry companions. The lawns are theirs too.', img: '/img/pet-friendly.webp' },
@@ -135,7 +167,6 @@ export const gallery = [
   { src: '/img/pool.webp', alt: 'The pool at dusk', cap: 'The pool', group: 'Facilities' },
   { src: '/img/game-room.webp', alt: 'Gaming lounge', cap: 'GO PLAY lounge', group: 'Facilities' },
   { src: '/img/gym.webp', alt: 'Gym', cap: 'The gym', group: 'Facilities' },
-  { src: '/img/banquet.webp', alt: 'Banquet hall', cap: 'Banquet hall', group: 'Facilities' },
   { src: '/img/children-play.webp', alt: "Children's play area", cap: 'Play area', group: 'Facilities' },
   { src: '/img/sea-view-deck.webp', alt: 'Sea view deck', cap: 'Sea view deck', group: 'Sea' },
   { src: '/img/beach-evening.webp', alt: 'Gopalpur beach in the evening', cap: 'Gopalpur beach', group: 'Sea' },
@@ -170,7 +201,7 @@ export const coast = [
 export const facilityGroups = [
   { id: 'play', title: 'Play and', em: 'unwind.', text: 'A pool, a private theatre, a gaming lounge and a garden for the children.' },
   { id: 'grounds', title: 'The grounds', em: 'and the sea.', text: 'Lawns for your pets, a sea view deck over the Bay of Bengal and a temple among the trees.' },
-  { id: 'eat', title: 'Eat and', em: 'gather.', text: 'Homestyle meals from The Shack, a banquet hall and an amphitheatre on the lawn.' },
+  { id: 'eat', title: 'Eat and', em: 'gather.', text: 'Homestyle meals from The Shack, and an amphitheatre on the lawn.' },
   { id: 'move', title: 'Move and', em: 'breathe.', text: 'A gym, a yoga lawn and a jogging track inside the property.' },
 ];
 

@@ -15,6 +15,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { inEverySuite, suites, type Suite } from '@/content/site';
 import { hasMotion } from '@/lib/env';
+import { bookHref } from '@/lib/book';
 import { Icon } from './Icons';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -55,6 +56,21 @@ export function SuiteJourney() {
   const root = useRef<HTMLElement>(null);
   const track = useRef<HTMLDivElement>(null);
   const [held, setHeld] = useState(false);
+  /* The section opens on a short overview of the three suites; the full sideways walk is there
+     for anyone who asks for it, so a visitor who wants the basics reaches the amenities quickly. */
+  const [walk, setWalk] = useState(false);
+  const holding = held && walk;
+
+  const explore = () => {
+    setWalk(true);
+    /* once the walk has rendered and measured itself, glide to its start and hand focus to it */
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const sec = root.current; if (!sec) return;
+      const lenis = (window as any).__lenis;
+      if (lenis) lenis.scrollTo(sec, { lerp: .1 }); else sec.scrollIntoView({ behavior: 'smooth' });
+      sec.querySelector<HTMLElement>('#suites-h')?.focus({ preventScroll: true });
+    }));
+  };
 
   useEffect(() => {
     const motion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -66,7 +82,7 @@ export function SuiteJourney() {
   }, []);
 
   useEffect(() => {
-    if (!held) return;
+    if (!holding) return;
     const sec = root.current!, tr = track.current!;
     const dist = () => Math.max(0, tr.scrollWidth - innerWidth);
     /* the section is as tall as the strip is wide, so one scroll step moves it one step sideways,
@@ -102,17 +118,55 @@ export function SuiteJourney() {
     ScrollTrigger.addEventListener('refreshInit', setH);
     ScrollTrigger.refresh();
     return () => { ScrollTrigger.removeEventListener('refreshInit', setH); ctx.revert(); sec.style.height = ''; };
-  }, [held]);
+  }, [holding]);
+
+  /* a walk that has just opened or closed changes the page height: every trigger below must re-measure */
+  useEffect(() => { requestAnimationFrame(() => ScrollTrigger.refresh()); }, [walk]);
+
+  const lede = `${N === 3 ? 'Three' : N} suite categories, with room to settle in. Living rooms, kitchenettes and balconies, with the resort around you.`;
+
+  if (!walk) return (
+    <section ref={root} className="sj sj--overview" data-bg="night" id="suites" aria-labelledby="suites-h">
+      <div className="wrap">
+        <div className="sj-ov-head">
+          <div>
+            <p className="eyebrow">Our suites</p>
+            <h2 id="suites-h" data-split>Room to live, <em>not just sleep.</em></h2>
+          </div>
+          <p className="lede">{lede}</p>
+        </div>
+        <ul className="sj-ov-grid">
+          {suites.map(s => (
+            <li className="sj-card" key={s.slug}>
+              <figure className="sj-card-ph"><img src={s.photos[0].src} alt={s.photos[0].alt} loading="lazy" decoding="async" /></figure>
+              <p className="sj-kicker">Suite {s.no} <span>/ {pad(N)}</span></p>
+              <h3>{title(s.name)}</h3>
+              <ul className="sj-facts">
+                {s.guests && <li><Icon id="i-guests" />{s.guests}</li>}
+                {s.size && <li><Icon id="i-size" />{s.size}</li>}
+                <li><Icon id="i-balcony" />{s.outdoor}</li>
+              </ul>
+              <p className="sj-best"><small>Best for</small>{s.bestFor}</p>
+            </li>
+          ))}
+        </ul>
+        <div className="sj-ov-cta">
+          <button type="button" className="btn btn--glass" onClick={explore} aria-controls="suites">Explore the suites <Icon id="i-arrow" /></button>
+          <a className="tlink" href={bookHref()}>Check availability <Icon id="i-arrow" /></a>
+        </div>
+      </div>
+    </section>
+  );
 
   return (
-    <section ref={root} className={'sj' + (held ? ' held' : '')} data-bg="night" id="suites" aria-labelledby="suites-h">
+    <section ref={root} className={'sj' + (holding ? ' held' : '')} data-bg="night" id="suites" aria-labelledby="suites-h">
       <div className="sj-stick">
-        <div className="sj-track" ref={track}>
+        <div className="sj-track" ref={track} data-lenis-prevent-horizontal>
           <div className="sj-intro" data-chapter="-1">
             <p className="eyebrow">Our suites</p>
-            <h2 id="suites-h">Room to live, <em>not just sleep.</em></h2>
-            <p className="lede">{N === 3 ? 'Three' : N} suite categories, with room to settle in. Living rooms, kitchenettes and balconies, with the resort around you.</p>
-            {held && <span className="sj-cue" aria-hidden="true"><i />Scroll to walk through</span>}
+            <h2 id="suites-h" tabIndex={-1}>Room to live, <em>not just sleep.</em></h2>
+            <p className="lede">{lede}</p>
+            {holding && <span className="sj-cue" aria-hidden="true"><i />Scroll to walk through</span>}
           </div>
 
           {suites.map((s, i) => (
@@ -131,7 +185,7 @@ export function SuiteJourney() {
                 </ul>
                 {(!s.guests || !s.size) && <p className="sj-detail-note">Ask reception about guest capacity and suite size.</p>}
                 <p className="sj-best"><small>Best for</small>{s.bestFor}</p>
-                <Link className="tlink" href="/#book">Check availability <Icon id="i-arrow" /></Link>
+                <a className="tlink" href={bookHref()}>Check availability <Icon id="i-arrow" /></a>
               </div>
               {s.photos.length > 1 && (
                 <div className="sj-bits">
@@ -151,7 +205,7 @@ export function SuiteJourney() {
             <h3>The comforts<br /><em>of your own place.</em></h3>
             <ul className="sj-amenities">{inEverySuite.map(x => <li key={x}><Icon id={AMENITY_ICONS[x]} /><span>{x}</span></li>)}</ul>
             <div className="sj-outro-links">
-              <a className="tlink" href="#book">Check availability <Icon id="i-arrow" /></a>
+              <a className="tlink" href={bookHref()}>Check availability <Icon id="i-arrow" /></a>
             </div>
           </div>
         </div>

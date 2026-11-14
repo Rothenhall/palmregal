@@ -55,8 +55,6 @@
   color-scheme: light;
 }
 *, *::before, *::after { box-sizing: border-box }
-html.lenis, html.lenis body { height: auto }
-.lenis.lenis-smooth { scroll-behavior: auto !important }
 html { -webkit-text-size-adjust: 100% }
 body {
   margin: 0; background: var(--page-bg); color: var(--c-text); font-family: var(--body); font-size: 16.5px; line-height: 1.65;
@@ -88,7 +86,6 @@ p { margin: 0 }
 [data-bg="night"] { --sec-bg: var(--teal-night); --sec-ink: var(--on-dark) }
 [data-bg="dusk"] { --sec-bg: var(--dusk); --sec-ink: var(--on-dark) }
 html.shift [data-bg] { background: transparent }
-html.shift .book { background: var(--mint) }
 html.shift body { transition: background-color 1.8s var(--ease-soft) }
 [data-bg="night"], [data-bg="dusk"] { --muted: rgba(238, 245, 242, .78) }
 [data-bg="night"] .eyebrow, [data-bg="dusk"] .eyebrow { color: var(--aqua) }
@@ -151,23 +148,6 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 @media (max-width: 1100px) { .nav { display: none } .menu-btn { display: grid } .hdr .wrap { justify-content: space-between } }
 @media (max-width: 560px) { .acts .ibtn.opt, .acts .btn { display: none } .logo b { font-size: 1.15rem } .logo img { width: 34px } }
 
-/* Home hero: an arched window that grows into the whole screen */
-.hero { position: relative; height: 210svh; background: var(--mint) }
-/* Without motion: no growing, a plain full hero */
-html:not(.motion) .hero:not(.aerial-hero) { height: auto }
-
-/* Booking bar */
-.book { position: relative; z-index: 5 }
-.book .wrap { padding-block: 28px 30px }
-.bookbar { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) auto; background: var(--white); color: var(--c-text); border-radius: var(--r-md); overflow: hidden; box-shadow: var(--shadow-card); border: 1px solid var(--c-line) }
-.fld { display: grid; gap: 2px; padding: 16px 22px; border-right: 1px solid var(--c-line); min-width: 0 }
-.fld label { font-size: .66rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--canopy) }
-.fld input, .fld select { border: 0; background: transparent; font: 500 1rem var(--body); color: var(--c-text); padding: 4px 0; min-height: 32px; width: 100%; min-width: 0; cursor: pointer }
-.bookbar .btn { margin: 10px; border-radius: var(--r-md); min-height: 58px; padding-inline: 1.7rem }
-.book-msg { color: var(--c-muted); font-size: .86rem; margin-top: 12px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center }
-.book-out { margin-top: 12px; background: var(--sage); color: var(--c-text); border-radius: var(--r-md); padding: 12px 16px; font-size: .9rem }
-@media (max-width: 980px) { .bookbar { grid-template-columns: 1fr 1fr } .fld { border-bottom: 1px solid var(--c-line) } .fld:nth-child(2n) { border-right: 0 } .bookbar .btn { grid-column: 1/-1 } }
-
 /* Floating Book Direct pill */
 
 .wa { position: fixed; z-index: 58; right: calc(20px + env(safe-area-inset-right, 0px)); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; gap: 10px; text-decoration: none }
@@ -214,9 +194,7 @@ html:not(.motion) .hero:not(.aerial-hero) { height: auto }
 @media (max-width: 960px) { .foot-grid { grid-template-columns: 1fr 1fr; gap: 34px } }
 @media (max-width: 560px) { .foot-grid { grid-template-columns: 1fr } }
 
-/* Inner page hero */
-
-/* Suites page */
+/* Enquiry form */
 
 .form { background: var(--white); color: var(--c-text); border-radius: var(--r-lg); padding: clamp(24px, 4vw, 44px); display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; align-content: start; border: 1px solid var(--c-line) }
 .form h2 { grid-column: 1/-1; font-size: 2.2rem; margin-bottom: 8px; color: var(--teal) }
@@ -305,8 +283,6 @@ h1 em, h2 em, h3 em { color: var(--c-em) }
 .tlink { color: var(--c-link) }
 [data-bg="dusk"] { background-image: radial-gradient(120% 70% at 80% 0%, rgba(60, 60, 132, .22), transparent 60%) }
 html.shift [data-bg="dusk"] { background-image: radial-gradient(120% 70% at 80% 0%, rgba(60, 60, 132, .22), transparent 60%) }
-
-/* ===== One card family, read from the section's roles ===== */
 
 /* ===== Parallax wrappers ===== */
 .mwall-par { position: absolute; inset: -8% 0; will-change: transform }
@@ -506,7 +482,6 @@ html.shift [data-bg="dusk"] { background-image: radial-gradient(120% 70% at 80% 
 /* ===== Restrained corners (research: 0–4px reads premium; consistency over exact value) ===== */
 .todo { border-radius: var(--r-sm) }
 .ibtn { border-radius: var(--r-sm) }
-.bookbar .btn { border-radius: var(--r-btn) }
 .socials a { border-radius: var(--r-sm) }
 
 /* ===== Contact: typography-led, no boxes ===== */
@@ -529,47 +504,6 @@ html.shift [data-bg="dusk"] { background-image: radial-gradient(120% 70% at 80% 
 .q button[aria-expanded="true"] i { transform: none }
 .q button i::after { transition: transform var(--dur-3) var(--ease) }
 .q button[aria-expanded="true"] i::after { transform: translate(-50%, -50%) rotate(90deg) scaleX(0) }
-
-/* Generated night arrival: the continuous camera and lighting change follow scroll. */
-.hero.aerial-hero { height: auto; background: var(--teal-950); color: var(--on-dark) }
-.aerial-hero[data-motion="true"] { height: 320svh }
-.aerial-hero__screen { position: sticky; top: 0; height: 100svh; min-height: 620px; overflow: hidden; isolation: isolate }
-.aerial-hero__poster, .aerial-hero__video, .aerial-hero__shade { position: absolute; inset: 0; width: 100%; height: 100% }
-.aerial-hero__poster img, .aerial-hero__video { width: 100%; height: 100%; object-fit: cover; object-position: 54% 50% }
-.aerial-hero__video { opacity: 0; pointer-events: none; transition: opacity .25s ease }
-.aerial-hero[data-video-ready="true"] .aerial-hero__video { opacity: 1 }
-.aerial-hero__shade { pointer-events: none; background: linear-gradient(180deg, rgba(11, 34, 40, .5), rgba(11, 34, 40, .02) 28%, rgba(11, 34, 40, .03) 45%, rgba(11, 34, 40, .82) 100%); z-index: 1 }
-.aerial-hero__copy { position: absolute; left: 0; right: 0; bottom: clamp(106px, 13svh, 150px); z-index: 2 }
-.aerial-hero__copy .eyebrow { color: var(--teal-200); font-size: .68rem; letter-spacing: .24em }
-.aerial-hero__copy h1 { font-size: clamp(4.8rem, 9vw, 9rem); line-height: .96; letter-spacing: -.045em; margin: 22px 0 20px; color: var(--on-dark) }
-.aerial-hero__copy h1 em { color: var(--teal-200) }
-.aerial-hero__lede { font-size: clamp(1.05rem, 1.5vw, 1.3rem); color: var(--on-dark); text-shadow: 0 2px 16px rgba(11, 34, 40, .6) }
-.aerial-hero__lede em { font-style: normal }
-.aerial-hero__copy .sh-cta { margin-top: 26px }
-.aerial-hero__footer { position: absolute; left: 0; right: 0; bottom: max(30px, env(safe-area-inset-bottom, 0px)); z-index: 2; display: flex; align-items: center; gap: 28px; padding-right: max(100px, var(--gr)); font-size: .66rem; font-weight: 600; letter-spacing: .15em; text-transform: uppercase }
-.aerial-hero__progress { display: none; width: clamp(80px, 14vw, 200px); height: 2px; background: rgba(238, 245, 242, .28) }
-.aerial-hero__progress i { display: block; height: 100%; background: var(--teal-200); transform: scaleX(0); transform-origin: left; will-change: transform }
-.aerial-hero[data-motion="true"] .aerial-hero__progress { display: block }
-.aerial-hero__explore { display: inline-flex; align-items: center; gap: 14px; min-height: 44px; margin-left: auto; text-decoration: none; color: var(--on-dark) }
-.aerial-hero__explore span { font-size: 1.2rem; color: var(--teal-200) }
-@media (max-width: 760px) {
-  .aerial-hero[data-motion="true"] { height: 260svh }
-  .aerial-hero__screen { min-height: 580px }
-  .aerial-hero__copy { bottom: 120px }
-  .aerial-hero__copy h1 { font-size: clamp(3.65rem, 15vw, 6.5rem); margin: 18px 0 }
-  .aerial-hero__copy .eyebrow { max-width: 30ch; font-size: .61rem; letter-spacing: .17em; line-height: 1.8 }
-  .aerial-hero__lede { max-width: 25ch; line-height: 1.55 }
-  .aerial-hero__copy .sh-cta { gap: 8px; margin-top: 22px }
-  .aerial-hero__copy .btn { padding-inline: 1.15rem; font-size: .82rem }
-  .aerial-hero__location { display: none }
-  .aerial-hero__footer { gap: 14px; bottom: max(24px, env(safe-area-inset-bottom, 0px)); font-size: .58rem; letter-spacing: .12em }
-  .aerial-hero__progress { width: 60px }
-}
-@media (prefers-reduced-motion: reduce) {
-  .aerial-hero[data-motion="true"] { height: auto }
-  .aerial-hero__video { display: none; transition: none }
-  .aerial-hero[data-motion="true"] .aerial-hero__progress { display: none }
-}
 
 /* ══ Image accordion ════════════════════════════════════════
    A row of pictures cropped to slivers, one of which opens
@@ -751,9 +685,6 @@ html:not(.motion) .dcard { position: relative; top: 0 }
    so nothing is ever covered before it can be read (sticky-card guidance: test with the pin off) */
 
 /* ===== Bold and immersive: the homepage in evening tones ===== */
-html.shift .book { background: var(--teal-950) }
-.book .book-msg { color: var(--c-muted) }
-.book .wrap { padding-block: 34px 44px }
 .dsec-count { -webkit-text-stroke-color: rgba(180, 228, 228, .6) }
 [data-bg="dusk"] .dcard--dusk, [data-bg="night"] .dcard--dusk { box-shadow: inset 0 0 0 1px var(--glass-edge), 0 30px 60px -36px rgba(0, 0, 0, .7) }
 [data-bg="dusk"] .dcard--teal { box-shadow: inset 0 0 0 1px rgba(180, 228, 228, .14), 0 30px 60px -36px rgba(0, 0, 0, .7) }
@@ -982,3 +913,133 @@ html.motion .lost-photo img { animation: lost-settle 2.8s var(--ease) both }
 .lost-links { display: flex; flex-wrap: wrap; gap: 14px 28px; margin-top: clamp(36px, 6svh, 56px); padding-top: 22px; border-top: 1px solid var(--line-d); max-width: 640px }
 .lost-links .tlink { color: var(--teal-100) }
 @media (prefers-reduced-motion: reduce) { .lost-photo img { animation: none } }
+
+/* ===== Suites overview: the three suites at a glance, the full walk on request ===== */
+.sj--overview { padding-block: var(--sec-y); background: var(--teal-950) }
+.sj-ov-head { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(20px, 4vw, 64px); align-items: end }
+.sj-ov-head h2 { font-size: clamp(2.6rem, 5vw, 5.2rem); line-height: .98; margin: 18px 0 0 }
+.sj-ov-head .lede { color: rgba(238, 245, 242, .78) }
+.sj-ov-grid { list-style: none; margin: var(--head-gap) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(18px, 2.4vw, 36px) }
+.sj-card { display: grid; gap: 12px; align-content: start }
+.sj-card-ph { margin: 0 0 6px; aspect-ratio: 5 / 4; overflow: hidden; border-radius: var(--r-lg); background: var(--teal-800) }
+.sj-card-ph img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 1.6s var(--ease) }
+.sj-card:hover .sj-card-ph img { transform: scale(1.04) }
+.sj-card h3 { font-size: clamp(1.7rem, 2.3vw, 2.4rem); line-height: 1.05; margin: 0 }
+.sj-card .sj-facts { margin-top: 2px }
+.sj-ov-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 30px; margin-top: clamp(36px, 5vw, 60px) }
+@media (max-width: 900px) {
+  .sj-ov-head { grid-template-columns: 1fr }
+  .sj-ov-grid { grid-template-columns: 1fr; gap: 34px }
+  .sj-card-ph { aspect-ratio: 4 / 3 }
+}
+
+/* ===== Opening screen: backgrounds that change, day into night, with large captions (Hero.tsx) ===== */
+.hero.hs { position: relative; height: 100svh; color: var(--on-dark) }
+.hs-screen { position: sticky; top: 0; height: 100svh; min-height: 620px; overflow: hidden; isolation: isolate; background: var(--teal-950) }
+.hs-stage, .hs-slide, .hs-media, .hs-shade { position: absolute; inset: 0 }
+.hs-slide { opacity: 0; transition: opacity 1.8s var(--ease-soft); z-index: 0 }
+.hs-slide.on { opacity: 1; z-index: 1 }
+.hs-media { width: 100%; height: 100%; object-fit: cover; object-position: 50% 50% }
+.hs-poster img { width: 100%; height: 100%; object-fit: cover }
+.hs-clip { opacity: 0; transition: opacity .6s var(--ease-soft) }
+.hs-clip.ready { opacity: 1 }
+/* photographs drift in very slowly while they are shown (transform only: the compositor does it) */
+.hs.is-running .hs-slide.on img.hs-media { animation: hs-drift calc(var(--secs) + 2s) linear both }
+@keyframes hs-drift { from { transform: scale(1.09) } to { transform: scale(1) } }
+.hs-shade { z-index: 2; pointer-events: none; background: linear-gradient(90deg, rgba(11, 34, 40, .62), rgba(11, 34, 40, .28) 38%, rgba(11, 34, 40, 0) 62%), linear-gradient(180deg, rgba(11, 34, 40, .55), rgba(11, 34, 40, .05) 30%, rgba(11, 34, 40, .15) 50%, rgba(11, 34, 40, .88) 100%) }
+
+.hs-copy { position: absolute; left: 0; right: 0; bottom: clamp(108px, 14svh, 156px); z-index: 3 }
+.hs-copy .eyebrow { margin: 0; color: var(--teal-200); font-size: .68rem; letter-spacing: .24em }
+/* the captions share one spot; the shown one rises in, the leaving one fades */
+.hs-captions { display: grid; margin: 22px 0 0 }
+.hs-caption { grid-area: 1 / 1; margin: 0; max-width: 15ch; font: 300 clamp(3rem, 6.6vw, 6.8rem)/1 var(--display); letter-spacing: -.035em; color: var(--on-dark); text-shadow: 0 2px 24px rgba(11, 34, 40, .45);
+  opacity: 0; transform: translateY(22px); transition: opacity .9s var(--ease-soft), transform 1.2s var(--ease) }
+.hs-caption em { color: var(--teal-200) }
+.hs-caption.on { opacity: 1; transform: none; transition-delay: .5s, .5s }
+.hs-copy .sh-cta { margin-top: 30px }
+
+.hs-foot { position: absolute; left: 0; right: 0; bottom: max(28px, env(safe-area-inset-bottom, 0px)); z-index: 3; display: flex; align-items: center; gap: 22px;
+  padding-right: max(100px, var(--gr)); font-size: .66rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase }
+.hs-place { color: rgba(238, 245, 242, .78) }
+.hs-dots { display: flex; gap: 8px }
+.hs-dots button { position: relative; width: clamp(28px, 4vw, 54px); height: 24px; padding: 0; border: 0; background: none; cursor: pointer }
+.hs-dots button::before, .hs-dots i { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 2px; margin-top: -1px; border-radius: 2px }
+.hs-dots button::before { background: rgba(238, 245, 242, .3) }
+.hs-dots i { display: block; background: var(--teal-200); transform: scaleX(0); transform-origin: left }
+.hs-dots button.on i { transform: scaleX(1) }
+.hs.is-running .hs-dots button.on i { animation: hs-fill linear both }
+@keyframes hs-fill { from { transform: scaleX(0) } to { transform: scaleX(1) } }
+.hs-pause { display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 1px solid rgba(238, 245, 242, .4); border-radius: 50%; background: rgba(11, 34, 40, .35); color: var(--on-dark); font-size: .6rem; letter-spacing: 0; cursor: pointer; transition: background var(--dur-2) var(--ease) }
+.hs-pause:hover { background: rgba(11, 34, 40, .7) }
+.hs-explore { display: inline-flex; align-items: center; gap: 14px; min-height: 44px; margin-left: auto; text-decoration: none; color: var(--on-dark) }
+.hs-explore span { font-size: 1.2rem; color: var(--teal-200) }
+
+@media (max-width: 760px) {
+  .hs-screen { min-height: 580px }
+  .hs-copy { bottom: 108px }
+  .hs-copy .eyebrow { max-width: 30ch; font-size: .6rem; letter-spacing: .17em; line-height: 1.8 }
+  .hs-caption { font-size: clamp(2.5rem, 11vw, 3.6rem); max-width: 12ch }
+  .hs-copy .sh-cta { gap: 8px; margin-top: 22px }
+  .hs-copy .btn { padding-inline: 1.15rem; font-size: .82rem }
+  .hs-place { display: none }
+  .hs-foot { gap: 12px; bottom: max(24px, env(safe-area-inset-bottom, 0px)); font-size: .58rem; letter-spacing: .12em }
+  .hs-dots button { width: 22px }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hs-slide, .hs-caption { transition: none }
+  .hs-clip { display: none }
+}
+
+/* ===== Section two: the night arrival follows the scroll (NightArrival.tsx) ===== */
+
+.aerial-hero { position: relative; height: auto; background: var(--teal-950); color: var(--on-dark) }
+.aerial-hero[data-motion="true"] { height: 320svh }
+.aerial-hero__screen { position: sticky; top: 0; height: 100svh; min-height: 620px; overflow: hidden; isolation: isolate }
+.aerial-hero__poster, .aerial-hero__video, .aerial-hero__shade { position: absolute; inset: 0; width: 100%; height: 100% }
+.aerial-hero__poster img, .aerial-hero__video { width: 100%; height: 100%; object-fit: cover; object-position: 54% 50% }
+.aerial-hero__video { opacity: 0; pointer-events: none; transition: opacity .25s ease }
+.aerial-hero[data-video-ready="true"] .aerial-hero__video { opacity: 1 }
+.aerial-hero__shade { pointer-events: none; background: linear-gradient(180deg, rgba(11, 34, 40, .5), rgba(11, 34, 40, .02) 28%, rgba(11, 34, 40, .03) 45%, rgba(11, 34, 40, .82) 100%); z-index: 1 }
+.aerial-hero__copy { position: absolute; left: 0; right: 0; bottom: clamp(106px, 13svh, 150px); z-index: 2 }
+.aerial-hero__copy .eyebrow { color: var(--teal-200); font-size: .68rem; letter-spacing: .24em }
+.aerial-hero__copy h2 { font-size: clamp(4.8rem, 9vw, 9rem); line-height: .96; letter-spacing: -.045em; margin: 22px 0 20px; color: var(--on-dark) }
+.aerial-hero__copy h2 em { color: var(--teal-200) }
+.aerial-hero__lede { font-size: clamp(1.05rem, 1.5vw, 1.3rem); color: var(--on-dark); text-shadow: 0 2px 16px rgba(11, 34, 40, .6) }
+.aerial-hero__lede em { font-style: normal }
+.aerial-hero__copy .sh-cta { margin-top: 26px }
+.aerial-hero__footer { position: absolute; left: 0; right: 0; bottom: max(30px, env(safe-area-inset-bottom, 0px)); z-index: 2; display: flex; align-items: center; gap: 28px; padding-right: max(100px, var(--gr)); font-size: .66rem; font-weight: 600; letter-spacing: .15em; text-transform: uppercase }
+.aerial-hero__progress { display: none; width: clamp(80px, 14vw, 200px); height: 2px; background: rgba(238, 245, 242, .28) }
+.aerial-hero__progress i { display: block; height: 100%; background: var(--teal-200); transform: scaleX(0); transform-origin: left; will-change: transform }
+.aerial-hero[data-motion="true"] .aerial-hero__progress { display: block }
+.aerial-hero__explore { display: inline-flex; align-items: center; gap: 14px; min-height: 44px; margin-left: auto; text-decoration: none; color: var(--on-dark) }
+.aerial-hero__explore span { font-size: 1.2rem; color: var(--teal-200) }
+@media (max-width: 760px) {
+  .aerial-hero[data-motion="true"] { height: 260svh }
+  .aerial-hero__screen { min-height: 580px }
+  .aerial-hero__copy { bottom: 120px }
+  .aerial-hero__copy h2 { font-size: clamp(3.65rem, 15vw, 6.5rem); margin: 18px 0 }
+  .aerial-hero__copy .eyebrow { max-width: 30ch; font-size: .61rem; letter-spacing: .17em; line-height: 1.8 }
+  .aerial-hero__lede { max-width: 25ch; line-height: 1.55 }
+  .aerial-hero__copy .sh-cta { gap: 8px; margin-top: 22px }
+  .aerial-hero__copy .btn { padding-inline: 1.15rem; font-size: .82rem }
+  .aerial-hero__location { display: none }
+  .aerial-hero__footer { gap: 14px; bottom: max(24px, env(safe-area-inset-bottom, 0px)); font-size: .58rem; letter-spacing: .12em }
+  .aerial-hero__progress { width: 60px }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aerial-hero[data-motion="true"] { height: auto }
+  .aerial-hero__video { display: none; transition: none }
+  .aerial-hero[data-motion="true"] .aerial-hero__progress { display: none }
+}
+
+/* ===== From "A day at Palm Regal" into the coast map: the tile dissolve (DaySun.tsx, after lucid) =====
+   With motion, the day gets one extra viewport at its end, and the map section tucks up beneath it by
+   two (the one it waits through, hidden, and the one it is revealed in), so the map is pinned in place
+   while the day's screen is cut away tile by tile through a mask. The map's own tour starts one
+   viewport later and is given that viewport back. */
+html.dsun-exit .dsun.held { height: 620svh; z-index: 2; background: transparent }
+/* the teal ground moves onto the pinned screen, so cutting the screen away really opens onto the map */
+html.dsun-exit .dsun.held .dsun-stick { background: var(--teal-950) }
+html.dsun-exit .location-map { z-index: 1; margin-top: -200svh }
+html.dsun-exit .location-map .ctour.held { height: calc(var(--n) * 62svh + 200svh) }
+.dsun.is-through .dsun-stick { visibility: hidden }

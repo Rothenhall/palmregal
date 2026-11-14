@@ -256,7 +256,7 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
   useEffect(() => {
     if (!held) return;
     const st = ScrollTrigger.create({
-      trigger: root.current!, start: 'top top', end: 'bottom bottom',
+      trigger: root.current!, start: () => (immersive && document.documentElement.classList.contains('dsun-exit') ? `top+=${innerHeight} top` : 'top top'), end: 'bottom bottom',
       onUpdate: self => { const n = Math.min(N - 1, Math.floor(self.progress * N * .999)); setI(c => (c === n ? c : n)); },
     });
     trig.current = st;
@@ -270,7 +270,7 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
     if (!st) { setI(n); return; }
     const y = st.start + ((n + .5) / N) * (st.end - st.start);
     const lenis = (window as any).__lenis;
-    if (lenis) lenis.scrollTo(y, { duration: 2.1 }); else window.scrollTo({ top: y, behavior: moving ? 'smooth' : 'auto' });
+    if (lenis) lenis.scrollTo(y, { lerp: .1 }); else window.scrollTo({ top: y, behavior: moving ? 'smooth' : 'auto' });
   };
 
   const overview = held
@@ -380,7 +380,7 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
                 </article>
               ))}
             </div>
-            <ol className="ctour-rail">
+            <ol className="ctour-rail" data-lenis-prevent>
               {STOPS.map((s, n) => (
                 <li key={s.id}>
                   <button type="button" onClick={() => pick(n)} aria-current={n === i ? 'step' : undefined} className={n < i ? 'past' : ''} aria-label={s.name}>

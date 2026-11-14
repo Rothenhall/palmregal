@@ -1,5 +1,5 @@
 import { Hero } from '@/components/Hero';
-import { BookBar } from '@/components/BookForm';
+import { NightArrival } from '@/components/NightArrival';
 import { DelightsStack } from '@/components/DelightsStack';
 import { DaySun } from '@/components/DaySun';
 import { Todo } from '@/components/Todo';
@@ -16,16 +16,9 @@ export default function Home() {
   return (
     <>
       <Hero />
-
-      <section className="book" id="book" data-bg="dusk" aria-label="Check availability">
-        <div className="wrap">
-          <BookBar />
-          <p className="book-msg">Book direct with the resort: your dates go straight to reception. <Todo>Booking engine or WhatsApp: question for Jahnavi</Todo></p>
-        </div>
-      </section>
+      <NightArrival />
 
       <SuiteJourney />
-
 
       <section className="sec dsec" data-bg="dusk" id="facilities" aria-labelledby="dl-h">
         <div className="wrap">

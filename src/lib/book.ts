@@ -25,6 +25,9 @@ export function sendLink(message: string) {
   return { href: `mailto:${site.email}?subject=${encodeURIComponent('Booking enquiry')}&body=${encodeURIComponent(message)}`, via: 'email' };
 }
 
+/** Where every booking button leads: the resort's booking system once its URL is set, the enquiry form until then. */
+export const bookHref = () => site.bookingUrl || '/#contact';
+
 export function waHref() {
   return site.whatsapp ? `https://wa.me/${site.whatsapp}` : '/#contact';
 }

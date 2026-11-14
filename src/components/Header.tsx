@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { nav, site } from '@/content/site';
 import { Icon } from './Icons';
-import { waHref } from '@/lib/book';
+import { bookHref, waHref } from '@/lib/book';
 
 const DARK = ['teal', 'canopy', 'night', 'dusk'];
 
@@ -72,12 +72,12 @@ export function Header() {
           <div className="acts">
             <a className="ibtn opt" href={site.phoneHref} aria-label="Call Palm Regal"><Icon id="i-phone" /></a>
             <a className="ibtn opt" href={waHref()} aria-label="WhatsApp Palm Regal"><Icon id="i-wa" /></a>
-            <Link className="btn btn--book" href="/#book">Book direct</Link>
+            <a className="btn btn--book" href={bookHref()}>Book direct</a>
             <button ref={openBtn} className="ibtn menu-btn" type="button" aria-label="Open menu" aria-expanded={open} aria-controls="mnav" onClick={() => setOpen(true)}><Icon id="i-menu" /></button>
           </div>
         </div>
       </header>
-      <div className={open ? 'mnav open' : 'mnav'} id="mnav" role="dialog" aria-modal="true" aria-label="Menu" hidden={!open}>
+      <div className={open ? 'mnav open' : 'mnav'} id="mnav" data-lenis-prevent role="dialog" aria-modal="true" aria-label="Menu" hidden={!open}>
         <div className="mnav-top">
           <Link className="logo" href="/" onClick={() => setOpen(false)}><img src="/img/emblem.png" alt="" width={40} height={40} /><span><b>{site.name}</b></span></Link>
           <button ref={closeBtn} className="ibtn" type="button" aria-label="Close menu" onClick={() => { setOpen(false); openBtn.current?.focus(); }}><Icon id="i-x" /></button>
@@ -87,7 +87,7 @@ export function Header() {
           {nav.map((n, i) => <Link key={n.href} href={n.href} onClick={() => setOpen(false)}><i>0{i + 1}</i>{n.label}</Link>)}
         </nav>
         <div className="mnav-foot">
-          <Link className="btn btn--book" href="/#book" onClick={() => setOpen(false)}>Book direct</Link>
+          <a className="btn btn--book" href={bookHref()} onClick={() => setOpen(false)}>Book direct</a>
           <a className="btn btn--line" href={site.phoneHref} onClick={() => setOpen(false)}><Icon id="i-phone" />Call</a>
           <a className="btn btn--line" href={waHref()} onClick={() => setOpen(false)}><Icon id="i-wa" />WhatsApp</a>
         </div>

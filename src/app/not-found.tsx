@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Icon } from '@/components/Icons';
 import { nav, site } from '@/content/site';
+import { bookHref } from '@/lib/book';
 
 export const metadata: Metadata = { title: 'Page not found' };
 
@@ -20,7 +21,7 @@ export default function NotFound() {
         <p className="lede">The page you were looking for isn&apos;t here. The garden, the suites and the beach are just this way.</p>
         <div className="sh-cta">
           <Link className="btn btn--book" href="/">Back to {site.name}</Link>
-          <Link className="btn btn--glass" href="/#book">Check availability <Icon id="i-arrow" /></Link>
+          <a className="btn btn--glass" href={bookHref()}>Check availability <Icon id="i-arrow" /></a>
         </div>
         <nav className="lost-links" aria-label="Parts of the stay">
           {nav.map(n => <Link key={n.href} className="tlink" href={n.href}>{n.label}</Link>)}

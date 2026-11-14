@@ -40,7 +40,7 @@ export function MomentsWall() {
       </div></div>
       <p className="mhint" aria-hidden="true">Click a moment</p>
       {open !== null && (
-        <div className="mfocus" role="dialog" aria-modal="true" aria-label={tiles[open].cap} onClick={() => setOpen(null)}>
+        <div className="mfocus" data-lenis-prevent role="dialog" aria-modal="true" aria-label={tiles[open].cap} onClick={() => setOpen(null)}>
           <figure onClick={e => e.stopPropagation()}>
             <img src={tiles[open].src} alt={tiles[open].alt} />
             <figcaption><small>{tiles[open].group}</small><b>{tiles[open].cap}</b></figcaption>
