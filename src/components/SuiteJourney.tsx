@@ -52,21 +52,48 @@ export function SuiteJourney({ content, f = noEdit }: { content: SiteContent; f?
   const root = useRef<HTMLElement>(null);
   const track = useRef<HTMLDivElement>(null);
   const [held, setHeld] = useState(false);
-  /* The section opens on a short overview of the three suites; the full sideways walk is there
-     for anyone who asks for it, so a visitor who wants the basics reaches the amenities quickly. */
+  /* The section is a short overview of the three suites, and by default the page simply scrolls on past it.
+     The sideways walk is opt-in: the button (or a suite card) opens it. The overview stays exactly where it is as
+     the first panel of the strip, and from then on scrolling down carries the strip sideways through each suite
+     to the close, then the page continues. */
   const [walk, setWalk] = useState(false);
   const holding = held && walk;
-
-  const explore = () => {
-    setWalk(true);
-    /* once the walk has rendered and measured itself, glide to its start and hand focus to it */
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      const sec = root.current; if (!sec) return;
-      const lenis = (window as any).__lenis;
-      if (lenis) lenis.scrollTo(sec, { lerp: .1 }); else sec.scrollIntoView({ behavior: 'smooth' });
-      sec.querySelector<HTMLElement>('#suites-h')?.focus({ preventScroll: true });
-    }));
+  const walkST = useRef<ScrollTrigger | null>(null);
+  const pending = useRef<number | null>(null);
+  const glide = (chapter = -1) => {
+    const sec = root.current, tr = track.current; if (!sec || !tr) return;
+    let y = sec.getBoundingClientRect().top + scrollY;
+    const st = walkST.current, ch = chapter >= 0 ? tr.querySelector<HTMLElement>(`[data-chapter="${chapter}"]`) : null;
+    if (st && !ch) y = st.start;
+    else if (st && ch) {
+      const dist = Math.max(1, tr.scrollWidth - innerWidth);
+      const x = Math.min(dist, Math.max(0, ch.offsetLeft - innerWidth * .06));
+      y = st.start + (st.end - st.start) * (x / dist);
+    } else if (ch) {
+      tr.scrollTo({ left: ch.offsetLeft, behavior: 'smooth' });
+    }
+    const lenis = (window as any).__lenis;
+    if (lenis) lenis.scrollTo(y, { lerp: .09 }); else scrollTo({ top: y, behavior: 'smooth' });
   };
+  /* the button and the cards: open the walk first if needed (it measures itself on the next frames), then glide */
+  const go = (chapter: number) => {
+    if (walk) { glide(chapter); return; }
+    pending.current = chapter;
+    setWalk(true);
+  };
+  /* without the held strip the walk is a swipe strip below the overview; glide to it once it has rendered */
+  useEffect(() => {
+    if (!walk || held || pending.current === null) return;
+    const ch = pending.current; pending.current = null;
+    requestAnimationFrame(() => {
+      const tr = track.current; if (!tr) return;
+      const y = tr.getBoundingClientRect().top + scrollY - innerHeight * .1;
+      const lenis = (window as any).__lenis;
+      if (lenis) lenis.scrollTo(y, { lerp: .09 }); else scrollTo({ top: y, behavior: 'smooth' });
+      const el = tr.querySelector<HTMLElement>(`[data-chapter="${Math.max(0, ch)}"]`);
+      if (el && ch > 0) tr.scrollTo({ left: el.offsetLeft, behavior: 'smooth' });
+    });
+  }, [walk, held]);
 
   useEffect(() => {
     const motion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -92,6 +119,9 @@ export function SuiteJourney({ content, f = noEdit }: { content: SiteContent; f?
         x: () => -dist(), ease: 'none',
         scrollTrigger: { trigger: sec, start: () => `top+=${lead()} top`, end: () => `bottom-=${tail()} bottom`, scrub: true, invalidateOnRefresh: true },
       });
+      walkST.current = tween.scrollTrigger ?? null;
+      /* the fade on the right edge says "more this way" until the strip starts moving */
+      ScrollTrigger.create({ trigger: sec, start: () => `top+=${lead()} top`, end: () => `bottom-=${tail()} bottom`, onUpdate: self => sec.classList.toggle('sj-moved', self.progress > .015) });
       const along = { containerAnimation: tween };
 
       /* large numbers rise into their mask as they come in */
@@ -114,15 +144,13 @@ export function SuiteJourney({ content, f = noEdit }: { content: SiteContent; f?
     }, sec);
     ScrollTrigger.addEventListener('refreshInit', setH);
     ScrollTrigger.refresh();
-    return () => { ScrollTrigger.removeEventListener('refreshInit', setH); ctx.revert(); sec.style.height = ''; };
+    /* opened by the button: settle the overview at the top, where the strip starts (or glide to the chosen suite) */
+    if (pending.current !== null) { const ch = pending.current; pending.current = null; requestAnimationFrame(() => glide(ch)); }
+    return () => { ScrollTrigger.removeEventListener('refreshInit', setH); ctx.revert(); sec.style.height = ''; walkST.current = null; };
   }, [holding]);
 
-  /* a walk that has just opened or closed changes the page height: every trigger below must re-measure */
-  useEffect(() => { requestAnimationFrame(() => ScrollTrigger.refresh()); }, [walk]);
-
-  if (!walk) return (
-    <section ref={root} className="sj sj--overview" data-bg="night" id="suites" aria-labelledby="suites-h">
-      <div className="wrap">
+  const overview = (
+    <>
         <div className="sj-ov-head">
           <div>
             <p className="eyebrow" {...f(sc, 'eyebrow')}>{sc.eyebrow}</p>
@@ -132,7 +160,7 @@ export function SuiteJourney({ content, f = noEdit }: { content: SiteContent; f?
         </div>
         <ul className="sj-ov-grid">
           {suites.map((s, i) => (
-            <li className="sj-card" key={i}>
+            <li className="sj-card" key={i} onClick={e => { if (!(e.target as HTMLElement).closest('a, button')) go(i); }}>
               <figure className="sj-card-ph">{s.photos[0] && <img src={s.photos[0].src} alt={s.photos[0].alt} loading="lazy" decoding="async" {...f(s.photos[0], 'src')} />}</figure>
               <p className="sj-kicker">Suite {pad(i + 1)} <span>/ {pad(N)}</span></p>
               <h3 {...f(s, 'name')}>{title(s.name)}</h3>
@@ -146,25 +174,24 @@ export function SuiteJourney({ content, f = noEdit }: { content: SiteContent; f?
           ))}
         </ul>
         <div className="sj-ov-cta">
-          <button type="button" className="btn btn--glass" onClick={explore} aria-controls="suites" {...f(sc, 'exploreButton')}>{sc.exploreButton} <Icon id="i-arrow" /></button>
+          {walk
+            /* once open: a scroll hint (still a button: it glides to the first suite) */
+            ? <button key="hint" type="button" className="sj-down" onClick={() => go(0)} aria-controls="suites"><span className="sj-down-ring" aria-hidden="true"><Icon id="i-arrow" /></span><span className="sj-down-hint" aria-live="polite" {...f(sc, 'walkHint')}>{sc.walkHint || 'Scroll to walk through each suite'}</span></button>
+            /* before: the call to action that opens the walk */
+            : <button key="cta" type="button" className="btn sj-explore" onClick={() => go(-1)} aria-controls="suites" aria-expanded={false}><span {...f(sc, 'exploreButton')}>{sc.exploreButton}</span><Icon id="i-arrow" /></button>}
           <a className="tlink" href={bookHref(site)} data-book="" {...f(content.buttons, 'checkAvailability')}>{content.buttons.checkAvailability} <Icon id="i-arrow" /></a>
         </div>
-      </div>
-    </section>
+    </>
   );
 
   return (
-    <section ref={root} className={'sj' + (holding ? ' held' : '')} data-bg="night" id="suites" aria-labelledby="suites-h">
-      <div className="sj-stick">
+    <section ref={root} className={'sj' + (held ? ' held' : '') + (walk ? ' walking' : '')} data-bg="night" id="suites" aria-labelledby="suites-h">
+      {/* without the held strip (no motion, very short screens) the overview sits above a strip you swipe */}
+      {!held && <div className="sj-ov-static wrap">{overview}</div>}
+      {(held || walk) && <div className="sj-stick">
         <div className="sj-track" ref={track} data-lenis-prevent-horizontal>
-          <div className="sj-intro" data-chapter="-1">
-            <p className="eyebrow" {...f(sc, 'eyebrow')}>{sc.eyebrow}</p>
-            <h2 id="suites-h" tabIndex={-1} {...f(sc, 'title')}>{sc.title} <em {...f(sc, 'em')}>{sc.em}</em></h2>
-            <p className="lede" {...f(sc, 'lede')}>{sc.lede}</p>
-            {holding && <span className="sj-cue" aria-hidden="true"><i />Scroll to walk through</span>}
-          </div>
-
-          {suites.map((s, i) => (
+          {held && <div className="sj-ov-panel" data-chapter="-1">{overview}</div>}
+          {walk && suites.map((s, i) => (
             <article className="sj-ch" data-chapter={i} key={i} aria-labelledby={`sj-${i}`}>
               <div className="sj-num num" aria-hidden="true"><span>{pad(i + 1)}</span></div>
               <SuitePhotos suite={s} f={f} />
@@ -195,16 +222,17 @@ export function SuiteJourney({ content, f = noEdit }: { content: SiteContent; f?
             </article>
           ))}
 
-          <div className="sj-outro" data-chapter={N}>
+          {walk && <div className="sj-outro" data-chapter={N}>
             <p className="eyebrow" {...f(sc, 'outroEyebrow')}>{sc.outroEyebrow}</p>
             <h3 {...f(sc, 'outroTitle')}>{sc.outroTitle}<br /><em {...f(sc, 'outroEm')}>{sc.outroEm}</em></h3>
             <ul className="sj-amenities">{sc.inEverySuite.map((x, k) => <li key={k} {...f(x, 'label')}><Icon id={x.icon || 'p-home'} /><span>{x.label}</span></li>)}</ul>
             <div className="sj-outro-links">
               <a className="tlink" href={bookHref(site)} data-book="" {...f(content.buttons, 'checkAvailability')}>{content.buttons.checkAvailability} <Icon id="i-arrow" /></a>
             </div>
-          </div>
+          </div>}
         </div>
-      </div>
+        {holding && <span className="sj-edge" aria-hidden="true" />}
+      </div>}
     </section>
   );
 }

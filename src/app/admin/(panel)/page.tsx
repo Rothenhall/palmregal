@@ -11,6 +11,7 @@ import { dayOf, firstGuestMessage, guestLabel, handoffText, n, timeAgo, RESORT }
 import { getNeedsReply } from '../_lib/data';
 import { setAssistantOn } from './concierge/actions';
 import { LiveRefresh } from '../_ui/LiveRefresh';
+import { usingDefaultPassword } from '@/lib/adminPassword';
 
 export const metadata = { title: 'Home' };
 export const dynamic = 'force-dynamic';
@@ -25,6 +26,7 @@ export default async function Home() {
     try { [all, settings] = await Promise.all([recentConvs(300), getSettings(true)]); } catch { failed = true; }
   }
   const needs = connected ? await getNeedsReply() : [];
+  const starting = await usingDefaultPassword().catch(() => false);
   const now = Date.now();
   const today = dayOf(now);
   const week = all.filter(c => now - c.createdAt < 7 * 86400_000);
@@ -42,6 +44,8 @@ export default async function Home() {
       {(!connected || failed) && (
         <p className="adm-banner">{failed ? 'Chat data could not be loaded just now. Try again in a moment.' : 'The chat database is not connected, so guest numbers are not available. You can still edit the website.'}</p>
       )}
+
+      {starting && <p className="adm-banner">You are still using the starting admin password. <Link href="/admin/password/">Change it now</Link> and share the new one with your team.</p>}
 
       <div className="adm-stats">
         <StatTile label="Chats today" value={n(todayCount)} sub={`${n(week.length)} in the last 7 days`} href="/admin/inbox/" />

@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   ArrowUpRight, BookOpen, BookPlus, ChartColumn, CornerDownLeft, Download, Globe, House, Inbox, MessageSquareWarning,
-  PenLine, Search, SlidersHorizontal, TriangleAlert,
+  KeyRound, MessageSquareQuote, PenLine, Search, SlidersHorizontal, TriangleAlert,
 } from 'lucide-react';
 
 /* Quick search: Ctrl+K (or ⌘K, or "/") anywhere in the admin, or the Search button in the sidebar.
@@ -19,10 +19,12 @@ const ITEMS: Item[] = [
   { id: 'insights', label: 'Insights', group: 'Go to', icon: <ChartColumn size={16} />, href: '/admin/insights/', words: 'stats dates searches topics analytics report' },
   { id: 'knowledge', label: 'Knowledge', group: 'Go to', icon: <BookOpen size={16} />, href: '/admin/concierge/knowledge/', words: 'documents pdf notes library' },
   { id: 'settings', label: 'Assistant settings', group: 'Go to', icon: <SlidersHorizontal size={16} />, href: '/admin/concierge/', words: 'chat bot name greeting tone bubble blocked' },
+  { id: 'testimonials', label: 'Testimonials', group: 'Go to', icon: <MessageSquareQuote size={16} />, href: '/admin/testimonials/', words: 'reviews guests quotes ratings stars' },
   { id: 'website', label: 'Website status', group: 'Go to', icon: <Globe size={16} />, href: '/admin/website/', words: 'publishing live health undo' },
   { id: 'edit', label: 'Edit website', hint: 'Opens the editor', group: 'Actions', icon: <PenLine size={16} />, href: '/admin/editor/#/~/admin/preview/', external: true, words: 'text photos change content' },
   { id: 'add', label: 'Add knowledge', hint: 'PDF, Word or a note', group: 'Actions', icon: <BookPlus size={16} />, href: '/admin/concierge/knowledge/?add=1', words: 'upload document teach' },
   { id: 'export', label: 'Download chats as a spreadsheet', hint: 'CSV', group: 'Actions', icon: <Download size={16} />, href: '/admin/inbox/export/', external: true, words: 'export csv excel' },
+  { id: 'password', label: 'Change password', group: 'Actions', icon: <KeyRound size={16} />, href: '/admin/password/', words: 'security login sign in team' },
   { id: 'live', label: 'View live site', group: 'Actions', icon: <ArrowUpRight size={16} />, href: '/', external: true, words: 'open website public' },
 ];
 

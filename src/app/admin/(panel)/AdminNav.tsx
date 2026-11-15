@@ -1,9 +1,9 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ArrowUpRight, BookOpen, ChartColumn, Globe, House, Inbox, PenLine, SlidersHorizontal } from 'lucide-react';
+import { ArrowUpRight, BookOpen, ChartColumn, Globe, House, Inbox, MessageSquareQuote, PenLine, SlidersHorizontal } from 'lucide-react';
 
-const icons = { home: House, inbox: Inbox, knowledge: BookOpen, settings: SlidersHorizontal, edit: PenLine, insights: ChartColumn, website: Globe };
+const icons = { home: House, inbox: Inbox, knowledge: BookOpen, settings: SlidersHorizontal, edit: PenLine, insights: ChartColumn, website: Globe, quote: MessageSquareQuote };
 export type NavGroup = { label?: string; items: { href: string; label: string; icon: keyof typeof icons; exact?: boolean; badge?: number; external?: boolean }[] };
 
 export function AdminNav({ groups }: { groups: NavGroup[] }) {

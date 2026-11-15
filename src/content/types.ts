@@ -47,13 +47,13 @@ export type SiteContent = {
   nav: { suites: string; facilities: string; gallery: string; location: string; contact: string };
   hero: { eyebrow: string; place: string; slides: HeroSlide[] };
   suitesSection: {
-    eyebrow: string; title: string; em: string; lede: string; exploreButton: string; suites: Suite[];
+    eyebrow: string; title: string; em: string; lede: string; exploreButton: string; walkHint?: string; suites: Suite[];
     outroEyebrow: string; outroTitle: string; outroEm: string; inEverySuite: { label: string; icon?: string | null }[];
   };
   facilitiesSection: { eyebrow: string; title: string; em: string; lede: string; groups: FacilityGroup[] };
   daySection: { eyebrow: string; moreLink: string; moments: Moment[] };
   /** photos: one per map place, keyed by the place id in src/content/coast.ts; empty means no photo card */
-  locationSection: { eyebrow: string; title: string; em: string; lede: string; photos?: Partial<Record<MapPlace, string | null>> };
+  locationSection: { eyebrow: string; title: string; em: string; lede: string; photos?: Partial<Record<MapPlace, string | null>>; photoCredits?: string };
   momentsSection: { eyebrow: string; title: string; em: string; lede: string; photos: GalleryPhoto[] };
   testimonials: { show: boolean; eyebrow: string; heading: string; intro?: string | null; items: Testimonial[] };
   faqSection: { eyebrow: string; title: string; em: string; lede: string; moreLink: string; faqs: Faq[] };

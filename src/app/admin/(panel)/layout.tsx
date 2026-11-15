@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function PanelLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
   if (!session?.user) redirect('/admin/login/');
-  const email = session.user.email ?? 'Admin';
+  const email = session.user.name ?? 'Palm Regal team';
   const waiting = (await getNeedsReply()).length;
 
   async function logout() {
@@ -32,12 +32,13 @@ export default async function PanelLayout({ children }: { children: React.ReactN
       { href: '/admin/inbox/', label: 'Inbox', icon: 'inbox', badge: waiting },
       { href: '/admin/insights/', label: 'Insights', icon: 'insights' },
     ] },
-    { label: 'Concierge', items: [
+    { label: 'Aria', items: [
       { href: '/admin/concierge/knowledge/', label: 'Knowledge', icon: 'knowledge' },
       { href: '/admin/concierge/', label: 'Assistant settings', icon: 'settings', exact: true },
     ] },
     { label: 'Website', items: [
       { href: '/admin/editor/#/~/admin/preview/', label: 'Edit website', icon: 'edit', external: true },
+      { href: '/admin/testimonials/', label: 'Testimonials', icon: 'quote' },
       { href: '/admin/website/', label: 'Website status', icon: 'website' },
     ] },
   ];

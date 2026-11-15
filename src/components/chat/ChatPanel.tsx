@@ -47,7 +47,7 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
   const aborter = useRef<AbortController | null>(null);
 
   const init = useCallback(async () => {
-    const off = (message: string) => setCfg({ enabled: false, name: 'Concierge', greeting: '', maxInput: 500, message });
+    const off = (message: string) => setCfg({ enabled: false, name: 'Aria', greeting: '', maxInput: 500, message });
     try {
       const r = await fetch(API, { cache: 'no-store' });
       const j = await r.json();
@@ -157,7 +157,7 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
     <div ref={root} className="chat" role="dialog" aria-modal="true" aria-labelledby="chat-title" data-open={open} hidden={!open} onKeyDown={onKey}>
       <header className="chat-head">
         <span className="chat-av-wrap"><img className="chat-av" src={AV} alt="" width={40} height={40} />{cfg?.enabled !== false && <i className="chat-av-dot" aria-hidden="true" />}</span>
-        <div className="chat-title"><h2 id="chat-title">{cfg?.name || 'Concierge'}</h2><p><i className="chat-live" />{cfg?.enabled === false ? 'Away right now' : 'AI concierge · replies instantly'}</p></div>
+        <div className="chat-title"><h2 id="chat-title">{cfg?.name || 'Aria'}</h2><p><i className="chat-live" />{cfg?.enabled === false ? 'Away right now' : 'Replies instantly'}</p></div>
         <div className="chat-head-actions">
           {hasUser && (
             <button type="button" onClick={reset} className="chat-ico" aria-label="Start a new chat" title="Start a new chat">
@@ -210,7 +210,7 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
           </div>
         ))}
         {busy && (msgs[msgs.length - 1]?.r !== 'a' || !msgs[msgs.length - 1].t) && (
-          <div className="chat-typing-row" role="status"><p className="chat-msg chat-msg--a chat-typing" aria-hidden="true"><i /><i /><i /></p><span>{cfg?.name || 'Concierge'} is typing</span></div>
+          <div className="chat-typing-row" role="status"><p className="chat-msg chat-msg--a chat-typing" aria-hidden="true"><i /><i /><i /></p><span>{cfg?.name || 'Aria'} is typing</span></div>
         )}
         {handoff && (
           <div className="chat-handoff" role="group" aria-label="Contact our team">
@@ -239,7 +239,7 @@ export default function ChatPanel({ open, onClose }: { open: boolean; onClose: (
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 19V5M6 11l6-6 6 6" /></svg>
           </button>
         </div>
-        <p className="chat-note">AI concierge · it can make mistakes. Chats are kept 90 days. Never share card details.</p>
+        <p className="chat-note">Aria is a virtual assistant and can make mistakes. Chats are kept 90 days. Never share card details.</p>
       </form>
     </div>
   );

@@ -8,7 +8,7 @@ export const authConfig = {
   providers: [],
   callbacks: {
     session({ session, token }) {
-      if (session.user && token.email) session.user.email = token.email;
+      if (session.user && token.name) session.user.name = token.name;
       return session;
     },
   },

@@ -91,7 +91,7 @@ const pinStop = (id: string) => Math.max(1, STOPS.findIndex(s => s.id === id));
 export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'location-title', copy, f = noEdit }: {
   immersive?: boolean; headingAs?: 'h1' | 'h2'; headingId?: string;
   /** the heading block above the map, and a photo per place (the map itself is drawn from src/content/coast.ts) */
-  copy: { eyebrow: string; title: string; em: string; lede: string; photos?: Partial<Record<string, string | null>> }; f?: Edit;
+  copy: { eyebrow: string; title: string; em: string; lede: string; photos?: Partial<Record<string, string | null>>; photoCredits?: string }; f?: Edit;
 }) {
   const MapHeading = headingAs;
   const root = useRef<HTMLDivElement>(null);
@@ -116,6 +116,21 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
   const route = stop.to ? way(pts[stop.to], stop.walk) : null;
 
   useEffect(() => { setMoving(hasMotion()); if (hasMotion()) setHeld(true); }, []);
+
+  /* Get the map ready before it is reached, so nothing loads or decodes while you are on it. The place photos load
+     with the page (the loading screen already fetches them; they are no longer lazy, which made them start only at
+     their stop), and two screens ahead each one is decoded and painted once, invisibly, so it appears at once. */
+  useEffect(() => {
+    const el = root.current; if (!el) return;
+    const warm = () => {
+      el.querySelectorAll<HTMLImageElement>('.cpin-photo img').forEach(img => { img.decode?.().catch(() => {}); });
+      el.classList.add('ctour-warm');
+      requestAnimationFrame(() => requestAnimationFrame(() => el.classList.remove('ctour-warm')));
+    };
+    const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { io.disconnect(); warm(); } }, { rootMargin: '200% 0px 200% 0px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   // Fit destinations into the visible map between the page title and controls.
   // The map itself remains full bleed; only the camera's usable area is inset.
@@ -414,7 +429,7 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
                     <i><svg aria-hidden="true"><use href={`#ck-${kind}`} /></svg></i>
                     <span className="cpin-tag"><b>{pinName(id)}</b>{id !== 'pr' && id !== 'beach' && <small className="num">{s.chip}</small>}{id === 'beach' && <small>5 min walk</small>}</span>
                     {/* the place's photo, beside its pin while the map is on it (set in the editor: Photos on the map) */}
-                    {photo && <span className="cpin-photo" aria-hidden="true" {...(copy.photos ? f(copy.photos, id) : {})}><img src={photo} alt="" loading="lazy" decoding="async" /></span>}
+                    {photo && <span className="cpin-photo" aria-hidden="true" {...(copy.photos ? f(copy.photos, id) : {})}><img src={photo} alt="" decoding="async" /></span>}
                   </button>
                 );
               })}
@@ -448,6 +463,7 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
             </ol>
           </aside>
         </div>
+        {copy.photoCredits && <p className="ctour-credit" {...f(copy, 'photoCredits')}>{copy.photoCredits}</p>}
       </div>
     </div>
   );

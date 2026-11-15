@@ -99,6 +99,39 @@ export async function undoLastChange(cfg: GhConfig | null, expectedSha: string, 
   } catch { return { ok: false, error: 'Could not reach the publishing service. Nothing was changed. Please try again.' }; }
 }
 
+/* ---------- edit the content file (admin pages that change website text) ---------- */
+
+export type EditResult = { ok: true; sha: string } | { ok: false; error: string };
+const b64 = (s: string) => Buffer.from(s, 'utf8').toString('base64');
+const unb64 = (s: string) => Buffer.from(s.replace(/\n/g, ''), 'base64').toString('utf8');
+
+/** The content file as it is on the branch right now (fresher than the deployed copy just after a save). */
+export async function readContentFile(cfg: GhConfig, f: F = fetch, file = CONTENT_FILE): Promise<{ data: Record<string, unknown>; sha: string } | null> {
+  try {
+    const r = await json<{ content: string; encoding: string; sha: string }>(await gh(cfg, `/contents/${enc(file)}?ref=${encodeURIComponent(cfg.branch)}`, f));
+    if (r.encoding !== 'base64') return null;
+    return { data: JSON.parse(unb64(r.content)), sha: r.sha };
+  } catch { return null; }
+}
+
+/** Reads the content file, applies `change` to it and commits the result as one change (Vercel republishes in about 2 minutes).
+    `change` gets the parsed file and edits it in place. Fails safely if someone else saved in between. */
+export async function editContentFile(cfg: GhConfig | null, change: (data: Record<string, unknown>) => void, message: string, f: F = fetch, file = CONTENT_FILE): Promise<EditResult> {
+  if (!cfg) return { ok: false, error: 'Publishing is not set up on this server.' };
+  try {
+    const cur = await readContentFile(cfg, f, file);
+    if (!cur) return { ok: false, error: 'The website text could not be read. Nothing was changed.' };
+    change(cur.data);
+    const res = await gh(cfg, `/contents/${enc(file)}`, f, {
+      method: 'PUT', timeoutMs: 15000, headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, content: b64(JSON.stringify(cur.data, null, 2) + '\n'), sha: cur.sha, branch: cfg.branch }),
+    });
+    if (res.status === 409) return { ok: false, error: 'The website was changed somewhere else at the same moment. Reload and try again.' };
+    const out = await json<{ commit: { sha: string } }>(res);
+    return { ok: true, sha: out.commit.sha };
+  } catch { return { ok: false, error: 'Could not reach the publishing service. Nothing was changed. Please try again.' }; }
+}
+
 /* ---------- photo sizes (for the site health check) ---------- */
 
 export async function githubPhotoSizes(cfg: GhConfig, f: F = fetch): Promise<{ path: string; size: number }[]> {

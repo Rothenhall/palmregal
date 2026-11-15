@@ -73,13 +73,13 @@ export function ChatLauncher() {
   const close = () => { setOpen(false); btn.current?.focus(); };
 
   if (!cfg?.enabled) return null;
-  const name = cfg.name || 'our assistant';
+  const name = cfg.name || 'Aria';
   return (
     <>
       {tease && t && !open && (
         <div className="chat-tease">
           <img className="chat-tease-av" src="/img/emblem.png" alt="" width={34} height={34} />
-          <button type="button" className="chat-tease-text" onClick={start}><small>{name === 'our assistant' ? 'Concierge' : name}</small>{t.text}</button>
+          <button type="button" className="chat-tease-text" onClick={start}><small>{name}</small>{t.text}</button>
           <button type="button" className="chat-tease-x" aria-label="Dismiss" onClick={() => setTease(false)}>
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
           </button>
@@ -91,7 +91,7 @@ export function ChatLauncher() {
       >
         <BellIcon size={24} />
         <i className="chat-fab-dot" aria-hidden="true" />
-        <span className="chat-fab-tip" aria-hidden="true">Ask our concierge</span>
+        <span className="chat-fab-tip" aria-hidden="true">Chat with {name}</span>
       </button>
       {loaded && <ChatPanel open={open} onClose={close} />}
     </>

@@ -161,7 +161,8 @@ export default defineConfig({
             text('eyebrow', 'Small line above the heading'),
             ...heading(),
             long('lede', 'Introduction'),
-            text('exploreButton', '"Explore" button'),
+            text('exploreButton', '"Explore" button', 'The button under the suite cards. Tapping it opens the sideways walk.'),
+            text('walkHint', 'Hint after the button is tapped', 'Replaces the button text once the walk is open, e.g. "Scroll to walk through each suite".'),
             {
               type: 'object', name: 'suites', label: 'Suites', list: true,
               description: 'One entry per suite category. Numbers (01, 02, ...) follow the order here.',
@@ -258,6 +259,7 @@ export default defineConfig({
                 photo('jirang', 'Jirang Monastery'),
               ],
             } as TinaField,
+            text('photoCredits', 'Photo credits', 'Small line at the bottom of the map. Photos from Wikimedia Commons must name the photographer and licence here.'),
           ]),
           group('momentsSection', 'Moments wall', 'The wall of photos that opens large when clicked.', [
             text('eyebrow', 'Small line above the heading'),

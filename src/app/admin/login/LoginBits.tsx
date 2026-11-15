@@ -11,7 +11,7 @@ export function PasswordInput() {
     <>
       <span className="adm-pass">
         <input
-          id="password" name="password" type={show ? 'text' : 'password'} autoComplete="current-password" required className="adm-input"
+          id="password" name="password" type={show ? 'text' : 'password'} autoComplete="current-password" required autoFocus className="adm-input"
           onKeyUp={e => setCaps(e.getModifierState('CapsLock'))} onBlur={() => setCaps(false)}
         />
         <button type="button" onClick={() => setShow(s => !s)} aria-label={show ? 'Hide password' : 'Show password'} aria-pressed={show}>

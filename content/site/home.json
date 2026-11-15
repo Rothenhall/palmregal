@@ -68,6 +68,7 @@
     "em": "not just sleep.",
     "lede": "Three suite categories, with room to settle in. Living rooms, kitchenettes and balconies, with the resort around you.",
     "exploreButton": "Explore the suites",
+    "walkHint": "Scroll to walk through each suite",
     "suites": [
       {
         "name": "One Bedroom Suite",
@@ -347,8 +348,13 @@
     "lede": "A short walk to the sea. A little further to discover Odisha.",
     "photos": {
       "pr": "/img/exterior-2.webp",
-      "beach": "/img/beach-evening.webp"
-    }
+      "beach": "/img/beach-evening.webp",
+      "bam": "/img/map-bam.webp",
+      "tt": "/img/map-tt.webp",
+      "chilika": "/img/map-chilika.webp",
+      "jirang": "/img/map-jirang.webp"
+    },
+    "photoCredits": "Photos via Wikimedia Commons: Berhampur, Government of Odisha (CC BY 4.0); Tara Tarini Temple, Nibedit (CC BY-SA 3.0); Chilika Lake, Phadke09 (CC BY-SA 4.0); Jirang Monastery, Prasantabhunya (CC BY-SA 4.0)."
   },
   "momentsSection": {
     "eyebrow": "Moments at Palm Regal",

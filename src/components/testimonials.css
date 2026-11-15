@@ -1,41 +1,135 @@
-/* Guest testimonials. Calm, quiet cards on the dusk ground; all colours come from the site's tokens. */
-.tm { padding-block: var(--sec-y) }
-.tm-head { display: grid; gap: 18px; justify-items: center; text-align: center; margin-bottom: var(--head-gap) }
-.tm-head h2 { max-width: 20ch }
-.tm-head .lede { margin-inline: auto }
-.tm-wrap { position: relative }
-.tm-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--gap) }
-.tm--1 .tm-list { max-width: 46rem; margin-inline: auto }
-.tm--grid .tm-list { grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)) }
-.tm--row .tm-list {
-  display: flex; gap: var(--gap); overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain;
-  padding: 4px var(--gl) 18px; margin-inline: calc(var(--gl) * -1); scroll-padding-inline: var(--gl); scrollbar-width: thin;
+/* Guest testimonials: a bento wall on the dusk ground. Three tones from the site's palette: light mint with a faint
+   grid (the large corner cards), sea, and night. Everything else comes from the site's tokens. */
+.tm { position: relative; padding-block: var(--sec-y) }
+.tm-head { display: grid; gap: 16px; justify-items: center; max-width: 46rem; margin: 0 auto var(--head-gap); text-align: center }
+.tm-head h2 { max-width: 20ch; font-size: clamp(2.2rem, 4.2vw, 3.8rem); line-height: 1.02 }
+.tm-head .lede { margin-inline: auto; color: var(--muted) }
+
+/* the wall: columns of cards; outer columns hold a big and a small card, the middle one three equal cards */
+.tm-bento { display: grid; gap: 10px; align-items: stretch }
+.tm-bento + .tm-bento { margin-top: 10px }
+.tm-bento--2 { grid-template-columns: repeat(2, minmax(0, 1fr)) }
+.tm-bento--3 { grid-template-columns: repeat(3, minmax(0, 1fr)) }
+.tm-bento--1 { max-width: 46rem; margin-inline: auto }
+.tm-col { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0 }
+.tm-col > .tm-card { flex: 3 1 auto }
+.tm-col > .tm-card--big { flex: 7 1 auto }
+
+.tm-card { position: relative; isolation: isolate; overflow: hidden; display: flex; flex-direction: column; gap: 18px; justify-content: flex-end;
+  min-height: 15rem; margin: 0; padding: clamp(20px, 2.2vw, 30px); border-radius: var(--r-lg); border: 1px solid rgba(238, 245, 242, .14) }
+.tm-card--big { min-height: 22rem }
+.tm-card--light { background: var(--mint-100); color: var(--ink-900); border-color: rgba(19, 47, 55, .12) }
+.tm-card--sea { background: linear-gradient(160deg, var(--teal-600), var(--teal-800)); color: var(--on-dark) }
+.tm-card--night { background: #0d1d22; color: var(--on-dark) }
+/* the faint grid, fading out downwards, on the light cards */
+.tm-grid { position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-image: linear-gradient(to right, rgba(19, 47, 55, .09) 1px, transparent 1px), linear-gradient(to bottom, rgba(19, 47, 55, .09) 1px, transparent 1px);
+  background-size: 50px 56px; mask-image: radial-gradient(ellipse 80% 55% at 50% 0%, #000 70%, transparent 110%) }
+
+.tm-stars { letter-spacing: .14em; font-size: .9rem; color: var(--sun-2) }
+.tm-card--light .tm-stars { color: var(--sun) }
+.tm-quote { margin: 0; font-family: var(--display); font-size: clamp(1rem, 1.2vw, 1.12rem); line-height: 1.55; white-space: pre-line; overflow-wrap: anywhere }
+.tm-card--big .tm-quote { font-size: clamp(1.18rem, 1.7vw, 1.55rem); line-height: 1.45 }
+.tm-by { display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; padding-top: 6px }
+.tm-who { display: grid; gap: 3px; min-width: 0 }
+.tm-name { font-weight: 600; font-size: 1.02rem; letter-spacing: .01em }
+.tm-card--big .tm-name { font-size: 1.15rem }
+.tm-meta { font-size: .82rem; opacity: .72 }
+.tm-src { width: fit-content; margin-top: 3px; font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: inherit; opacity: .7; text-decoration: none }
+a.tm-src:hover { opacity: 1; text-decoration: underline; text-underline-offset: 3px }
+.tm-photo { flex: none; width: 56px; height: 56px; border-radius: 12px; object-fit: cover }
+.tm-initials { display: grid; place-items: center; font: 600 1rem/1 var(--display); background: rgba(238, 245, 242, .1); color: var(--teal-200) }
+.tm-card--light .tm-initials { background: var(--teal-800); color: var(--mint-100) }
+.tm-card a:focus-visible { outline: 2px solid currentColor; outline-offset: 3px }
+
+/* a quiet rule under the wall, with small square ends */
+.tm-rule { position: relative; height: 1px; margin-top: clamp(28px, 4vw, 48px); background: rgba(238, 245, 242, .18) }
+.tm-rule::before, .tm-rule::after { content: ""; position: absolute; top: -6px; width: 12px; height: 12px; border: 1px solid rgba(238, 245, 242, .3); background: var(--dusk) }
+.tm-rule::before { left: -6px } .tm-rule::after { right: -6px }
+
+/* the reveal: blur and drop into place, one after another (only once the script has armed it) */
+.tm-armed .tm-card, .tm-armed .tm-rise { opacity: 0; filter: blur(10px); translate: 0 -20px;
+  transition: opacity .6s var(--ease), filter .6s var(--ease), translate .7s var(--ease); transition-delay: calc(var(--i, 0) * .12s) }
+.tm-armed.tm-in .tm-card, .tm-armed.tm-in .tm-rise { opacity: 1; filter: none; translate: 0 0 }
+.tm-armed .tm-card { transition-delay: calc(.3s + var(--i, 0) * .12s) }
+
+@media (max-width: 1000px) {
+  .tm-bento--3 { grid-template-columns: repeat(2, minmax(0, 1fr)) }
+  .tm-bento--3 > .tm-col:last-child { grid-column: 1 / -1; flex-direction: row }
+  .tm-bento--3 > .tm-col:last-child > .tm-card { flex: 1 1 0 }
 }
-.tm--row .tm-list:focus-visible { outline: 2px solid var(--teal-200); outline-offset: 2px }
-.tm--row .tm-card { flex: 0 0 min(86vw, 24rem); scroll-snap-align: start }
-.tm-card {
-  position: relative; margin: 0; display: flex; flex-direction: column; gap: 22px; padding: clamp(26px, 3vw, 40px);
-  border: 1px solid var(--c-line); border-radius: var(--r-lg); background: var(--c-surface);
+@media (max-width: 640px) {
+  .tm-bento--2, .tm-bento--3 { grid-template-columns: minmax(0, 1fr) }
+  .tm-bento--3 > .tm-col:last-child { flex-direction: column }
+  .tm-card, .tm-card--big { min-height: 0 }
 }
-.tm-card::before {
-  content: "\201C"; font-family: var(--display); font-size: 5.5rem; line-height: .7; height: .45em; color: var(--c-em); opacity: .7;
+@media (prefers-reduced-motion: reduce) { .tm-armed .tm-card, .tm-armed .tm-rise { transition: none; opacity: 1; filter: none; translate: none } }
+
+/* the "these are samples" note, shown only on a developer computer */
+.tm-sample { padding: 8px 14px; border: 1px dashed var(--sun-2); border-radius: var(--r-lg); color: var(--sun-2); font-size: .8rem; letter-spacing: .02em }
+
+/* ===== Creative layer: score, quote marks, star fill, spotlight and tilt, sea wave, towns ribbon ===== */
+.tm::before { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(60% 45% at 50% 0%, rgba(180, 228, 228, .09), transparent 70%), radial-gradient(40% 35% at 85% 85%, rgba(240, 180, 90, .06), transparent 70%) }
+.tm > .wrap { position: relative; z-index: 1 }
+
+/* overall score under the heading */
+.tm-score { display: inline-flex; align-items: center; gap: 14px; margin-top: 6px; padding: 10px 18px 10px 14px; border: 1px solid rgba(238, 245, 242, .16); border-radius: 999px; background: rgba(238, 245, 242, .04) }
+.tm-score-n { font: 400 2.1rem/1 var(--display); color: var(--on-dark) }
+.tm-score-txt { display: grid; gap: 3px; text-align: left }
+.tm-score-txt small { font-size: .74rem; letter-spacing: .02em; color: var(--muted) }
+.tm-score-stars i { font-style: normal; font-size: 1rem; letter-spacing: .14em; background: linear-gradient(90deg, var(--sun-2) var(--fill), rgba(238, 245, 242, .2) var(--fill)); -webkit-background-clip: text; background-clip: text; color: transparent }
+
+/* cards: depth, a big soft quotation mark, a spotlight that follows the pointer, a gentle tilt */
+.tm-card { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .5s var(--ease), box-shadow .5s var(--ease), border-color .4s var(--ease); box-shadow: 0 24px 50px -30px rgba(0, 0, 0, .7) }
+.tm-card.is-lit { box-shadow: 0 34px 70px -30px rgba(0, 0, 0, .75); border-color: rgba(180, 228, 228, .32); transition: transform .12s linear, box-shadow .5s var(--ease), border-color .4s var(--ease) }
+.tm-card--light.is-lit { border-color: rgba(19, 47, 55, .25) }
+.tm-glow { position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity .5s var(--ease);
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), rgba(180, 228, 228, .14), transparent 60%) }
+.tm-card--light .tm-glow { background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), rgba(47, 104, 115, .12), transparent 60%) }
+.tm-card.is-lit .tm-glow { opacity: 1 }
+.tm-mark { position: absolute; top: -.18em; right: .08em; z-index: -1; font: 400 9rem/1 var(--display); color: currentColor; opacity: .07; pointer-events: none; transition: translate .8s var(--ease), opacity .5s }
+.tm-card--big .tm-mark { font-size: 14rem }
+.tm-card.is-lit .tm-mark { translate: -6px 6px; opacity: .11 }
+.tm-card--night { background: radial-gradient(120% 90% at 100% 0%, rgba(47, 104, 115, .35), transparent 55%), #0d1d22 }
+.tm-card--sea { padding-bottom: calc(clamp(20px, 2.2vw, 30px) + 14px) }
+.tm-wave { position: absolute; left: 0; right: 0; bottom: 0; z-index: -1; width: 100%; height: 46px; pointer-events: none }
+.tm-wave path:first-child { fill: rgba(238, 245, 242, .06) }
+.tm-wave path:last-child { fill: rgba(11, 34, 40, .28) }
+.tm-armed.tm-in .tm-wave { animation: tm-swell 9s ease-in-out infinite alternate }
+@keyframes tm-swell { to { translate: -6% 0 } }
+.tm-wave { width: 112% }
+
+/* stars light up one by one as the card arrives */
+.tm-stars { display: inline-flex; gap: 1px }
+.tm-stars i { font-style: normal; opacity: .22 }
+.tm-stars i.on { opacity: 1 }
+.tm-armed .tm-stars i.on { opacity: .22; scale: .6; transition: opacity .35s var(--ease), scale .5s cubic-bezier(.3, 1.6, .5, 1); transition-delay: calc(.6s + var(--i, 0) * .12s + var(--s) * .07s) }
+.tm-armed.tm-in .tm-stars i.on { opacity: 1; scale: 1 }
+.tm-quote { position: relative }
+.tm-photo { box-shadow: 0 0 0 3px rgba(238, 245, 242, .08) }
+
+/* a slow ribbon of the guests' home towns */
+.tm-towns { position: relative; overflow: hidden; margin-top: clamp(26px, 3.6vw, 44px); padding-block: 14px; border-block: 1px solid rgba(238, 245, 242, .1);
+  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent) }
+.tm-towns-track { display: flex; width: max-content; animation: tm-ribbon 40s linear infinite }
+.tm-towns:hover .tm-towns-track { animation-play-state: paused }
+.tm-towns-track > span { display: flex; flex: none }
+.tm-towns em { display: inline-flex; align-items: center; gap: .45em; padding-inline: 1.6rem; font-style: normal; font-size: .8rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); white-space: nowrap }
+.tm-towns em::after { content: "✦"; margin-left: 2.2rem; color: var(--teal-200); opacity: .6; font-size: .7rem }
+.tm-towns b { font: 400 1.05rem/1 var(--display); letter-spacing: 0; text-transform: none; color: var(--on-dark) }
+@keyframes tm-ribbon { to { translate: -50% 0 } }
+.tm-towns + .tm-rule { margin-top: 0; opacity: 0 }
+
+@media (prefers-reduced-motion: reduce) {
+  .tm-card { transform: none; transition: none }
+  .tm-towns-track, .tm-armed.tm-in .tm-wave { animation: none }
+  .tm-armed .tm-stars i.on { opacity: 1; scale: 1; transition: none }
 }
-.tm--1 .tm-card { text-align: center; align-items: center }
-.tm-quote { margin: 0; font-family: var(--display); font-size: clamp(1.1rem, 1.5vw, 1.32rem); line-height: 1.55; color: var(--c-text); white-space: pre-line; overflow-wrap: anywhere }
-.tm--1 .tm-quote { font-size: clamp(1.3rem, 2.4vw, 1.8rem) }
-.tm-by { margin-top: auto; display: flex; align-items: center; gap: 14px; font-size: var(--t-small); color: var(--c-muted) }
-.tm--1 .tm-by { justify-content: center; text-align: left }
-.tm-photo { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; flex: none }
-.tm-name { display: block; font-weight: 600; font-size: 1rem; color: var(--c-text) }
-.tm-meta { display: block }
-.tm-stars { display: inline-block; letter-spacing: .12em; color: var(--sun-2); font-size: .95rem; margin-right: 8px }
-.tm-src { display: inline-block; margin-top: 4px }
-.tm-nav { display: flex; justify-content: center; gap: 12px; margin-top: 18px }
-.tm-nav button {
-  width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--c-line); background: transparent; color: var(--c-text);
-  font-size: 1.15rem; line-height: 1; cursor: pointer; transition: background var(--dur-1) var(--ease), border-color var(--dur-1) var(--ease);
-}
-.tm-nav button:hover { background: var(--c-surface-2); border-color: var(--teal-200) }
-.tm-nav button:focus-visible { outline: 2px solid var(--teal-200); outline-offset: 3px }
-@media (prefers-reduced-motion: reduce) { .tm--row .tm-list { scroll-behavior: auto } .tm-nav button { transition: none } }
-@media (max-width: 600px) { .tm-nav { display: none } .tm-card::before { font-size: 4.5rem } }
+@media (max-width: 640px) { .tm-mark { font-size: 7rem } .tm-card--big .tm-mark { font-size: 9rem } .tm-score-n { font-size: 1.7rem } }
+
+/* one transition list for armed cards: the reveal keeps its stagger, the tilt and light answer at once */
+.tm-armed .tm-card { --d: calc(.3s + var(--i, 0) * .12s);
+  transition: opacity .6s var(--ease) var(--d), filter .6s var(--ease) var(--d), translate .7s var(--ease) var(--d), transform .6s var(--ease) 0s, box-shadow .5s var(--ease) 0s, border-color .4s var(--ease) 0s }
+.tm-armed .tm-card.is-lit { transition: opacity .6s var(--ease) var(--d), filter .6s var(--ease) var(--d), translate .7s var(--ease) var(--d), transform .12s linear 0s, box-shadow .5s var(--ease) 0s, border-color .4s var(--ease) 0s }
+@media (prefers-reduced-motion: reduce) { .tm-armed .tm-card, .tm-armed .tm-card.is-lit { transition: none } }

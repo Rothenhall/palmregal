@@ -31,7 +31,7 @@ export type ChatSettings = {
 
 export const DEFAULTS: ChatSettings = {
   enabled: true,
-  name: 'Palm Regal Concierge',
+  name: 'Aria',
   greeting: 'Namaste! I can help with our suites, facilities, getting here and what to see around Gopalpur. What would you like to know?',
   tone: 'warm',
   extra: '',
@@ -65,6 +65,7 @@ export function sanitize(raw: Partial<Record<keyof ChatSettings, unknown>> | nul
   const s: ChatSettings = { ...DEFAULTS };
   s.enabled = r.enabled === undefined ? DEFAULTS.enabled : r.enabled === true || r.enabled === 'true' || r.enabled === 'on';
   s.name = String(r.name ?? DEFAULTS.name).trim().slice(0, 40) || DEFAULTS.name;
+  if (/^palm regal concierge$/i.test(s.name)) s.name = DEFAULTS.name;
   s.greeting = String(r.greeting ?? DEFAULTS.greeting).trim().slice(0, 300) || DEFAULTS.greeting;
   s.tone = (r.tone as ToneId) in TONES ? (r.tone as ToneId) : DEFAULTS.tone;
   s.extra = String(r.extra ?? '').trim().slice(0, 1200);

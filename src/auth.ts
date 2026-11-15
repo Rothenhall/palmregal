@@ -1,33 +1,20 @@
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
-import bcrypt from 'bcryptjs';
 import { authConfig } from './auth.config';
+import { checkPassword, clientKey } from './lib/adminPassword';
 
-/* Valid hash of a random string, compared against when the email is unknown so response time doesn't reveal it. */
-const DUMMY_HASH = '$2b$12$d.mcOkEzgwOnhujlbwoPne0p6Tj9omqN1gd9lUn0gLyzcWLnHb38y';
-
-/* Admin accounts come from env vars (no database). Comma-separate ADMIN_EMAIL / ADMIN_PASSWORD_HASH to add more later. */
-function admins() {
-  const emails = (process.env.ADMIN_EMAIL ?? '').split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
-  const hashes = (process.env.ADMIN_PASSWORD_HASH ?? '').split(',').map(s => s.trim());
-  return emails.map((email, i) => ({ email, hash: hashes[i] ?? '' }));
-}
-
+/* One shared password for the resort team (no email). The password and its attempt limit live in lib/adminPassword.ts;
+   it is stored as a hash in content/admin.json and can be changed in Admin → Password. */
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   providers: [
     Credentials({
-      credentials: { email: {}, password: {} },
-      async authorize(creds) {
-        const email = String(creds?.email ?? '').trim().toLowerCase();
+      credentials: { password: {} },
+      async authorize(creds, req) {
         const password = String(creds?.password ?? '');
-        if (!email || !password) return null;
-        const admin = admins().find(a => a.email === email);
-        const ok = await bcrypt.compare(password, admin?.hash || DUMMY_HASH);
-        return admin && ok ? { id: admin.email, email: admin.email, name: 'Admin' } : null;
+        // attempts are counted per network; only a one-way hash of the address is stored
+        return (await checkPassword(password, clientKey(req?.headers?.get('x-forwarded-for')))) ? { id: 'admin', name: 'Palm Regal team' } : null;
       },
     }),
-    // Later: import Google from 'next-auth/providers/google' and add Google({ ... }) here,
-    // then restrict sign-in to the admin emails in a signIn callback.
   ],
 });
