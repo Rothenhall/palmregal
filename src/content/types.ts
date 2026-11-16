@@ -37,6 +37,8 @@ export type Testimonial = {
   source?: string | null; link?: string | null; photo?: string | null;
 };
 
+export type OverallRating = { rating?: number | null; count?: number | null; source?: string | null; link?: string | null; asOf?: string | null };
+
 /** the places on the coast map that can carry a photo (ids from src/content/coast.ts) */
 export type MapPlace = 'pr' | 'beach' | 'bam' | 'tt' | 'chilika' | 'sonpur' | 'jirang';
 
@@ -55,7 +57,8 @@ export type SiteContent = {
   /** photos: one per map place, keyed by the place id in src/content/coast.ts; empty means no photo card */
   locationSection: { eyebrow: string; title: string; em: string; lede: string; photos?: Partial<Record<MapPlace, string | null>>; photoCredits?: string };
   momentsSection: { eyebrow: string; title: string; em: string; lede: string; photos: GalleryPhoto[] };
-  testimonials: { show: boolean; eyebrow: string; heading: string; intro?: string | null; items: Testimonial[] };
+  /** the overall rating exactly as the review site states it (not computed from the shown reviews); update now and then */
+  testimonials: { show: boolean; eyebrow: string; heading: string; intro?: string | null; overall?: OverallRating | null; items: Testimonial[] };
   faqSection: { eyebrow: string; title: string; em: string; lede: string; moreLink: string; faqs: Faq[] };
   contactSection: {
     eyebrow: string; title: string; em: string; lede: string; callLabel: string; writeLabel: string;

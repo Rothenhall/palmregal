@@ -45,7 +45,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
 
   const sidebar = (
     <>
-      <div className="adm-brand"><span className="adm-mark" aria-hidden="true">PR</span><span className="adm-wordmark">{RESORT}</span></div>
+      <div className="adm-brand"><img className="adm-mark" src="/img/emblem.png" alt="" width={34} height={34} /><span className="adm-wordmark">{RESORT}</span></div>
       <PaletteButton />
       <AdminNav groups={groups} />
       <div className="adm-side-foot">

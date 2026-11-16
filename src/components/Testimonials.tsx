@@ -14,7 +14,7 @@ const TONES: Tone[] = ['light', 'sea', 'night', 'night', 'night', 'sea', 'light'
 /* how many cards go in each column, for a block of n cards */
 const COLS: Record<number, number[]> = { 1: [1], 2: [1, 1], 3: [1, 1, 1], 4: [2, 2], 5: [2, 1, 2], 6: [2, 2, 2], 7: [2, 3, 2] };
 
-/* placeholders shown until real reviews are added (see below); each is labelled as a sample; lengths vary like real reviews */
+/* placeholders for the website editor's preview only (never shown on the public site); each is labelled as a sample */
 const SAMPLES: Testimonial[] = [
   { quote: 'Sample review. We woke up to the sound of the sea every morning and walked to the beach in minutes. The suite had everything we needed for a week with the children, and the staff remembered how we liked our tea by the second day.', name: 'Sample Guest A', from: 'Kolkata', stayed: 'January 2026', rating: 5, source: 'Google' },
   { quote: 'Sample review. Spacious, spotless and quiet. Perfect for a long weekend.', name: 'Sample Guest B', from: 'Bhubaneswar', rating: 5, source: 'Booking.com' },
@@ -62,11 +62,11 @@ function Card({ t, tone, big, i, f }: { t: Testimonial; tone: Tone; big: boolean
 export function Testimonials({ content, f = noEdit }: { content: SiteContent; f?: Edit }) {
   const t = content.testimonials;
   const real = (t?.items ?? []).filter(i => i?.quote?.trim() && i?.name?.trim());
-  /* While there are no real reviews yet, clearly marked samples fill the wall (live site included, as the resort
-     asked), so the layout can be judged. Each one stays labelled "Sample" so no visitor takes it for a real guest.
-     They disappear by themselves as soon as one real review is added in Admin → Testimonials. */
+  /* The public site shows real reviews only: nothing renders while the section is off or empty. Samples appear
+     solely in the website editor's preview (f is set there), so the layout can be judged before real ones exist. */
+  const editing = f !== noEdit;
   const sample = !real.length;
-  if (!sample && (!t?.show || !real.length)) return null;
+  if (sample ? !editing : (!t?.show && !editing)) return null;
   const items = sample ? SAMPLES : real;
 
   /* blocks of seven; each block is split into its columns */
@@ -77,9 +77,13 @@ export function Testimonials({ content, f = noEdit }: { content: SiteContent; f?
     blocks.push(COLS[block.length].map(n => { const col = block.slice(at, at + n); at += n; return col; }));
   }
 
-  const rated = items.map(i => Number(i.rating)).filter(r => r >= 1 && r <= 5);
-  const avg = rated.length ? rated.reduce((a, b) => a + b, 0) / rated.length : 0;
-  const sources = [...new Set(items.map(i => i.source).filter((x): x is string => !!x && x !== 'Other'))];
+  /* the overall rating is the figure the review site itself states (entered by the resort), never an average of the cards shown */
+  const o = t?.overall;
+  const oRating = Number(o?.rating), oCount = Number(o?.count);
+  const showOverall = !sample && oRating >= 1 && oRating <= 5;
+  const oSource = o?.source?.trim() || 'Google';
+  const oLink = o?.link && /^https?:\/\//i.test(o.link) ? o.link : '';
+  const oWhen = o?.asOf && !Number.isNaN(Date.parse(o.asOf)) ? new Date(o.asOf).toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' }) : '';
   const towns = [...new Set(items.map(i => i.from?.trim()).filter((x): x is string => !!x))];
 
   let n = -1;
@@ -91,12 +95,15 @@ export function Testimonials({ content, f = noEdit }: { content: SiteContent; f?
           {t.eyebrow && <p className="eyebrow tm-rise" style={{ ['--i' as string]: 0 }} {...f(t, 'eyebrow')}>{t.eyebrow}</p>}
           {t.heading && <h2 id="tm-h" className="tm-rise" style={{ ['--i' as string]: 1 }} {...f(t, 'heading')}>{t.heading}</h2>}
           {t.intro && <p className="lede tm-rise" style={{ ['--i' as string]: 2 }} {...f(t, 'intro')}>{t.intro}</p>}
-          {avg > 0 && (
+          {showOverall && (
             <div className="tm-score tm-rise" style={{ ['--i' as string]: 3 }}>
-              <b className="tm-score-n">{avg.toFixed(1)}</b>
+              <b className="tm-score-n" {...f(o!, 'rating')}>{oRating.toFixed(1)}</b>
               <span className="tm-score-txt">
-                <span className="tm-score-stars" role="img" aria-label={`Average ${avg.toFixed(1)} out of 5`}><i style={{ ['--fill' as string]: `${(avg / 5) * 100}%` }} aria-hidden="true">★★★★★</i></span>
-                <small>{sample ? 'Sample average' : 'Average'} from {rated.length} {rated.length === 1 ? 'review' : 'reviews'}{sources.length ? ` · ${sources.join(', ')}` : ''}</small>
+                <span className="tm-score-stars" role="img" aria-label={`${oRating.toFixed(1)} out of 5 on ${oSource}`}><i style={{ ['--fill' as string]: `${(oRating / 5) * 100}%` }} aria-hidden="true">★★★★★</i></span>
+                <small>
+                  {oRating.toFixed(1)} on {oSource}{oCount > 0 ? ` · ${oCount.toLocaleString('en-IN')} reviews` : ''}{oWhen ? ` · as of ${oWhen}` : ''}
+                  {oLink && <> · <a href={oLink} target="_blank" rel="noopener noreferrer" {...f(o!, 'link')}>See them on {oSource} ↗</a></>}
+                </small>
               </span>
             </div>
           )}

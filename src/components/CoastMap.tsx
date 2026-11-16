@@ -97,6 +97,8 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
   const root = useRef<HTMLDivElement>(null);
   const stage = useRef<HTMLDivElement>(null);
   const svg = useRef<SVGSVGElement>(null);
+  /* the way has its own small layer, so the light travelling along it repaints only that, never the whole coast */
+  const routeSvg = useRef<SVGSVGElement>(null);
   const back = useRef<HTMLDivElement>(null);
   const haze = useRef<HTMLDivElement>(null);
   const chip = useRef<HTMLSpanElement>(null);
@@ -122,14 +124,22 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
      their stop), and two screens ahead each one is decoded and painted once, invisibly, so it appears at once. */
   useEffect(() => {
     const el = root.current; if (!el) return;
+    let warmed = false;
     const warm = () => {
-      el.querySelectorAll<HTMLImageElement>('.cpin-photo img').forEach(img => { img.decode?.().catch(() => {}); });
-      el.classList.add('ctour-warm');
-      requestAnimationFrame(() => requestAnimationFrame(() => el.classList.remove('ctour-warm')));
+      if (warmed) return; warmed = true;
+      const imgs = [...el.querySelectorAll<HTMLImageElement>('.cpin-photo img')];
+      /* decode now (the loading screen has already fetched them), then paint each once, invisibly, so every card is rasterised before its stop */
+      Promise.all(imgs.map(img => (img.decode ? img.decode() : Promise.resolve()).catch(() => {}))).then(() => {
+        el.classList.add('ctour-warm');
+        requestAnimationFrame(() => requestAnimationFrame(() => el.classList.remove('ctour-warm')));
+      });
     };
+    /* when the loading screen lifts (or at once if it is already gone), without waiting for the visitor to scroll near */
+    const onReady = () => { removeEventListener('pr:ready', onReady); (window.requestIdleCallback || ((fn: () => void) => setTimeout(fn, 200)))(warm); };
+    if (document.documentElement.classList.contains('pl-on')) addEventListener('pr:ready', onReady); else onReady();
     const io = new IntersectionObserver(es => { if (es.some(e => e.isIntersecting)) { io.disconnect(); warm(); } }, { rootMargin: '200% 0px 200% 0px' });
     io.observe(el);
-    return () => io.disconnect();
+    return () => { io.disconnect(); removeEventListener('pr:ready', onReady); };
   }, []);
 
   // Fit destinations into the visible map between the page title and controls.
@@ -158,11 +168,13 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
   const rest = useRef<{ vx: number; vy: number; s: number } | null>(null);
   const settle = useRef(0);
   const commit = (vx: number, vy: number, w: number, h: number, s: number) => {
-    const el = svg.current; if (!el) return;
-    el.setAttribute('viewBox', `${vx} ${vy} ${w} ${h}`);
-    /* one screen pixel in map units, so the way keeps the same weight at every zoom */
-    el.style.setProperty('--u', (1 / s).toFixed(4));
-    el.style.transform = '';
+    /* --u is one screen pixel in map units, so the way keeps the same weight at every zoom */
+    for (const el of [svg.current, routeSvg.current]) {
+      if (!el) continue;
+      el.setAttribute('viewBox', `${vx} ${vy} ${w} ${h}`);
+      el.style.setProperty('--u', (1 / s).toFixed(4));
+      el.style.transform = '';
+    }
     /* the land texture thins as the camera comes close, so it never turns into big spots */
     if (dots.current) dots.current.style.opacity = String(Math.min(1, Math.max(.2, (w - 100) / 420)));
     rest.current = { vx, vy, s };
@@ -180,7 +192,9 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
     else {
       /* a point at screen p under the rest camera belongs at p * k + offset under this one */
       const k = s / r.s;
-      if (svg.current) svg.current.style.transform = `translate3d(${((r.vx - vx) * s).toFixed(2)}px, ${((r.vy - vy) * s).toFixed(2)}px, 0) scale(${k.toFixed(5)})`;
+      const tf = `translate3d(${((r.vx - vx) * s).toFixed(2)}px, ${((r.vy - vy) * s).toFixed(2)}px, 0) scale(${k.toFixed(5)})`;
+      if (svg.current) svg.current.style.transform = tf;
+      if (routeSvg.current) routeSvg.current.style.transform = tf;
       settle.current = window.setTimeout(() => commit(vx, vy, c.w, h, s), 140);
     }
     const at = (p: P) => `translate3d(${((p[0] - vx) * s).toFixed(1)}px, ${((p[1] - vy) * s).toFixed(1)}px, 0)`;
@@ -189,7 +203,8 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
       const el = pinEls.current[id]; if (!el) continue;
       el.style.transform = at(pts[id]);
       const labelEdge = immersive ? (sw <= 900 ? sw - 130 : sw - 520) : sw * .7;
-      el.dataset.flip = id !== 'beach' && (pts[id][0] - vx) * s > labelEdge ? '1' : '0';
+      const flip = id !== 'beach' && (pts[id][0] - vx) * s > labelEdge ? '1' : '0';
+      if (el.dataset.flip !== flip) el.dataset.flip = flip;
       if (el.classList.contains('has-photo')) {
         const px = (pts[id][0] - vx) * s, py = (pts[id][1] - vy) * s, half = sw <= 760 ? 95 : 130;
         const card = py < (sw <= 760 ? 150 : 210) ? 'below' : 'above', edge = px < half ? 'l' : px > sw - half ? 'r' : '';
@@ -200,9 +215,11 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
         const x = (pts[id][0] - vx) * s, y = (pts[id][1] - vy) * s;
         const underHeading = x < (sw <= 900 ? sw : Math.min(sw * .45, 480) + 110) && y < (sw <= 900 ? 215 : 355);
         const obscured = underHeading && !STOPS[iRef.current].frame.includes(id);
-        el.style.visibility = obscured ? 'hidden' : '';
-        el.inert = obscured || x < 12 || x > sw - 12 || y < 12 || y > sh - 12
+        const vis = obscured ? 'hidden' : '';
+        if (el.style.visibility !== vis) el.style.visibility = vis;
+        const inert = obscured || x < 12 || x > sw - 12 || y < 12 || y > sh - 12
           || (id === 'beach' && Math.hypot(pts.beach[0] - HOME[0], pts.beach[1] - HOME[1]) * s <= 36);
+        if (el.inert !== inert) el.inert = inert;
       }
     }
     const wide = Math.min(1, Math.max(0, (c.w - 420) / 260));
@@ -214,10 +231,12 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
       const obscured = immersive && (x < edge || x > sw - edge || y < 80 || y > sh - 80
         || (sw <= 900 ? y > sh - 335 || y < 215
           : (x > sw - 440 && y > 200) || (x < 600 && y < 355)));
-      el.style.opacity = String(obscured ? 0 : r.cls === 'sea' ? .4 + wide * .6 : wide);
+      const op = String(obscured ? 0 : r.cls === 'sea' ? .4 + wide * .6 : wide);
+      if (el.style.opacity !== op) el.style.opacity = op;
     }
     /* the beach shows once it has room to sit apart from the resort */
-    stage.current!.dataset.near = Math.hypot(pts.beach[0] - HOME[0], pts.beach[1] - HOME[1]) * s > 36 ? '1' : '0';
+    const near = Math.hypot(pts.beach[0] - HOME[0], pts.beach[1] - HOME[1]) * s > 36 ? '1' : '0';
+    if (stage.current!.dataset.near !== near) stage.current!.dataset.near = near;
     const mid = chip.current?.dataset.mid;
     if (mid && chip.current) { const [mx, my] = mid.split(',').map(Number); chip.current.style.transform = at([mx, my]); }
     /* parallax: the sea grid behind moves at about half the rate of the land, the haze in front faster */
@@ -402,13 +421,15 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
               <path d={geo.border} className="ct-border" vectorEffect="non-scaling-stroke" />
               <path d={geo.roads} className="ct-road-case" vectorEffect="non-scaling-stroke" />
               <path d={geo.roads} className="ct-road" vectorEffect="non-scaling-stroke" />
+              </g>
+            </svg>
+            <svg ref={routeSvg} className="ctour-route" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid slice" aria-hidden="true">
               {route && (
                 <g key={stop.id} className={'ct-way' + (stop.walk ? ' walk' : '')}>
                   <path d={route.d} className="ct-way-line" ref={wayLine} />
                   <path d={route.d} className="ct-way-dot" ref={wayDot} />
                 </g>
               )}
-              </g>
             </svg>
 
             <div className="ctour-labels" aria-hidden="true">
@@ -429,7 +450,7 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
                     <i><svg aria-hidden="true"><use href={`#ck-${kind}`} /></svg></i>
                     <span className="cpin-tag"><b>{pinName(id)}</b>{id !== 'pr' && id !== 'beach' && <small className="num">{s.chip}</small>}{id === 'beach' && <small>5 min walk</small>}</span>
                     {/* the place's photo, beside its pin while the map is on it (set in the editor: Photos on the map) */}
-                    {photo && <span className="cpin-photo" aria-hidden="true" {...(copy.photos ? f(copy.photos, id) : {})}><img src={photo} alt="" decoding="async" /></span>}
+                    {photo && <span className="cpin-photo" aria-hidden="true" {...(copy.photos ? f(copy.photos, id) : {})}><img src={photo} alt="" width={240} height={150} decoding="async" loading="eager" /></span>}
                   </button>
                 );
               })}

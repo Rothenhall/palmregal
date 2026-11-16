@@ -46,7 +46,11 @@ export async function saveTestimonials(draft: TestimonialsDraft): Promise<SaveRe
   if (!(await auth())?.user) return { ok: false, error: 'Please sign in again.' };
   const { section, error } = clean(draft);
   if (error) return { ok: false, error };
-  const apply = (data: Record<string, unknown>) => { data.testimonials = section; };
+  const apply = (data: Record<string, unknown>) => {
+    /* keep the overall Google rating, which this form does not edit */
+    const old = (data.testimonials ?? {}) as { overall?: unknown };
+    data.testimonials = old.overall ? { ...section, overall: old.overall } : section;
+  };
 
   const cfg = ghConfigFromEnv();
   if (!cfg) {

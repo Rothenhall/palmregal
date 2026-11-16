@@ -59,15 +59,6 @@ fragment HomeParts on Home {
       }
     }
   }
-  arrival {
-    __typename
-    eyebrow
-    title
-    em
-    lede
-    ledeEm
-    place
-  }
   suitesSection {
     __typename
     eyebrow
@@ -75,6 +66,7 @@ fragment HomeParts on Home {
     em
     lede
     exploreButton
+    walkHint
     suites {
       __typename
       name
@@ -141,6 +133,17 @@ fragment HomeParts on Home {
     title
     em
     lede
+    photos {
+      __typename
+      pr
+      beach
+      bam
+      tt
+      chilika
+      sonpur
+      jirang
+    }
+    photoCredits
   }
   momentsSection {
     __typename
@@ -162,6 +165,14 @@ fragment HomeParts on Home {
     eyebrow
     heading
     intro
+    overall {
+      __typename
+      rating
+      count
+      source
+      link
+      asOf
+    }
     items {
       __typename
       quote

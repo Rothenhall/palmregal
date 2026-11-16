@@ -156,11 +156,23 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
    page, where a blur would cost every frame. */
 .chat-fab { position: fixed; z-index: 58; right: calc(22px + env(safe-area-inset-right, 0px)); bottom: calc(22px + env(safe-area-inset-bottom, 0px));
   display: grid; place-items: center; width: 60px; height: 60px; padding: 0; border: 1px solid rgba(180, 228, 228, .28); border-radius: 50%;
-  background: radial-gradient(circle at 30% 25%, var(--teal-700), var(--teal-900) 70%); color: var(--teal-200); cursor: pointer;
+  background: radial-gradient(circle at 30% 25%, var(--teal-700), var(--teal-900) 70%); color: #f4faf8; cursor: pointer;
   box-shadow: 0 16px 36px -12px rgba(0, 0, 0, .6), 0 0 0 6px rgba(180, 228, 228, .06); transition: transform .45s var(--ease), box-shadow .45s var(--ease), border-color .3s }
 .chat-fab:hover { transform: translateY(-3px) scale(1.04); border-color: rgba(180, 228, 228, .5); box-shadow: 0 22px 44px -14px rgba(0, 0, 0, .65), 0 0 0 8px rgba(180, 228, 228, .08) }
-.chat-fab:hover svg { animation: chat-ring .7s var(--ease) }
-@keyframes chat-ring { 0%, 100% { rotate: 0deg } 25% { rotate: -14deg } 55% { rotate: 10deg } 80% { rotate: -4deg } }
+/* the living orb: a sphere of light, breathing slowly. Layers are pre-blurred gradients; only transform/opacity animate. */
+.chat-orb { position: relative; width: 70%; height: 70%; border-radius: 50%; overflow: hidden; isolation: isolate; animation: chat-breathe 5.5s ease-in-out infinite;
+  background: radial-gradient(circle at 50% 55%, var(--teal-300), var(--teal-700) 80%); box-shadow: 0 0 14px rgba(143, 196, 200, .45), 0 0 4px rgba(180, 228, 228, .5) }
+.chat-orb i { position: absolute; border-radius: 50% }
+.chat-orb-a { inset: -40%; background: conic-gradient(from 0deg, rgba(180, 228, 228, .85), rgba(224, 154, 78, .5) 25%, rgba(143, 196, 200, .2) 50%, rgba(217, 241, 240, .8) 75%, rgba(180, 228, 228, .85)); opacity: .75; animation: chat-drift 11s linear infinite }
+.chat-orb-b { width: 70%; height: 70%; left: 4%; bottom: -8%; background: radial-gradient(circle, rgba(224, 154, 78, .7), rgba(208, 138, 60, 0) 70%); animation: chat-roam 9s ease-in-out infinite }
+.chat-orb-c { inset: 0; background: radial-gradient(circle at 34% 26%, rgba(244, 248, 243, .95), rgba(217, 241, 240, .35) 28%, rgba(217, 241, 240, 0) 55%), radial-gradient(circle at 50% 50%, transparent 62%, rgba(15, 50, 55, .35)) }
+.chat-fab:hover .chat-orb { animation-duration: 3.5s; filter: brightness(1.12) }
+.chat-fab:hover .chat-orb-a { animation-duration: 7s }
+.chat-fab.is-tease .chat-orb { animation: chat-pulse 1.8s var(--ease) 1 }
+@keyframes chat-breathe { 0%, 100% { transform: scale(.96) } 50% { transform: scale(1.04) } }
+@keyframes chat-pulse { 0%, 100% { transform: scale(1) } 45% { transform: scale(1.14) } }
+@keyframes chat-drift { to { transform: rotate(360deg) } }
+@keyframes chat-roam { 0%, 100% { transform: translate(0, 0) scale(1) } 50% { transform: translate(40%, -45%) scale(1.15) } }
 .chat-fab-dot { position: absolute; top: 5px; right: 5px; width: 12px; height: 12px; border-radius: 50%; background: #5fd39a; border: 2px solid var(--teal-900) }
 .chat-fab-tip { position: absolute; right: calc(100% + 12px); top: 50%; padding: .5rem .8rem; border: 1px solid rgba(180, 228, 228, .2); border-radius: 10px;
   background: var(--teal-900); color: var(--on-dark); font: 600 .78rem/1 var(--body); letter-spacing: .02em; white-space: nowrap; box-shadow: 0 12px 28px -12px rgba(0, 0, 0, .6);
@@ -181,7 +193,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .chat-tease-x:hover { background: rgba(238, 245, 242, .08); color: var(--on-dark) }
 .chat-tease button:focus-visible { outline: 2px solid var(--teal-200); outline-offset: 1px }
 @keyframes chat-tease-in { from { opacity: 0; transform: translateY(8px) } }
-@media (prefers-reduced-motion: reduce) { .chat-tease { animation: none } .chat-fab:hover svg { animation: none } }
+@media (prefers-reduced-motion: reduce) { .chat-tease { animation: none } .chat-orb, .chat-orb i, .chat-fab.is-tease .chat-orb { animation: none !important } }
 
 /* Sections */
 .sec { position: relative; padding-block: var(--sec-y); overflow-x: clip }
@@ -332,6 +344,7 @@ html.shift [data-bg="dusk"] { background-image: radial-gradient(120% 70% at 80% 
 /* back layer: a faint sea grid that moves at about half the land's rate */
 .ctour-back { position: absolute; inset: 0; pointer-events: none;
   background-image: linear-gradient(rgba(180, 228, 228, .07) 1px, transparent 1px), linear-gradient(90deg, rgba(180, 228, 228, .07) 1px, transparent 1px) }
+.ctour-stage > svg.ctour-route { pointer-events: none }
 .ctour-stage > svg { position: absolute; inset: 0; width: 100%; height: 100%; transform-origin: 0 0; will-change: transform }
 .ct-shallow-1 { fill: none; stroke: rgba(132, 204, 252, .07); stroke-width: 34; stroke-linejoin: round }
 .ct-shallow-2 { fill: none; stroke: rgba(180, 228, 228, .07); stroke-width: 18; stroke-linejoin: round }
@@ -346,7 +359,7 @@ html.shift [data-bg="dusk"] { background-image: radial-gradient(120% 70% at 80% 
 .ct-way-line { fill: none; stroke: var(--teal-200); stroke-width: calc(var(--u, 1) * 2.6px); stroke-linecap: round }
 /* the walk to the beach is a dotted footpath, spaced in screen pixels */
 .ct-way.walk .ct-way-line { stroke-dasharray: 0 calc(var(--u, 1) * 9px); stroke-width: calc(var(--u, 1) * 4px); animation: fadeIn .6s var(--ease) .6s both }
-.ct-way-dot { fill: none; stroke: #fff; stroke-width: calc(var(--u, 1) * 7px); stroke-linecap: round; opacity: 0; filter: drop-shadow(0 0 4px rgba(180, 228, 228, .9)) }
+.ct-way-dot { fill: none; stroke: #fff; stroke-width: calc(var(--u, 1) * 7px); stroke-linecap: round; opacity: 0 }
 .ct-way.walk .ct-way-dot { display: none }
 
 /* labels and pins are HTML, placed by the camera, so they stay readable at any zoom */
@@ -363,8 +376,8 @@ html.shift [data-bg="dusk"] { background-image: radial-gradient(120% 70% at 80% 
 .cpin > i { position: relative; flex: none; display: grid; place-items: center; width: var(--d); height: var(--d); border-radius: 50%; background: rgba(10, 30, 37, .9); border: 1px solid rgba(180, 228, 228, .5); color: var(--teal-200);
   box-shadow: 0 4px 14px rgba(0, 0, 0, .35); transition: transform .45s var(--ease-pop), background .35s, color .35s, border-color .35s }
 .cpin > i svg { width: 16px; height: 16px }
-.cpin-tag { display: grid; gap: 1px; padding: 5px 10px 6px; border-radius: var(--r-sm); background: rgba(10, 30, 37, .74); border: 1px solid rgba(238, 245, 242, .12); white-space: nowrap; line-height: 1.15; text-align: left;
-  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); transition: background .35s, border-color .35s }
+.cpin-tag { display: grid; gap: 1px; padding: 5px 10px 6px; border-radius: var(--r-sm); background: rgba(10, 30, 37, .88); border: 1px solid rgba(238, 245, 242, .12); white-space: nowrap; line-height: 1.15; text-align: left;
+  transition: background .35s, border-color .35s }
 .cpin-tag b { font-size: .8rem; font-weight: 600 }
 .cpin-tag small { display: none; font-size: .68rem; font-weight: 500; color: var(--teal-200) }
 .cpin:hover .cpin-tag small, .cpin:focus-visible .cpin-tag small, .cpin.on .cpin-tag small { display: block }
@@ -389,7 +402,7 @@ html.shift [data-bg="dusk"] { background-image: radial-gradient(120% 70% at 80% 
 
 /* front layer: a thin haze that moves faster than the land and thickens mid-flight */
 .ctour-haze { position: absolute; inset: -20%; z-index: 2; pointer-events: none; opacity: .25; will-change: transform, opacity }
-.ctour-haze i { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(238, 245, 242, .11), transparent); filter: blur(10px) }
+.ctour-haze i { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(238, 245, 242, .11), transparent) }
 .ctour-haze i:nth-child(1) { left: 6%; top: 16%; width: 46%; height: 30% }
 .ctour-haze i:nth-child(2) { left: 54%; top: 48%; width: 40%; height: 26% }
 .ctour-haze i:nth-child(3) { left: 28%; top: 72%; width: 34%; height: 22% }

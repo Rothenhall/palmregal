@@ -473,11 +473,79 @@
     ]
   },
   "testimonials": {
-    "show": false,
+    "show": true,
     "eyebrow": "Guest words",
     "heading": "What our guests say",
     "intro": "",
-    "items": []
+    "items": [
+      {
+        "quote": "We had an absolutely wonderful stay here with family and kids. The resort is incredibly family-friendly, offering a perfect blend of relaxation for the adults and plenty of fun activities to keep the children happily entertained. The staff went out of their way to make us feel welcome, and the hospitality was top-notch. Highly recommended for anyone looking to spend quality time with their loved ones in a beautiful setting!",
+        "name": "Ashutosh M.",
+        "from": null,
+        "stayed": null,
+        "rating": 5,
+        "source": "Google",
+        "link": null,
+        "photo": null
+      },
+      {
+        "quote": "Amazing stay, we stayed during our road trip from Bangalore to Kolkata with 2 dogs and the stay was comfortable. They have an in house restaurant where the food quality is top notch and the price is also very reasonable. I highly recommend the palm regal resorts at Gopalpur. I will come back soon.",
+        "name": "Sourav D.",
+        "from": null,
+        "stayed": null,
+        "rating": 5,
+        "source": "Google",
+        "link": null,
+        "photo": null
+      },
+      {
+        "quote": "We recently stay here, it was fabulous. Rooms are fully furnished and clean,also comfortable for children. They provide a induction and tea maker ,some tea/coffee Cups and plates also . Actually it's like a 1bhk apartment. Staffs behaviour is nice polite. Overall we had a great time.Cost is budget friendly. Thankyou palm Regal",
+        "name": "Shreyashi M.",
+        "from": null,
+        "stayed": null,
+        "rating": 5,
+        "source": "Google",
+        "link": null,
+        "photo": null
+      },
+      {
+        "quote": "It was an amazing experience with Palm regal resort home stay.\nStaff was so helpful and all the things are managed very promptly. Overall a excellent experience, will come back again.\nThank you team..!!",
+        "name": "Saikat S.",
+        "from": null,
+        "stayed": null,
+        "rating": 5,
+        "source": "Google",
+        "link": null,
+        "photo": null
+      },
+      {
+        "quote": "Palm Regal Resort Homestay at Gopalpur exceeded my expectations. … The spacious 1BHK room with a balcony was comfortable, clean, and well-maintained. … Beach is merely 500-700 mtrs away, as well part of Gopalpur Sea Beach is visible from room balcony. Highly recommended if you’re looking for a comfortable, spacious, and well-equipped stay in Gopalpur. Great value for money!",
+        "name": "Manaswinee P.",
+        "from": null,
+        "stayed": null,
+        "rating": 5,
+        "source": "Google",
+        "link": null,
+        "photo": null
+      },
+      {
+        "quote": "Had a very pleasant experience staying over here. Food is also good here and lots of amenities to enjoy. Overall a nice weekend stay location.",
+        "name": "Sayan S.",
+        "from": null,
+        "stayed": null,
+        "rating": 5,
+        "source": "Google",
+        "link": null,
+        "photo": null
+      }
+    ],
+    "overall": {
+      "rating": 4.7,
+      "count": 1639,
+      "source": "Google",
+      "link": "https://www.google.com/travel/search?q=palm%20regal&g2lb=4965990%2C72471280%2C72573224%2C72686036%2C72803964%2C72882230%2C73064764%2C121529350%2C121608706%2C121738283%2C121921501%2C121951222%2C121960738%2C122078727%2C122093076%2C122097177%2C122134888%2C122147524%2C122172427%2C122258383&hl=en-IN&gl=in&cs=1&ssta=1&ts=CAEaSQorEicyJTB4M2EzZDU5NWFlYzY1OTQzZDoweGEwNWQzOWQxZWZjNWY5OWUaABIaEhQKBwjqDxAMGBcSBwjqDxAMGBgYATICEAAqCQoFOgNJTlIaAA&qs=CAE4AkIJCZ75xe_ROV2g&ictx=111",
+      "asOf": "2026-11-16"
+    }
   },
   "faqSection": {
     "eyebrow": "Before you arrive",

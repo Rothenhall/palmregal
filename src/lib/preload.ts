@@ -14,3 +14,12 @@ export function contentPhotos(content: SiteContent): string[] {
   walk(content);
   return [...out];
 }
+
+/** the photos split by when the visitor needs them: the opening screen, the coast map, everything else */
+export function contentPhotoGroups(content: SiteContent): { hero: string[]; map: string[]; rest: string[] } {
+  const all = contentPhotos(content);
+  const hero = new Set<string>(), map = new Set<string>();
+  for (const s of content.hero?.slides ?? []) for (const v of [s.image, s.poster, s.posterMobile]) if (v && all.includes(v)) hero.add(v);
+  for (const v of Object.values(content.locationSection?.photos ?? {})) if (v && all.includes(v)) map.add(v);
+  return { hero: [...hero], map: [...map].filter(s => !hero.has(s)), rest: all.filter(s => !hero.has(s) && !map.has(s)) };
+}

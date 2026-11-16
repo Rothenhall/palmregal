@@ -30,7 +30,7 @@ export default async function Page() {
         title="Testimonials"
         description="Words from real guests, shown as a wall of cards on your website just before the questions and contact form."
       />
-      <TestimonialsEditor initial={{ show: !!t.show, eyebrow: t.eyebrow ?? '', heading: t.heading ?? '', intro: t.intro ?? '', items: t.items ?? [] }} connected={connected} />
+      <TestimonialsEditor initial={{ show: !!t.show, eyebrow: t.eyebrow ?? '', heading: t.heading ?? '', intro: t.intro ?? '', overall: t.overall ?? null, items: t.items ?? [] }} connected={connected} />
     </div>
   );
 }

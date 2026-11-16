@@ -14,6 +14,10 @@
 import { useEffect, useRef, useState } from 'react';
 
 const MIN_MS = 900, MAX_MS = 8000;
+/* the coast map's photos get this long to arrive (fetched and decoded); after that the page carries on and they finish behind it */
+const MAP_CAP_MS = 3000;
+/* decoded pictures are kept alive for the page's lifetime, so the browser cannot drop them before the map shows them */
+const kept: HTMLImageElement[] = [];
 
 /* one task per photo, plus the fonts and the hero's first film */
 function photo(src: string) {
@@ -35,7 +39,7 @@ function heroFilm() {
   });
 }
 
-export function Preloader({ photos, name, tagline }: { photos: string[]; name: string; tagline: string }) {
+export function Preloader({ groups, name, tagline }: { groups: { hero: string[]; map: string[]; rest: string[] }; name: string; tagline: string }) {
   const [state, setState] = useState<'loading' | 'leaving' | 'gone'>('loading');
   const count = useRef<HTMLSpanElement>(null), line = useRef<HTMLSpanElement>(null);
 
@@ -47,11 +51,19 @@ export function Preloader({ photos, name, tagline }: { photos: string[]; name: s
 
     /* phones skip the laptop-only versions and the other way round */
     const phone = matchMedia('(max-width: 760px)').matches;
-    const list = photos.filter(src => (phone ? !/-poster\.webp$/.test(src) : !/-mobile\./.test(src)));
-    const tasks: Promise<void>[] = [document.fonts?.ready.then(() => {}) ?? Promise.resolve(), heroFilm(), ...list.map(photo)];
+    const keep = (list: string[]) => list.filter(src => (phone ? !/-poster\.webp$/.test(src) : !/-mobile\./.test(src)));
+    const hero = keep(groups.hero), map = keep(groups.map), rest = keep(groups.rest);
     let done = 0, shown = 0, frame = 0, alive = true, finished = false;
-    const total = tasks.length, start = performance.now();
-    tasks.forEach(t => t.then(() => { done++; }));
+    const total = 2 + hero.length + map.length + rest.length, start = performance.now();
+    const track = (t: Promise<void>) => { t.then(() => { done++; }); return t; };
+    /* the opening screen first (fonts, first film, its photos), then the map's photos and the rest side by side,
+       so the hero never queues behind something far down the page */
+    const capped = (p: Promise<void>) => Promise.race([p, new Promise<void>(r => setTimeout(r, MAP_CAP_MS))]);
+    Promise.all([track(document.fonts?.ready.then(() => {}) ?? Promise.resolve()), track(heroFilm()), ...hero.map(s => track(photo(s)))]).then(() => {
+      if (!alive) return;
+      map.forEach(s => track(capped(photo(s))));
+      rest.forEach(s => track(photo(s)));
+    });
 
     const finish = () => {
       if (finished) return; finished = true;

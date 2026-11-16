@@ -32,7 +32,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   return (
     <main className="adm-login">
       <div className="adm-login-wrap">
-        <div className="adm-login-brand"><span className="adm-mark" aria-hidden="true">PR</span><span className="adm-wordmark">{RESORT}</span></div>
+        <div className="adm-login-brand"><img className="adm-mark" src="/img/emblem.png" alt="" width={34} height={34} /><span className="adm-wordmark">{RESORT}</span></div>
         <form className="adm-card adm-login-card" action={login}>
           <div><h1>Welcome back</h1><p>Enter the team password to manage your website and guest chats.</p></div>
           {error && <p className="adm-inline-error" role="alert"><CircleAlert size={16} aria-hidden="true" />{error === 'locked' ? 'Too many wrong tries. Please wait 15 minutes and try again.' : 'That password is not right. Please try again.'}</p>}

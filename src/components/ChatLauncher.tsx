@@ -8,16 +8,6 @@ import dynamic from 'next/dynamic';
 const ChatPanel = dynamic(() => import('./chat/ChatPanel'), { ssr: false });
 const warm = () => { void import('./chat/ChatPanel'); };
 
-/* the concierge's mark: a hotel service bell, the sign of a front desk that is there to help */
-export function BellIcon({ size = 22 }: { size?: number }) {
-  return (
-    <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M4.5 16.5a7.5 7.5 0 0 1 15 0" /><path d="M3 16.5h18" /><path d="M5 19.5h14" />
-      <path d="M12 9V7.4" /><circle cx="12" cy="6.2" r="1.2" /><path d="M8.6 12.6a4.2 4.2 0 0 1 2.2-1.6" />
-    </svg>
-  );
-}
-
 type Cfg = { enabled: boolean; name?: string; teaser?: { text: string; delay: number; scroll: boolean; mobile: boolean; days: number } | null };
 const KEY = 'pr_chat_tease';
 const lsGet = () => { try { return Number(localStorage.getItem(KEY)) || 0; } catch { return 0; } };
@@ -86,10 +76,10 @@ export function ChatLauncher() {
         </div>
       )}
       <button
-        ref={btn} type="button" className="chat-fab" aria-label={`Chat with ${name}`} aria-haspopup="dialog" aria-expanded={open}
+        ref={btn} type="button" className={tease && !open ? 'chat-fab is-tease' : 'chat-fab'} aria-label={`Chat with ${name}`} aria-haspopup="dialog" aria-expanded={open}
         onClick={start} onPointerEnter={warm} onFocus={warm} hidden={open}
       >
-        <BellIcon size={24} />
+        <span className="chat-orb" aria-hidden="true"><i className="chat-orb-a" /><i className="chat-orb-b" /><i className="chat-orb-c" /></span>
         <i className="chat-fab-dot" aria-hidden="true" />
         <span className="chat-fab-tip" aria-hidden="true">Chat with {name}</span>
       </button>
