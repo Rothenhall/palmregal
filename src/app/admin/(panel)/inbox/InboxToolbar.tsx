@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, X } from 'lucide-react';
+import { Loader2, Search, X } from 'lucide-react';
 import { Segmented } from '../../_ui/Segmented';
 
 type View = 'all' | 'needs' | 'unanswered';
@@ -10,7 +10,7 @@ type View = 'all' | 'needs' | 'unanswered';
 export function InboxToolbar({ view, q, counts }: { view: View; q: string; counts: Record<View, number> }) {
   const router = useRouter();
   const [text, setText] = useState(q);
-  const [, start] = useTransition();
+  const [pending, start] = useTransition();
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
   useEffect(() => setText(q), [q]);
 
@@ -32,6 +32,7 @@ export function InboxToolbar({ view, q, counts }: { view: View; q: string; count
         />
         {text && <button type="button" aria-label="Clear search" onClick={() => { setText(''); go(view, ''); }}><X size={14} /></button>}
       </form>
+      {pending && <span className="adm-inline-loading" role="status"><Loader2 size={14} className="adm-spin" aria-hidden="true" />Updating conversations…</span>}
       <Segmented<View>
         label="Show" size="sm" value={view} onChange={v => go(v, text)}
         options={[

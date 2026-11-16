@@ -608,3 +608,19 @@
 .adm-pw-meter.is-3 i:nth-child(-n+3) { background: var(--teal-ring) }
 .adm-pw-meter.is-4 i { background: var(--green) }
 .adm-banner svg { vertical-align: -3px; margin-right: 4px }
+
+/* Loading placeholders keep the panel stable while server-rendered pages arrive. */
+.adm-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0 }
+.adm-skeleton { height: 12px; border-radius: 6px; background: var(--border); opacity: .65; animation: adm-pulse 1.5s ease-in-out infinite }
+.adm-skeleton--title { width: 220px; max-width: 65%; height: 30px; margin-bottom: 12px }
+.adm-skeleton--subtitle { width: 340px; max-width: 90%; margin-bottom: var(--s5) }
+.adm-skeleton--short { width: 28% }
+.adm-skeleton--medium { width: 45% }
+.adm-skeleton--value { width: 25%; height: 28px }
+.adm-loading-tile { padding: var(--s4); display: grid; gap: 14px }
+.adm-loading-panel { padding: var(--s4) }
+.adm-loading-row { display: grid; gap: 10px; padding: 20px 0; border-bottom: 1px solid var(--border) }
+.adm-loading-row:last-child { border-bottom: 0; padding-bottom: 0 }
+.adm-inline-loading { display: inline-flex; align-items: center; gap: 6px; color: var(--text-2); font-size: 13px }
+@keyframes adm-pulse { 50% { opacity: .3 } }
+@media (prefers-reduced-motion: reduce) { .adm-skeleton, .adm-spin { animation: none } }

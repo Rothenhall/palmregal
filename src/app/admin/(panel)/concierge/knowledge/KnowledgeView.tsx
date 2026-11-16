@@ -17,6 +17,8 @@ export function KnowledgeView({ docs, limits, openAdd, error }: { docs: KbDoc[];
   const [renaming, setRenaming] = useState<KbDoc | null>(null);
   const [name, setName] = useState('');
   const [deleting, setDeleting] = useState<KbDoc | null>(null);
+  const [savingName, setSavingName] = useState(false);
+  const [toggling, setToggling] = useState<Record<string, boolean>>({});
   const [over, setOver] = useState<Record<string, boolean>>({});
   const [find, setFind] = useState('');
   const needle = find.trim().toLowerCase();
@@ -29,9 +31,11 @@ export function KnowledgeView({ docs, limits, openAdd, error }: { docs: KbDoc[];
   const add = <button type="button" className={btn('primary')} onClick={() => setAdding(true)} disabled={full}><Plus size={16} aria-hidden="true" />Add knowledge</button>;
 
   const toggle = async (d: KbDoc, on: boolean) => {
+    setToggling(o => ({ ...o, [d.id]: true }));
     setOver(o => ({ ...o, [d.id]: on }));
     try { await toggleDoc(d.id, on); toast(on ? `“${d.title}” is on` : `“${d.title}” is off`); router.refresh(); }
     catch { setOver(o => { const { [d.id]: _, ...r } = o; return r; }); toast('Could not change that. Please try again.', 'error'); }
+    finally { setToggling(o => ({ ...o, [d.id]: false })); }
   };
 
   return (
@@ -67,8 +71,8 @@ export function KnowledgeView({ docs, limits, openAdd, error }: { docs: KbDoc[];
                     </span>
                     <span className="adm-cell-date">{date(d.at)}</span>
                     <span className="adm-cell-switch">
-                      <input type="checkbox" role="switch" className="adm-switch" checked={on} onChange={e => toggle(d, e.target.checked)} aria-label={`Use “${d.title}” when answering guests`} />
-                      <small>{on ? 'On' : 'Off'}</small>
+                      <input type="checkbox" role="switch" className="adm-switch" checked={on} disabled={!!toggling[d.id]} onChange={e => toggle(d, e.target.checked)} aria-label={`Use “${d.title}” when answering guests`} />
+                      <small role={toggling[d.id] ? 'status' : undefined}>{toggling[d.id] ? 'Updating…' : on ? 'On' : 'Off'}</small>
                     </span>
                     <span className="adm-cell-menu">
                       <Menu
@@ -99,13 +103,16 @@ export function KnowledgeView({ docs, limits, openAdd, error }: { docs: KbDoc[];
       <AddKnowledge open={adding} onClose={() => { setAdding(false); if (location.search.includes('add=')) history.replaceState(history.state, '', location.pathname); }} limits={limits} />
 
       <Dialog
-        open={!!renaming} onClose={() => setRenaming(null)} title="Rename"
+        open={!!renaming} onClose={() => { if (!savingName) setRenaming(null); }} title="Rename"
         footer={<>
-          <button type="button" className={btn('secondary')} onClick={() => setRenaming(null)}>Cancel</button>
-          <button type="button" className={btn('primary')} disabled={!name.trim()} onClick={async () => {
-            const r = await renameDoc(renaming!.id, name);
-            if (r.ok) { setRenaming(null); toast('Renamed'); router.refresh(); } else toast(r.error, 'error');
-          }}>Save</button>
+          <button type="button" className={btn('secondary')} onClick={() => setRenaming(null)} disabled={savingName}>Cancel</button>
+          <button type="button" className={btn('primary')} disabled={!name.trim() || savingName} onClick={async () => {
+            setSavingName(true);
+            try {
+              const r = await renameDoc(renaming!.id, name);
+              if (r.ok) { setRenaming(null); toast('Renamed'); router.refresh(); } else toast(r.error, 'error');
+            } catch { toast('Could not rename. Please try again.', 'error'); } finally { setSavingName(false); }
+          }}>{savingName ? 'Saving…' : 'Save'}</button>
         </>}
       >
         <Field label="Title" htmlFor="rn"><Input id="rn" value={name} maxLength={80} onChange={e => setName(e.target.value)} autoFocus /></Field>
