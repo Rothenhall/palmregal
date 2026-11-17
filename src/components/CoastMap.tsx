@@ -336,11 +336,26 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
     return () => { draw.cancel(); travel?.cancel(); };
   }, [i, stop.walk]);
 
+  /* the way in from the day: as the map rises into view, a veil of the page's teal lifts and the heading
+     settles, scrubbed to the scroll position both ways (nothing plays on its own) */
+  useEffect(() => {
+    if (!held || !immersive) return;
+    const el = root.current!;
+    let last = '';
+    const set = (v: number) => { const s = v.toFixed(3); if (s !== last) { last = s; el.style.setProperty('--enter', s); } };
+    set(0);
+    const st = ScrollTrigger.create({
+      trigger: el, start: 'top bottom', end: 'top 15%',
+      onUpdate: self => set(self.progress), onRefresh: self => set(self.progress),
+    });
+    return () => { st.kill(); el.style.removeProperty('--enter'); };
+  }, [held, immersive]);
+
   /* the scroll walks the stops; measured once the section has its scrolling height */
   useEffect(() => {
     if (!held) return;
     const st = ScrollTrigger.create({
-      trigger: root.current!, start: () => (immersive && document.documentElement.classList.contains('dsun-exit') ? `top+=${innerHeight} top` : 'top top'), end: 'bottom bottom',
+      trigger: root.current!, start: 'top top', end: 'bottom bottom',
       onUpdate: self => {
         const n = Math.min(N - 1, Math.floor(self.progress * N * .999)); setI(c => (c === n ? c : n));
         scrubTo(Math.min(N - 1, Math.max(0, self.progress * N - .5)));

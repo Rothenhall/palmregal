@@ -1087,17 +1087,12 @@ html:not(.motion) .dcard { position: relative; top: 0 }
   .aerial-hero__video { display: none; transition: none }
 }
 
-/* ===== From "A day at Palm Regal" into the coast map: the tile dissolve (DaySun.tsx, after lucid) =====
-   With motion, the day gets one extra viewport at its end, and the map section tucks up beneath it by
-   two (the one it waits through, hidden, and the one it is revealed in), so the map is pinned in place
-   while the day's screen is cut away tile by tile through a mask. The map's own tour starts one
-   viewport later and is given that viewport back. */
-html.dsun-exit .dsun.held { height: 620svh; z-index: 2; background: transparent }
-/* the teal ground moves onto the pinned screen, so cutting the screen away really opens onto the map */
-html.dsun-exit .dsun.held .dsun-stick { background: var(--teal-950) }
-html.dsun-exit .location-map { z-index: 1; margin-top: -200svh }
-html.dsun-exit .location-map .ctour.held { height: calc(var(--n) * 62svh + 200svh) }
-.dsun.is-through .dsun-stick { visibility: hidden }
+/* ===== From "A day at Palm Regal" into the coast map =====
+   No effect plays here. The day ends and the map simply scrolls up under it; both rest on the same deep
+   teal, and as the map rises into view a veil of that teal lifts and its heading settles into place, all
+   tied to scroll position (--enter, set by CoastMap.tsx), never to time. */
+.ctour--immersive .ctour-grid::before { content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none; background: var(--teal-950); opacity: calc(1 - var(--enter, 1)) }
+.ctour--immersive .ctour-heading { opacity: var(--enter, 1); translate: 0 calc((1 - var(--enter, 1)) * 24px) }
 
 /* ===== Stay picker (BookingDialog.tsx): every Book direct / Check availability button opens it ===== */
 .bk { --c-text: var(--on-dark); --c-eyebrow: var(--aqua); color-scheme: dark; width: min(560px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); margin: auto; padding: 0; border: 1px solid var(--glass-edge); border-radius: var(--r-lg); background: var(--teal-night); color: var(--on-dark); box-shadow: 0 40px 90px -30px rgba(0, 0, 0, .7) }
