@@ -3,11 +3,9 @@
    beneath recedes. Cards taller than the screen stick by their bottom edge (see measure). Measures
    use untransformed flow sizes so the animation cannot feed back on itself. On phones (and with
    reduced motion) the cards simply flow one after another, so every card can be read in full.
-   Inside a card, every listed facility with a photograph owns exactly one image on the stage:
-   hovering or tapping the item brings its photograph in, and the card steps through them on its
-   own while it is the one on screen. */
+   Inside a card, every listed facility owns one tile across the card's full width (see DelightCard). */
 import './delights.css';
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { Edit, Facility, FacilityGroup } from '@/content/types';
@@ -108,30 +106,22 @@ export function DelightsStack({ groups, f = noEdit }: { groups: FacilityGroup[];
   );
 }
 
-type Shown = { active: number; prev: number; dir: 1 | -1; moved: boolean };
-
+/* One card: a heading block, then a row of tiles across the whole card, one per facility. The tile in
+   focus widens and shows its full description; a facility with a photograph fills its tile with it, one
+   without gets a designed tile (its initial, the card's pattern), so a missing photo never reads as a gap.
+   The card steps through its facilities on its own while it is on screen; hover, focus or a tap takes
+   over. Adding a photo in the admin turns that tile into a photo tile, with nothing else to change. */
 function DelightCard({ g, gi, f }: { g: FacilityGroup; gi: number; f: Edit }) {
   const list = g.items;
-  const picIdx = list.map((x, i) => (hasPic(x) ? i : -1)).filter(i => i >= 0);
-  const stageId = useId();
   const card = useRef<HTMLElement>(null);
-  const [shown, setShown] = useState<Shown>({ active: picIdx[0] ?? -1, prev: -1, dir: 1, moved: false });
+  const [active, setActive] = useState(0);
   const [inView, setInView] = useState(false);
   const [hover, setHover] = useState(false);
   const [focus, setFocus] = useState(false);
   const [touchHold, setTouchHold] = useState(false);
   const [reduced, setReduced] = useState(false);
   const touchTimer = useRef(0);
-
-  /* the list can change in the editor: keep the active item pointing at a photograph */
-  const picKey = picIdx.join(',');
-  const active = hasPic(list[shown.active] ?? { name: '', text: '' }) ? shown.active : (picIdx[0] ?? -1);
-
-  const show = (i: number, dir?: 1 | -1) => setShown(s => {
-    const from = hasPic(list[s.active] ?? { name: '', text: '' }) ? s.active : (picIdx[0] ?? -1);
-    if (i === from || !hasPic(list[i])) return s;
-    return { active: i, prev: from, dir: dir ?? (i > from ? 1 : -1), moved: true };
-  });
+  const at = Math.min(active, Math.max(0, list.length - 1));
 
   useEffect(() => {
     const q = matchMedia('(prefers-reduced-motion: reduce)');
@@ -151,17 +141,12 @@ function DelightCard({ g, gi, f }: { g: FacilityGroup; gi: number; f: Edit }) {
     return () => { io.disconnect(); clearTimeout(touchTimer.current); };
   }, []);
 
-  const playing = inView && !hover && !focus && !touchHold && !reduced && picIdx.length > 1;
-
+  const playing = inView && !hover && !focus && !touchHold && !reduced && list.length > 1;
   useEffect(() => {
     if (!playing) return;
-    const t = window.setTimeout(() => {
-      const at = picIdx.indexOf(active);
-      show(picIdx[(at + 1) % picIdx.length], 1);
-    }, STEP_MS);
+    const t = window.setTimeout(() => setActive(a => (a + 1) % list.length), STEP_MS);
     return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [playing, active, picKey]);
+  }, [playing, at, list.length]);
 
   const holdForTouch = () => {
     setTouchHold(true);
@@ -169,13 +154,12 @@ function DelightCard({ g, gi, f }: { g: FacilityGroup; gi: number; f: Edit }) {
     touchTimer.current = window.setTimeout(() => setTouchHold(false), TOUCH_HOLD_MS);
   };
 
-  const activeItem = active >= 0 ? list[active] : null;
-
   return (
     <article
       ref={card}
       className={'dcard dcard--' + TONES[gi % TONES.length]}
       data-playing={playing ? 'true' : undefined}
+      style={{ ['--n' as string]: list.length }}
       onPointerEnter={e => { if (e.pointerType === 'mouse') setHover(true); }}
       onPointerLeave={e => { if (e.pointerType === 'mouse') setHover(false); }}
       onPointerDown={e => { if (e.pointerType !== 'mouse') holdForTouch(); }}
@@ -183,44 +167,36 @@ function DelightCard({ g, gi, f }: { g: FacilityGroup; gi: number; f: Edit }) {
       onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocus(false); }}
     >
       <span className="dcard-veil" aria-hidden="true" />
-      <div className="dcard-body">
+      <header className="dcard-head">
         <span className="dcard-no">{NUM[gi % NUM.length]}</span>
         <h3 {...f(g, 'title')}>{g.title} <em {...f(g, 'em')}>{g.em}</em></h3>
         <p className="dcard-lede" {...f(g, 'text')}>{g.text}</p>
-        <ul>
-          {list.map((x, xi) => {
-            const label = <><b>{x.name}{x.tag && <i> {x.tag}</i>}</b><span {...f(x, 'text')}>{x.text}</span></>;
-            if (!hasPic(x)) return <li key={xi} {...f(x, 'name')}><div className="dcard-item dcard-item--plain">{label}</div></li>;
-            const on = xi === active;
-            return (
-              <li key={xi} {...f(x, 'name')}>
-                <button
-                  type="button"
-                  className={'dcard-item' + (on ? ' is-on' : '')}
-                  aria-pressed={on}
-                  aria-controls={stageId}
-                  onPointerEnter={e => { if (e.pointerType === 'mouse') show(xi); }}
-                  onClick={() => show(xi)}
-                >{label}</button>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-      <div className="dcard-media">
-        <div className="dcard-stage" id={stageId} data-moved={shown.moved ? 'true' : undefined} data-dir={shown.dir === 1 ? 'next' : 'back'}>
-          {picIdx.map(i => {
-            const x = list[i];
-            const state = i === active ? ' is-on' : i === shown.prev ? ' is-prev' : '';
-            return (
-              <div className={'dcard-shot' + state} key={i} aria-hidden={i !== active}>
-                <img src={x.img!} alt={x.name} loading="lazy" decoding="async" {...f(x, 'img')} />
+        <span className="dcard-count" aria-hidden="true">{String(at + 1).padStart(2, '0')} <i>/ {String(list.length).padStart(2, '0')}</i></span>
+      </header>
+      <ul className="dcard-tiles dcard-stage">
+        {list.map((x, xi) => {
+          const on = xi === at, pic = hasPic(x);
+          return (
+            <li key={xi} className={'dtile' + (on ? ' is-on' : '') + (pic ? ' dtile--pic' : ' dtile--plain')} {...f(x, 'name')}>
+              <button
+                type="button" className="dtile-hit" aria-pressed={on} aria-label={`${x.name}${x.tag ? `, ${x.tag}` : ''}`}
+                onPointerEnter={e => { if (e.pointerType === 'mouse') setActive(xi); }}
+                onFocus={() => setActive(xi)}
+                onClick={() => setActive(xi)}
+              />
+              {pic
+                ? <img className="dtile-img" src={x.img!} alt="" decoding="async" {...f(x, 'img')} />
+                : <span className="dtile-mark" aria-hidden="true">{x.name.replace(/[^A-Za-z]/g, '').charAt(0)}</span>}
+              <div className="dtile-copy">
+                {x.tag && <small>{x.tag}</small>}
+                <b>{x.name}</b>
+                <span {...f(x, 'text')}>{x.text}</span>
               </div>
-            );
-          })}
-          {activeItem && <span className="dcard-chip" key={active} aria-hidden="true">{activeItem.name}</span>}
-        </div>
-      </div>
+              {on && playing && <i className="dtile-timer" aria-hidden="true" />}
+            </li>
+          );
+        })}
+      </ul>
     </article>
   );
 }
