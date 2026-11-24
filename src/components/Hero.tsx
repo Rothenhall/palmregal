@@ -8,7 +8,7 @@
    - A pause button stops the changes (anything that moves on its own for more than five seconds
      needs one). Reduced motion: nothing changes on its own and clips show their still frame. */
 import Link from 'next/link';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import type { Edit, SiteContent } from '@/content/types';
 import { bookHref } from '@/lib/book';
 import { noEdit } from '@/lib/edit';
@@ -84,7 +84,10 @@ export function Hero({ content, f = noEdit }: { content: SiteContent; f?: Edit }
       </div>
 
       <div className="hs-copy wrap">
-        <h1 className="eyebrow" {...f(copy, 'eyebrow')}>{copy.eyebrow}</h1>
+        {/* each " · " part is kept whole, so on a phone the line breaks cleanly between them */}
+        <h1 className="eyebrow" {...f(copy, 'eyebrow')}>{copy.eyebrow.split(' · ').map((part, k, all) => (
+          <Fragment key={k}><span className="hs-eb-part">{part}{k < all.length - 1 ? ' ·' : ''}</span>{k < all.length - 1 ? ' ' : ''}</Fragment>
+        ))}</h1>
         <div className="hs-captions" aria-live={running ? 'off' : 'polite'}>
           {SLIDES.map((s, i) => (
             <p key={i} className={'hs-caption' + (i === at ? ' on' : '')} aria-hidden={i !== at} {...f(s, 'title')}>{s.title} <em {...f(s, 'em')}>{s.em}</em></p>

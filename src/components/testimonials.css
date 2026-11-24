@@ -133,3 +133,11 @@ a.tm-src:hover { opacity: 1; text-decoration: underline; text-underline-offset: 
   transition: opacity .6s var(--ease) var(--d), filter .6s var(--ease) var(--d), translate .7s var(--ease) var(--d), transform .6s var(--ease) 0s, box-shadow .5s var(--ease) 0s, border-color .4s var(--ease) 0s }
 .tm-armed .tm-card.is-lit { transition: opacity .6s var(--ease) var(--d), filter .6s var(--ease) var(--d), translate .7s var(--ease) var(--d), transform .12s linear 0s, box-shadow .5s var(--ease) 0s, border-color .4s var(--ease) 0s }
 @media (prefers-reduced-motion: reduce) { .tm-armed .tm-card, .tm-armed .tm-card.is-lit { transition: none } }
+
+/* the rating pill: the full caption on wider screens, a short one on phones so it stays on one or two lines */
+.tm-score-short { display: none }
+@media (max-width: 640px) {
+  .tm-score { gap: 10px; max-width: 100%; padding: 8px 16px 8px 12px }
+  .tm-score-txt small.tm-score-long { display: none }
+  .tm-score-txt small.tm-score-short { display: block; line-height: 1.35 }
+}

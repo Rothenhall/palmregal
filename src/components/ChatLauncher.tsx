@@ -69,6 +69,32 @@ export function ChatLauncher() {
     return () => { clearTimeout(off); removeEventListener('keydown', esc); };
   }, [tease]);
 
+  /* phones: the button steps back while the page is being scrolled (fainter, back after a short pause)
+     and moves out of the way while the footer's bottom bar is on screen. Classes only, no re-renders. */
+  const enabled = !!cfg?.enabled;
+  useEffect(() => {
+    const b = btn.current;
+    if (!enabled || !b) return;
+    const mq = matchMedia('(max-width: 760px)');
+    let idle = 0, io: IntersectionObserver | null = null;
+    const onScroll = () => {
+      if (!mq.matches) return;
+      b.classList.add('is-scrolling');
+      clearTimeout(idle);
+      idle = window.setTimeout(() => b.classList.remove('is-scrolling'), 600);
+    };
+    const bar = document.querySelector('.foot-bottom');
+    if (bar && 'IntersectionObserver' in window) {
+      io = new IntersectionObserver(([e]) => {
+        /* never pull the button away from under keyboard focus */
+        b.classList.toggle('is-tucked', mq.matches && e.isIntersecting && document.activeElement !== b);
+      });
+      io.observe(bar);
+    }
+    addEventListener('scroll', onScroll, { passive: true });
+    return () => { clearTimeout(idle); io?.disconnect(); removeEventListener('scroll', onScroll); b.classList.remove('is-scrolling', 'is-tucked'); };
+  }, [enabled]);
+
   const start = () => { everOpened.current = true; setTease(false); setLoaded(true); setOpen(true); };
   const close = () => { setOpen(false); btn.current?.focus(); };
 

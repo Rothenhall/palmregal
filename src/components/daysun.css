@@ -1,0 +1,59 @@
+/* "A day at Palm Regal" (DaySun.tsx): phone layout.
+   globals.css keeps the desktop and tablet design (the photo accordion). On phones the accordion's
+   slivers are replaced by one full-width photo per moment that crossfades with the scroll.
+   Selectors start at #gallery so they outrank globals.css whatever order the sheets load in. */
+
+/* the phone-only pieces stay out of the way everywhere else */
+#gallery .dsun-deck, #gallery .dsun-step-pic { display: none }
+
+@media (max-width: 760px) {
+  #gallery .dsun-strip { display: none }
+
+  /* ---- held (scrubbed) version: the pinned screen is one column that fills the viewport ---- */
+  #gallery.held .dsun-stick { padding: calc(var(--hdr) + 4px) 0 16px }
+  #gallery.held .dsun-grid { display: flex; flex-direction: column; justify-content: center; gap: 0; height: 100% }
+  #gallery.held .dsun-copy > .eyebrow { flex: none; margin: 0 0 2px }
+
+  #gallery.held .dsun-stage { display: flex; flex-direction: column; flex: 1 1 auto; gap: 6px; height: auto; min-height: 0; max-height: calc(60svh + 54px) }
+
+  /* time-of-day tabs: comfortable 48px targets, active one marked by the orb, colour and a bar */
+  #gallery.held .dsun-timeline { flex: none; height: 48px }
+  #gallery.held .dsun-timeline button { min-height: 48px; padding: 22px 2px 4px; font-size: .68rem; line-height: 1.15; -webkit-tap-highlight-color: transparent; touch-action: manipulation }
+  #gallery.held .dsun-timeline button[aria-current] { font-weight: 600 }
+  #gallery.held .dsun-timeline button::after { content: ''; position: absolute; left: 30%; right: 30%; bottom: 0; height: 2px; border-radius: 2px; background: rgb(var(--day-glow, 210,190,151)); opacity: 0; transform: scaleX(.4); transition: opacity .3s, transform .4s var(--ease) }
+  #gallery.held .dsun-timeline button[aria-current]::after { opacity: .9; transform: none }
+
+  /* the photo: full width, most of the screen, rounded */
+  #gallery.held .dsun-deck { display: block; position: relative; flex: 1 1 auto; min-height: 220px; border-radius: 18px; overflow: hidden; isolation: isolate; background: rgba(238,245,242,.04); touch-action: pan-y; -webkit-user-select: none; user-select: none; box-shadow: 0 24px 50px -28px rgba(0,0,0,.6) }
+  #gallery .dsun-slide { position: absolute; inset: 0; margin: 0; will-change: opacity, transform; backface-visibility: hidden }
+  #gallery .dsun-slide img { display: block; width: 100%; height: 100%; object-fit: cover; -webkit-user-drag: none; pointer-events: none }
+
+  /* number, time, heading and text under the photo */
+  #gallery.held .dsun-num { flex: none; order: -1; margin: 12px 0 2px; font-size: 1.25rem }
+  #gallery.held .dsun-words { flex: none; display: grid; min-height: 0 }
+  #gallery.held .dsun-step { position: relative; inset: auto; grid-area: 1 / 1 }
+  #gallery.held .dsun-step h3 { font-size: 1.6rem; line-height: 1.05; margin: 4px 0 6px }
+  /* keeps the last lines clear of the round chat button in the bottom-right corner */
+  #gallery.held .dsun-step p { max-width: none; padding-right: 56px; font-size: .93rem; line-height: 1.45 }
+  #gallery.held .dsun-foot { flex: none; margin-top: 8px }
+
+  /* ---- not held (reduced motion): a plain list, each moment with its own full photo ---- */
+  #gallery:not(.held) .dsun-stage { display: none }
+  #gallery:not(.held) .dsun-words { min-height: 0 }
+  #gallery:not(.held) .dsun-step { padding-block: 22px 26px }
+  #gallery:not(.held) .dsun-step-pic { display: block; margin: 0 0 16px; aspect-ratio: 4 / 3; border-radius: 16px; overflow: hidden; background: rgba(238,245,242,.04) }
+  #gallery:not(.held) .dsun-step-pic img { display: block; width: 100%; height: 100%; object-fit: cover }
+  #gallery:not(.held) .dsun-step h3 { font-size: 1.75rem }
+}
+
+@media (max-width: 760px) and (max-height: 680px) {
+  #gallery.held .dsun-deck { min-height: 170px }
+  #gallery.held .dsun-num { margin-top: 8px; font-size: 1.1rem }
+  #gallery.held .dsun-step h3 { font-size: 1.4rem }
+  #gallery.held .dsun-step p { font-size: .88rem }
+  #gallery.held .dsun-foot { display: none }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #gallery .dsun-timeline button::after { transition: none }
+}

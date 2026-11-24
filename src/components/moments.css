@@ -1,0 +1,48 @@
+/* Moments: phone layout (copy first, then a clean photo grid) and viewer navigation.
+   Desktop keeps the drifting wall from globals.css; .mgrid is hidden there. */
+.mgrid, .mgrid-more, .mgrid-end { display: none }
+
+/* Viewer: previous / next and counter (all sizes) */
+.mfocus .mnav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 2; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; padding: 0; border: 1px solid var(--glass-edge); background: rgba(12, 37, 44, .55); color: var(--on-dark); cursor: pointer }
+.mfocus .mnav svg { width: 20px; height: 20px }
+.mfocus .mnav.prev { left: 12px } .mfocus .mnav.prev svg { transform: rotate(180deg) }
+.mfocus .mnav.next { right: 12px }
+.mfocus .mnav:focus-visible, .mfocus .ibtn:focus-visible { outline: 2px solid var(--aqua); outline-offset: 2px }
+.mfocus figcaption .mcount { font-size: .7rem; letter-spacing: .14em; opacity: .7 }
+.mfocus img { touch-action: pan-y }
+
+@media (max-width: 760px) {
+  /* section: copy above, photos below; no overlay gradient, no drifting wall */
+  .moments-sec.moments-sec { display: flex; flex-direction: column; min-height: 0; overflow: visible; overflow-x: clip }
+  .moments-sec.moments-sec::before { display: none }
+  .moments-sec .mwall-par, .moments-sec .mhint { display: none }
+  .moments-sec .moments-copy { order: 1; pointer-events: auto; width: 100%; max-width: 100%; box-sizing: border-box }
+  .moments-sec .moments-copy h2 { max-width: none }
+
+  .mgrid { order: 2; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: clamp(120px, 42vw, 240px); grid-auto-flow: dense; gap: 8px; width: 100%; box-sizing: border-box; margin: 24px 0 0; padding: 0 var(--gr) 0 var(--gl); list-style: none }
+  .mgrid li { min-width: 0; margin: 0 }
+  .mgrid li.wide { grid-column: span 2 }
+  .mgrid li.tall { grid-row: span 2 }
+  .mgrid button { display: block; width: 100%; height: 100%; padding: 0; border: 0; border-radius: var(--r-sm, 10px); overflow: hidden; background: #14323a; cursor: zoom-in; -webkit-tap-highlight-color: transparent }
+  .mgrid button:focus-visible { outline: 2px solid var(--aqua); outline-offset: 2px }
+  .mgrid img { display: block; width: 100%; height: 100%; object-fit: cover }
+
+  /* gentle reveal, once (data-in set by an IntersectionObserver) */
+  .mgrid.reveal li { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease }
+  .mgrid.reveal li[data-in] { opacity: 1; transform: none }
+
+  .mgrid-more { order: 3; display: flex; align-items: center; justify-content: center; min-height: 48px; margin: 16px var(--gr) 0 var(--gl); padding: 0 24px; border-radius: 999px; border: 1px solid var(--glass-edge, rgba(255, 255, 255, .3)); background: rgba(238, 245, 242, .08); color: var(--on-dark, #eef5f2); font: inherit; font-weight: 600; cursor: pointer }
+  /* room at the bottom right for the fixed round chat button */
+  .moments-sec .mgrid-end { order: 4; display: block; height: 72px }
+
+  /* viewer on phones: full width, caption clear of the chat button */
+  .mfocus { padding: 12px }
+  .mfocus figure { width: 100%; max-width: 100% }
+  .mfocus img { max-height: 70vh; object-fit: contain; background: #0c252c }
+  .mfocus figcaption { position: static; padding: 14px 80px 16px 16px; background: rgba(12, 37, 44, .95) }
+  .mfocus figcaption b { font-size: 1.3rem }
+}
+
+@media (max-width: 760px) and (prefers-reduced-motion: reduce) {
+  .mgrid.reveal li { opacity: 1; transform: none; transition: none }
+}

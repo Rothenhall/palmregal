@@ -9,8 +9,10 @@
    at their own speeds. It opens on the heading and closes on what comes in every suite.
 
    Without motion it is a strip you swipe or scroll sideways, one chapter at a time. */
+import './suites.css';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import type { PointerEvent as ReactPointerEvent, MouseEvent as ReactMouseEvent } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { Edit, SiteContent, Suite } from '@/content/types';
@@ -23,19 +25,122 @@ gsap.registerPlugin(ScrollTrigger);
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
-function SuitePhotos({ suite, f }: { suite: Suite; f: Edit }) {
-  const [index, setIndex] = useState(0);
-  const photo = suite.photos[index];
-  const count = suite.photos.length;
+/* A small rolling carousel: every few seconds the next photograph fades in over the last while it settles from a
+   slow zoom. It waits while hovered or touched, while it is off screen, and does not roll at all for reduced
+   motion (the arrows, dots and swipes still work). Photographs load only as they come up, plus the next one. */
+const ROLL_MS = 4500;
+type Photo = Suite['photos'][number];
+
+function useRoll(count: number, offset = 0) {
+  const ref = useRef<HTMLElement>(null);
+  const [at, setAt] = useState({ i: 0, p: -1 });
+  const [seen, setSeen] = useState(false);
+  const [hold, setHold] = useState(false);
+  const [still, setStill] = useState(false);
+  const [ready, setReady] = useState<number[]>([0]);
+  const first = useRef(true);
+  const touch = useRef<{ id: number; x: number; y: number } | null>(null);
+  const swiped = useRef(false);
+  const index = count ? at.i % count : 0;
+  const to = (k: number) => setAt(a => (k === a.i ? a : { i: k, p: a.i }));
+  const step = (d: number) => setAt(a => ({ i: (a.i + d + count) % count, p: a.i }));
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === 'undefined') { setSeen(true); return; }
+    const io = new IntersectionObserver(([e]) => setSeen(e.isIntersecting), { rootMargin: '0px 160px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  useEffect(() => {
+    const m = matchMedia('(prefers-reduced-motion: reduce)');
+    const on = () => setStill(m.matches);
+    on();
+    m.addEventListener('change', on);
+    return () => m.removeEventListener('change', on);
+  }, []);
+  /* the photograph on show and the next one are loaded; the rest wait */
+  useEffect(() => {
+    if (!seen || count < 2) return;
+    const next = (index + 1) % count;
+    setReady(r => (r.includes(index) && r.includes(next) ? r : Array.from(new Set([...r, index, next]))));
+  }, [seen, index, count]);
+  /* the roll itself: restarts after every change, so a tap on an arrow gives the new photograph its full time */
+  useEffect(() => {
+    if (count < 2 || !seen || hold || still) return;
+    const t = setTimeout(() => { first.current = false; step(1); }, ROLL_MS + (first.current ? offset : 0));
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [count, seen, hold, still, at, offset]);
+
+  const handlers = {
+    onPointerEnter: (e: ReactPointerEvent<HTMLElement>) => { if (e.pointerType === 'mouse') setHold(true); },
+    onPointerLeave: (e: ReactPointerEvent<HTMLElement>) => { if (e.pointerType === 'mouse') setHold(false); },
+    onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
+      if (e.pointerType === 'mouse') return;
+      touch.current = { id: e.pointerId, x: e.clientX, y: e.clientY };
+      swiped.current = false;
+      setHold(true);
+    },
+    onPointerUp: (e: ReactPointerEvent<HTMLElement>) => {
+      const s = touch.current; touch.current = null;
+      if (e.pointerType !== 'mouse') setHold(false);
+      if (!s || s.id !== e.pointerId || count < 2) return;
+      const dx = e.clientX - s.x, dy = e.clientY - s.y;
+      /* a sideways swipe only; anything more vertical is the page scrolling */
+      if (Math.abs(dx) > 36 && Math.abs(dx) > Math.abs(dy) * 1.3) { swiped.current = true; step(dx < 0 ? 1 : -1); }
+    },
+    onPointerCancel: () => { touch.current = null; setHold(false); },
+    /* a swipe is not a tap: it must not open the walk */
+    onClickCapture: (e: ReactMouseEvent<HTMLElement>) => { if (swiped.current) { swiped.current = false; e.stopPropagation(); e.preventDefault(); } },
+  };
+  return { ref, index, prev: count ? at.p : -1, ready, hold, to, step, handlers };
+}
+
+function Frames({ photos, index, prev, ready, f, lazyFirst }: { photos: Photo[]; index: number; prev: number; ready: number[]; f: Edit; lazyFirst?: boolean }) {
   return (
-    <figure className="sj-hero" aria-label={`${suite.name} photographs`}>
-      <img src={photo.src} alt={photo.alt} decoding="async" {...f(photo, 'src')} />
+    <span className="sj-roll">
+      {photos.map((p, k) => (
+        <img key={k} className={k === index ? 'on' : k === prev ? 'was' : undefined} src={ready.includes(k) || k === index ? p.src : undefined}
+          alt={p.alt} aria-hidden={k !== index || undefined} decoding="async" loading={k === 0 && lazyFirst ? 'lazy' : undefined} {...f(p, 'src')} />
+      ))}
+    </span>
+  );
+}
+
+function CardPhotos({ suite, f, offset }: { suite: Suite; f: Edit; offset: number }) {
+  const photos = suite.photos, count = photos.length;
+  const r = useRoll(count, offset);
+  const stop = (e: ReactMouseEvent, fn: () => void) => { e.stopPropagation(); fn(); };
+  return (
+    <figure ref={r.ref} className="sj-card-ph sj-rolling" aria-roledescription="carousel" aria-label={`${suite.name} photographs`} {...r.handlers}>
+      {count > 0 && <Frames photos={photos} index={r.index} prev={r.prev} ready={r.ready} f={f} lazyFirst />}
+      {count > 1 && <>
+        <button type="button" className="sj-roll-btn prev" aria-label={`Previous photograph of ${suite.name}`} onClick={e => stop(e, () => r.step(-1))}><Icon id="i-arrow" /></button>
+        <button type="button" className="sj-roll-btn next" aria-label={`Next photograph of ${suite.name}`} onClick={e => stop(e, () => r.step(1))}><Icon id="i-arrow" /></button>
+        <span className="sj-roll-dots">
+          {photos.map((_, k) => (
+            <button key={k} type="button" aria-label={`Photograph ${k + 1} of ${count}`} aria-current={k === r.index ? 'true' : undefined} onClick={e => stop(e, () => r.to(k))} />
+          ))}
+        </span>
+      </>}
+    </figure>
+  );
+}
+
+function SuitePhotos({ suite, f }: { suite: Suite; f: Edit }) {
+  const count = suite.photos.length;
+  const r = useRoll(count);
+  const index = r.index, photo = suite.photos[index];
+  return (
+    <figure ref={r.ref} className="sj-hero sj-rolling" aria-label={`${suite.name} photographs`} {...r.handlers}>
+      <Frames photos={suite.photos} index={index} prev={r.prev} ready={r.ready} f={f} />
       {suite.pending && <span className="stand">Photo to confirm</span>}
       <figcaption className="sj-photo-caption">
-        <span aria-live="polite"><small>{pad(index + 1)} / {pad(count)}</small><span {...f(photo, 'alt')}>{photo.alt}</span></span>
+        <span><small>{pad(index + 1)} / {pad(count)}</small><span {...f(photo, 'alt')}>{photo.alt}</span></span>
         {count > 1 && <div className="sj-photo-controls">
-          <button type="button" className="sj-photo-prev" aria-label={`Previous photograph of ${suite.name}`} onClick={() => setIndex(n => (n + count - 1) % count)}><Icon id="i-arrow" /></button>
-          <button type="button" aria-label={`Next photograph of ${suite.name}`} onClick={() => setIndex(n => (n + 1) % count)}><Icon id="i-arrow" /></button>
+          <button type="button" className="sj-photo-prev" aria-label={`Previous photograph of ${suite.name}`} onClick={e => { e.stopPropagation(); r.step(-1); }}><Icon id="i-arrow" /></button>
+          <button type="button" aria-label={`Next photograph of ${suite.name}`} onClick={e => { e.stopPropagation(); r.step(1); }}><Icon id="i-arrow" /></button>
         </div>}
       </figcaption>
     </figure>
@@ -130,7 +235,8 @@ export function SuiteJourney({ content, f = noEdit }: { content: SiteContent; f?
       /* each main photograph opens from a sliver, and the picture drifts inside its frame */
       tr.querySelectorAll<HTMLElement>('.sj-hero').forEach(el => {
         gsap.fromTo(el, { clipPath: 'inset(10% 0% 10% 42%)' }, { clipPath: 'inset(0% 0% 0% 0%)', ease: 'none', scrollTrigger: { ...along, trigger: el, start: 'left 100%', end: 'left 30%', scrub: true } });
-        const img = el.querySelector('img');
+        /* the drift moves the whole roll, so the carousel's own fade and zoom stay on the photographs inside */
+        const img = el.querySelector('.sj-roll');
         if (img) gsap.fromTo(img, { xPercent: -7, scale: 1.16 }, { xPercent: 7, scale: 1.04, ease: 'none', scrollTrigger: { ...along, trigger: el, start: 'left right', end: 'right left', scrub: true } });
       });
       /* the smaller photographs travel at their own speeds, for depth */
@@ -161,7 +267,7 @@ export function SuiteJourney({ content, f = noEdit }: { content: SiteContent; f?
         <ul className="sj-ov-grid">
           {suites.map((s, i) => (
             <li className="sj-card" key={i} onClick={e => { if (!(e.target as HTMLElement).closest('a, button')) go(i); }}>
-              <figure className="sj-card-ph">{s.photos[0] && <img src={s.photos[0].src} alt={s.photos[0].alt} loading="lazy" decoding="async" {...f(s.photos[0], 'src')} />}</figure>
+              <CardPhotos suite={s} f={f} offset={i * 1500} />
               <p className="sj-kicker">Suite {pad(i + 1)} <span>/ {pad(N)}</span></p>
               <h3 {...f(s, 'name')}>{title(s.name)}</h3>
               <ul className="sj-facts">

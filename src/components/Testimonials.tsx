@@ -96,7 +96,9 @@ export function Testimonials({ content, f = noEdit }: { content: SiteContent; f?
               <b className="tm-score-n">{avg.toFixed(1)}</b>
               <span className="tm-score-txt">
                 <span className="tm-score-stars" role="img" aria-label={`Average ${avg.toFixed(1)} out of 5`}><i style={{ ['--fill' as string]: `${(avg / 5) * 100}%` }} aria-hidden="true">★★★★★</i></span>
-                <small>{sample ? 'Sample average' : 'Average'} from {rated.length} {rated.length === 1 ? 'review' : 'reviews'}{sources.length ? ` · ${sources.join(', ')}` : ''}</small>
+                <small className="tm-score-long">{sample ? 'Sample average' : 'Average'} from {rated.length} {rated.length === 1 ? 'review' : 'reviews'}{sources.length ? ` · ${sources.join(', ')}` : ''}</small>
+                {/* phones: a shorter caption that fits the pill, without the list of sources */}
+                <small className="tm-score-short">{sample ? 'Sample average' : 'Average'} · {rated.length} {rated.length === 1 ? 'review' : 'reviews'}</small>
               </span>
             </div>
           )}

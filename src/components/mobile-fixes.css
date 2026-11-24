@@ -1,0 +1,53 @@
+/* Phone fixes for the coast map, the hero and the chat button. Loaded after globals.css (imported by
+   SiteChrome); each rule is at least as specific as the one it overrides. */
+
+/* ===== Coast map: photo credits fold into a toggle on phones ===== */
+/* wider screens: the wrapper is invisible to layout and the credit line sits where it always has */
+.ctour-credits { display: contents }
+.ctour-credit-toggle { display: none }
+
+@media (max-width: 760px) {
+  .ctour.held .ctour-credits, .ctour--immersive .ctour-credits {
+    position: absolute; left: var(--gl); bottom: calc(10px + env(safe-area-inset-bottom, 0px)); z-index: 4; display: block;
+    max-width: calc(100% - var(--gl) - 84px) }
+  .ctour.held .ctour-credit-toggle, .ctour--immersive .ctour-credit-toggle {
+    display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px; border: 1px solid rgba(238, 245, 242, .18); border-radius: 999px;
+    background: rgba(11, 34, 40, .72); color: rgba(238, 245, 242, .7); font: inherit; font-size: .66rem; letter-spacing: .04em; cursor: pointer }
+  .ctour-credit-toggle::after { content: "+"; font-size: .9rem; line-height: 1; color: var(--teal-200) }
+  .ctour-credits.open .ctour-credit-toggle::after { content: "\2212" }
+  .ctour-credit-toggle:focus-visible { outline: 2px solid var(--teal-200); outline-offset: 2px }
+  /* closed: hidden; open: a small panel above the toggle, chosen by the visitor */
+  .ctour.held .ctour-credits .ctour-credit, .ctour--immersive .ctour-credits .ctour-credit { display: none }
+  .ctour.held .ctour-credits.open .ctour-credit, .ctour--immersive .ctour-credits.open .ctour-credit {
+    display: block; position: absolute; left: 0; right: auto; bottom: calc(100% + 8px); z-index: 5; width: min(320px, calc(100vw - var(--gl) * 2));
+    margin: 0; padding: 10px 12px; border: 1px solid rgba(238, 245, 242, .14); border-radius: var(--r-sm, 4px); background: rgba(11, 34, 40, .96);
+    font-size: .66rem; line-height: 1.55; text-align: left; color: rgba(238, 245, 242, .78); pointer-events: auto }
+
+  /* ===== Coast map: smaller photo cards, clear of the heading (CoastMap puts them below high pins) ===== */
+  .cpin .cpin-photo { width: 140px }
+
+  /* ===== Coast map: the stop bar scrolls sideways edge to edge, snapping to each stop ===== */
+  .ctour--immersive .ctour-panel .ctour-rail {
+    scroll-snap-type: x proximity; scroll-padding-inline: var(--g); margin-inline: calc(var(--g) * -1); padding-inline: var(--g);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 var(--g), #000 calc(100% - 32px), transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 var(--g), #000 calc(100% - 32px), transparent) }
+  .ctour--immersive .ctour-panel .ctour-rail li { scroll-snap-align: start }
+  .ctour--immersive .ctour-panel .ctour-rail button { min-height: 44px; white-space: nowrap }
+  .ctour:not(.ctour--immersive) .ctour-rail button i { height: 44px }
+
+  /* ===== Hero: the eyebrow breaks between its parts; the bottom controls leave room for the chat button ===== */
+  /* the eyebrow is an inline-flex row (a rule, then text): let its parts wrap onto a second line */
+  .hs .hs-copy .eyebrow { max-width: 100%; flex-wrap: wrap; column-gap: .55em; row-gap: 2px; letter-spacing: .12em; line-height: 1.75 }
+  .hs-eb-part { white-space: nowrap }
+  .hs .hs-foot.wrap { padding-right: calc(72px + env(safe-area-inset-right, 0px)) }
+
+  /* ===== Chat button: smaller, fainter while scrolling, out of the way over the footer's bottom bar ===== */
+  button.chat-fab { width: 48px; height: 48px;
+    transition: transform .45s var(--ease), box-shadow .45s var(--ease), border-color .3s, opacity .35s var(--ease), visibility 0s }
+  button.chat-fab svg { width: 21px; height: 21px }
+  button.chat-fab .chat-fab-dot { top: 3px; right: 3px; width: 10px; height: 10px }
+  button.chat-fab.is-scrolling { opacity: .55 }
+  button.chat-fab.is-tucked { opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(14px) scale(.9);
+    transition: transform .45s var(--ease), box-shadow .45s var(--ease), border-color .3s, opacity .35s var(--ease), visibility 0s .35s }
+  button.chat-fab:focus-visible { opacity: 1 }
+}

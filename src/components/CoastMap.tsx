@@ -110,6 +110,9 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
   const size = useRef({ w: 0, h: 0 });
   const tween = useRef<gsap.core.Tween | null>(null);
   const [i, setI] = useState(0);
+  /* phones: the photo credits fold into a small "Photo credits" toggle, so they never sit over the stop bar */
+  const [credits, setCredits] = useState(false);
+  const rail = useRef<HTMLOListElement>(null);
   const [held, setHeld] = useState(false);
   const [moving, setMoving] = useState(true);
   const stop = STOPS[i];
@@ -191,8 +194,9 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
       const labelEdge = immersive ? (sw <= 900 ? sw - 130 : sw - 520) : sw * .7;
       el.dataset.flip = id !== 'beach' && (pts[id][0] - vx) * s > labelEdge ? '1' : '0';
       if (el.classList.contains('has-photo')) {
-        const px = (pts[id][0] - vx) * s, py = (pts[id][1] - vy) * s, half = sw <= 760 ? 95 : 130;
-        const card = py < (sw <= 760 ? 150 : 210) ? 'below' : 'above', edge = px < half ? 'l' : px > sw - half ? 'r' : '';
+        const px = (pts[id][0] - vx) * s, py = (pts[id][1] - vy) * s, half = sw <= 760 ? 82 : 130;
+        /* on a phone the heading covers the top of the stage, so a pin in its upper part shows its photo below */
+        const card = py < (sw <= 760 ? sh * .45 : 210) ? 'below' : 'above', edge = px < half ? 'l' : px > sw - half ? 'r' : '';
         if (el.dataset.card !== card) el.dataset.card = card;
         if (el.dataset.edge !== edge) el.dataset.edge = edge;
       }
@@ -295,6 +299,23 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
     if (iRef.current !== i) { iRef.current = i; if (along.current < 0) flyTo(i); }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [i]);
+
+  /* the stop bar scrolls sideways on phones: keep the current stop in view (the bar only, never the page) */
+  useEffect(() => {
+    const r = rail.current; if (!r || r.scrollWidth <= r.clientWidth + 1) return;
+    const b = r.querySelector<HTMLElement>('[aria-current]'); if (!b) return;
+    const rr = r.getBoundingClientRect(), br = b.getBoundingClientRect();
+    const left = r.scrollLeft + (br.left - rr.left) - (rr.width - br.width) / 2;
+    r.scrollTo({ left: Math.max(0, left), behavior: hasMotion() ? 'smooth' : 'auto' });
+  }, [i]);
+
+  /* the credits close on Escape */
+  useEffect(() => {
+    if (!credits) return;
+    const esc = (e: KeyboardEvent) => { if (e.key === 'Escape') setCredits(false); };
+    addEventListener('keydown', esc);
+    return () => removeEventListener('keydown', esc);
+  }, [credits]);
 
   /* draw the way in, measured from the path itself so it always reaches the place
      (a pathLength-based dash is not drawn to the end by every browser) */
@@ -450,7 +471,7 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
                 </article>
               ))}
             </div>
-            <ol className="ctour-rail" data-lenis-prevent>
+            <ol className="ctour-rail" data-lenis-prevent ref={rail}>
               {STOPS.map((s, n) => (
                 <li key={s.id}>
                   <button type="button" onClick={() => pick(n)} aria-current={n === i ? 'step' : undefined} className={n < i ? 'past' : ''} aria-label={s.name}>
@@ -463,7 +484,12 @@ export function CoastMap({ immersive = false, headingAs = 'h1', headingId = 'loc
             </ol>
           </aside>
         </div>
-        {copy.photoCredits && <p className="ctour-credit" {...f(copy, 'photoCredits')}>{copy.photoCredits}</p>}
+        {copy.photoCredits && (
+          <div className={'ctour-credits' + (credits ? ' open' : '')}>
+            <button type="button" className="ctour-credit-toggle" aria-expanded={credits} aria-controls={headingId + '-credits'} onClick={() => setCredits(c => !c)}>Photo credits</button>
+            <p className="ctour-credit" id={headingId + '-credits'} {...f(copy, 'photoCredits')}>{copy.photoCredits}</p>
+          </div>
+        )}
       </div>
     </div>
   );
