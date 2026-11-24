@@ -334,18 +334,12 @@ var config_default = defineConfig({
               ]
             }
           ]),
-          group("arrival", "Night film introduction", "The opening words over the night-time film that plays as you scroll.", [
-            text("eyebrow", "Small line above the heading"),
-            ...heading("", "The first word of the big heading"),
-            text("lede", "Sentence under the heading"),
-            text("ledeEm", "Sentence, italic ending"),
-            text("place", "Place line at the bottom")
-          ]),
           group("suitesSection", "Suites", "The suites section: its heading, each suite and what comes in every suite.", [
             text("eyebrow", "Small line above the heading"),
             ...heading(),
             long("lede", "Introduction"),
-            text("exploreButton", '"Explore" button'),
+            text("exploreButton", '"Explore" button', "The button under the suite cards. Tapping it opens the sideways walk."),
+            text("walkHint", "Hint after the button is tapped", 'Replaces the button text once the walk is open, e.g. "Scroll to walk through each suite".'),
             {
               type: "object",
               name: "suites",
@@ -451,10 +445,26 @@ var config_default = defineConfig({
               ]
             }
           ]),
-          group("locationSection", "Location heading", "The words above the map. The map itself is part of the design.", [
+          group("locationSection", "Location and map", "The words above the map, and a photo for each place on it. The map itself is part of the design.", [
             text("eyebrow", "Small line above the heading"),
             ...heading(),
-            text("lede", "Sentence under the heading")
+            text("lede", "Sentence under the heading"),
+            {
+              type: "object",
+              name: "photos",
+              label: "Photos on the map",
+              description: "When the map reaches a place, its photo appears beside the pin. Landscape photos work best. Leave one empty and that place simply shows no photo.",
+              fields: [
+                photo("pr", "Palm Regal"),
+                photo("beach", "Gopalpur beach"),
+                photo("bam", "Berhampur"),
+                photo("tt", "Tara Tarini Temple"),
+                photo("chilika", "Chilika Lake"),
+                photo("sonpur", "Sonpur Blue Flag Beach"),
+                photo("jirang", "Jirang Monastery")
+              ]
+            },
+            text("photoCredits", "Photo credits", "Small line at the bottom of the map. Photos from Wikimedia Commons must name the photographer and licence here.")
           ]),
           group("momentsSection", "Moments wall", "The wall of photos that opens large when clicked.", [
             text("eyebrow", "Small line above the heading"),
@@ -480,6 +490,19 @@ var config_default = defineConfig({
             text("eyebrow", "Small line above the heading"),
             text("heading", "Heading"),
             long("intro", "Introduction (optional)"),
+            {
+              type: "object",
+              name: "overall",
+              label: "Overall rating shown above the reviews",
+              description: "Update these from your Google profile now and then. Leave the rating empty to hide the line. Do not work out an average from the reviews listed below; use the figure Google shows.",
+              fields: [
+                { type: "number", name: "rating", label: "Google rating, e.g. 4.7", description: "Out of 5, exactly as Google shows it." },
+                { type: "number", name: "count", label: "Number of Google reviews", description: "The total Google shows, e.g. 1639." },
+                { type: "string", name: "source", label: "Where the rating is from", options: ["Google", "Booking.com", "Airbnb", "MakeMyTrip", "TripAdvisor"] },
+                text("link", "Link to your listing (optional)", "A full web address starting with https://"),
+                text("asOf", "Date you copied it (optional)", 'e.g. 2026-11-16. Shown as "as of November 2026".')
+              ]
+            },
             {
               type: "object",
               name: "items",

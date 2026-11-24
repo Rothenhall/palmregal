@@ -151,15 +151,6 @@ type HomeHero {
   slides: [HomeHeroSlides]
 }
 
-type HomeArrival {
-  eyebrow: String
-  title: String
-  em: String
-  lede: String
-  ledeEm: String
-  place: String
-}
-
 type HomeSuitesSectionSuitesPhotos {
   src: String
   alt: String
@@ -188,6 +179,7 @@ type HomeSuitesSection {
   em: String
   lede: String
   exploreButton: String
+  walkHint: String
   suites: [HomeSuitesSectionSuites]
   outroEyebrow: String
   outroTitle: String
@@ -233,11 +225,23 @@ type HomeDaySection {
   moments: [HomeDaySectionMoments]
 }
 
+type HomeLocationSectionPhotos {
+  pr: String
+  beach: String
+  bam: String
+  tt: String
+  chilika: String
+  sonpur: String
+  jirang: String
+}
+
 type HomeLocationSection {
   eyebrow: String
   title: String
   em: String
   lede: String
+  photos: HomeLocationSectionPhotos
+  photoCredits: String
 }
 
 type HomeMomentsSectionPhotos {
@@ -253,6 +257,14 @@ type HomeMomentsSection {
   em: String
   lede: String
   photos: [HomeMomentsSectionPhotos]
+}
+
+type HomeTestimonialsOverall {
+  rating: Float
+  count: Float
+  source: String
+  link: String
+  asOf: String
 }
 
 type HomeTestimonialsItems {
@@ -271,6 +283,7 @@ type HomeTestimonials {
   eyebrow: String
   heading: String
   intro: String
+  overall: HomeTestimonialsOverall
   items: [HomeTestimonialsItems]
 }
 
@@ -314,7 +327,6 @@ type Home implements Node & Document {
   buttons: HomeButtons
   nav: HomeNav
   hero: HomeHero
-  arrival: HomeArrival
   suitesSection: HomeSuitesSection
   facilitiesSection: HomeFacilitiesSection
   daySection: HomeDaySection
@@ -417,15 +429,6 @@ input HomeHeroFilter {
   slides: HomeHeroSlidesFilter
 }
 
-input HomeArrivalFilter {
-  eyebrow: StringFilter
-  title: StringFilter
-  em: StringFilter
-  lede: StringFilter
-  ledeEm: StringFilter
-  place: StringFilter
-}
-
 input HomeSuitesSectionSuitesPhotosFilter {
   src: ImageFilter
   alt: StringFilter
@@ -459,6 +462,7 @@ input HomeSuitesSectionFilter {
   em: StringFilter
   lede: StringFilter
   exploreButton: StringFilter
+  walkHint: StringFilter
   suites: HomeSuitesSectionSuitesFilter
   outroEyebrow: StringFilter
   outroTitle: StringFilter
@@ -504,11 +508,23 @@ input HomeDaySectionFilter {
   moments: HomeDaySectionMomentsFilter
 }
 
+input HomeLocationSectionPhotosFilter {
+  pr: ImageFilter
+  beach: ImageFilter
+  bam: ImageFilter
+  tt: ImageFilter
+  chilika: ImageFilter
+  sonpur: ImageFilter
+  jirang: ImageFilter
+}
+
 input HomeLocationSectionFilter {
   eyebrow: StringFilter
   title: StringFilter
   em: StringFilter
   lede: StringFilter
+  photos: HomeLocationSectionPhotosFilter
+  photoCredits: StringFilter
 }
 
 input HomeMomentsSectionPhotosFilter {
@@ -524,6 +540,14 @@ input HomeMomentsSectionFilter {
   em: StringFilter
   lede: StringFilter
   photos: HomeMomentsSectionPhotosFilter
+}
+
+input HomeTestimonialsOverallFilter {
+  rating: NumberFilter
+  count: NumberFilter
+  source: StringFilter
+  link: StringFilter
+  asOf: StringFilter
 }
 
 input HomeTestimonialsItemsFilter {
@@ -542,6 +566,7 @@ input HomeTestimonialsFilter {
   eyebrow: StringFilter
   heading: StringFilter
   intro: StringFilter
+  overall: HomeTestimonialsOverallFilter
   items: HomeTestimonialsItemsFilter
 }
 
@@ -585,7 +610,6 @@ input HomeFilter {
   buttons: HomeButtonsFilter
   nav: HomeNavFilter
   hero: HomeHeroFilter
-  arrival: HomeArrivalFilter
   suitesSection: HomeSuitesSectionFilter
   facilitiesSection: HomeFacilitiesSectionFilter
   daySection: HomeDaySectionFilter
@@ -691,15 +715,6 @@ input HomeHeroMutation {
   slides: [HomeHeroSlidesMutation]
 }
 
-input HomeArrivalMutation {
-  eyebrow: String
-  title: String
-  em: String
-  lede: String
-  ledeEm: String
-  place: String
-}
-
 input HomeSuitesSectionSuitesPhotosMutation {
   src: String
   alt: String
@@ -728,6 +743,7 @@ input HomeSuitesSectionMutation {
   em: String
   lede: String
   exploreButton: String
+  walkHint: String
   suites: [HomeSuitesSectionSuitesMutation]
   outroEyebrow: String
   outroTitle: String
@@ -773,11 +789,23 @@ input HomeDaySectionMutation {
   moments: [HomeDaySectionMomentsMutation]
 }
 
+input HomeLocationSectionPhotosMutation {
+  pr: String
+  beach: String
+  bam: String
+  tt: String
+  chilika: String
+  sonpur: String
+  jirang: String
+}
+
 input HomeLocationSectionMutation {
   eyebrow: String
   title: String
   em: String
   lede: String
+  photos: HomeLocationSectionPhotosMutation
+  photoCredits: String
 }
 
 input HomeMomentsSectionPhotosMutation {
@@ -793,6 +821,14 @@ input HomeMomentsSectionMutation {
   em: String
   lede: String
   photos: [HomeMomentsSectionPhotosMutation]
+}
+
+input HomeTestimonialsOverallMutation {
+  rating: Float
+  count: Float
+  source: String
+  link: String
+  asOf: String
 }
 
 input HomeTestimonialsItemsMutation {
@@ -811,6 +847,7 @@ input HomeTestimonialsMutation {
   eyebrow: String
   heading: String
   intro: String
+  overall: HomeTestimonialsOverallMutation
   items: [HomeTestimonialsItemsMutation]
 }
 
@@ -854,7 +891,6 @@ input HomeMutation {
   buttons: HomeButtonsMutation
   nav: HomeNavMutation
   hero: HomeHeroMutation
-  arrival: HomeArrivalMutation
   suitesSection: HomeSuitesSectionMutation
   facilitiesSection: HomeFacilitiesSectionMutation
   daySection: HomeDaySectionMutation

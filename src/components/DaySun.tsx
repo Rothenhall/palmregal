@@ -10,7 +10,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import type { Edit, Moment } from '@/content/types';
 import { hasMotion } from '@/lib/env';
 import { noEdit } from '@/lib/edit';
-import { grid, order, turned, TILE, type Tile } from '@/lib/tiles';
 import { ImageAccordion } from './ImageAccordion';
 import { Icon } from './Icons';
 
@@ -58,7 +57,6 @@ export function DaySun({ copy, f = noEdit }: { copy: { eyebrow: string; moreLink
   const trig = useRef<ScrollTrigger | null>(null);
   const sky = useRef<HTMLDivElement>(null);
   const rail = useRef<HTMLElement>(null);
-  const stick = useRef<HTMLDivElement>(null);
   const [i, setI] = useState(0);
   /* where the scroll is along the strip of photos, between pictures too, so the photos open and
      close continuously with the scroll instead of switching at a threshold */
@@ -77,14 +75,13 @@ export function DaySun({ copy, f = noEdit }: { copy: { eyebrow: string; moreLink
   const lit = () => [sky.current, rail.current].filter(Boolean) as HTMLElement[];
   useEffect(() => { if (!held) paint(lit(), (i + .5) / N, N); }, [i, held, N]);
 
-  /* measured once the section has its scrolling height, or start and end would be wrong.
-     The last viewport of the section is the way out (below), so the day itself ends one viewport early. */
+  /* measured once the section has its scrolling height, or start and end would be wrong */
   useEffect(() => {
     if (!held) return;
     const el = root.current!, targets = lit();
     paint(targets, 0, N);
     const st = ScrollTrigger.create({
-      trigger: el, start: 'top top', end: () => `bottom-=${innerHeight} bottom`,
+      trigger: el, start: 'top top', end: 'bottom bottom',
       onUpdate: self => {
         paint(targets, self.progress, N);
         const n = Math.min(N - 1, Math.floor(self.progress * N * .999));
@@ -97,57 +94,6 @@ export function DaySun({ copy, f = noEdit }: { copy: { eyebrow: string; moreLink
     ScrollTrigger.refresh();
     return () => { st.kill(); trig.current = null; };
   }, [held, N]);
-
-  /* The way out into the coast map (after lucid's tiles). The map section sits pinned underneath this
-     one's last viewport; while that viewport scrolls, the day's screen is cut away square by square in
-     a fixed random order, through a mask, so the live map shows through. Scrubbed both ways. */
-  useEffect(() => {
-    if (!held) return;
-    const el = root.current!, screen = stick.current!, html = document.documentElement;
-    let tiles: Tile[] = [], rank: number[] = [], sizes = '', places = '';
-    const build = () => {
-      tiles = grid(innerWidth, innerHeight, innerWidth < 760 ? TILE.phone : TILE.desktop);
-      rank = order(tiles.length);
-      sizes = tiles.map(t => `${t.w}px ${t.h}px`).join(',');
-      places = tiles.map(t => `${t.left}px ${t.top}px`).join(',');
-    };
-    const setMask = (image: string) => {
-      const s = screen.style;
-      s.setProperty('mask-image', image); s.setProperty('-webkit-mask-image', image);
-      if (image) {
-        s.setProperty('mask-size', sizes); s.setProperty('-webkit-mask-size', sizes);
-        s.setProperty('mask-position', places); s.setProperty('-webkit-mask-position', places);
-        s.setProperty('mask-repeat', 'no-repeat'); s.setProperty('-webkit-mask-repeat', 'no-repeat');
-      }
-    };
-    let state = '';
-    const cut = (q: number) => {
-      const now = q <= 0 ? 'whole' : q >= 1 ? 'gone' : 'cutting';
-      if (now === 'cutting') {
-        /* each tile is a mask layer: opaque while the day shows there, clear once it has turned */
-        setMask(tiles.map((_, i) => { const a = (1 - turned(q, rank[i], tiles.length)).toFixed(3); return `linear-gradient(rgba(0,0,0,${a}),rgba(0,0,0,${a}))`; }).join(','));
-      } else if (now !== state) setMask('');
-      if (now !== state) {
-        el.classList.toggle('is-through', now === 'gone');
-        /* the transient flag: only while the tiles are actually being cut away */
-        html.classList.toggle('dsun-exiting', now === 'cutting');
-        state = now;
-      }
-    };
-    build();
-    /* `dsun-exit` is a LAYOUT mode, not a "transition running" flag: with it, globals.css makes this
-       section one viewport taller and tucks the coast map up 200svh beneath it, and CoastMap.tsx /
-       Motion.tsx offset their triggers by it. It therefore has to be on from load (whenever the motion
-       version is used), or the page would jump by two screens the moment the exit began. Anything that
-       should only apply during the dissolve itself keys off `dsun-exiting` (set in cut() above). */
-    html.classList.add('dsun-exit');
-    const out = ScrollTrigger.create({
-      trigger: el, start: () => `bottom-=${innerHeight} bottom`, end: 'bottom bottom',
-      onUpdate: self => cut(self.progress), onRefresh: self => { build(); state = ''; cut(self.progress); },
-    });
-    ScrollTrigger.refresh();
-    return () => { out.kill(); setMask(''); el.classList.remove('is-through'); html.classList.remove('dsun-exit', 'dsun-exiting'); };
-  }, [held]);
 
   /* choosing a sliver scrolls to the middle of that moment's stretch */
   const pick = (n: number) => {
@@ -174,7 +120,7 @@ export function DaySun({ copy, f = noEdit }: { copy: { eyebrow: string; moreLink
 
   return (
     <section ref={root} id="gallery" className={'dsun' + (held ? ' held' : '')} data-bg="night" data-moment={i} aria-labelledby="dsun-h">
-      <div className="dsun-stick" ref={stick}>
+      <div className="dsun-stick">
         <div className="dsun-sky" ref={sky} aria-hidden="true" />
         <div className="wrap dsun-grid">
           <div className="dsun-copy">

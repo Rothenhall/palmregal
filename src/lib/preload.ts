@@ -15,12 +15,11 @@ export function contentPhotos(content: SiteContent): string[] {
   return [...out];
 }
 
-/** the photos the first screen needs: the hero's stills (both the laptop and phone versions; the
-    loading screen keeps the ones for this screen) and the first photo of each suite in the overview */
-export function firstScreenPhotos(content: SiteContent): string[] {
-  const out = new Set<string>();
-  const add = (v?: string | null) => { if (v && PHOTO.test(v)) out.add(v); };
-  for (const s of content.hero.slides) { add(s.image); add(s.poster); add(s.posterMobile); }
-  for (const s of content.suitesSection.suites) add(s.photos[0]?.src);
-  return [...out];
+/** the photos split by when the visitor needs them: the opening screen, the coast map, everything else */
+export function contentPhotoGroups(content: SiteContent): { hero: string[]; map: string[]; rest: string[] } {
+  const all = contentPhotos(content);
+  const hero = new Set<string>(), map = new Set<string>();
+  for (const s of content.hero?.slides ?? []) for (const v of [s.image, s.poster, s.posterMobile]) if (v && all.includes(v)) hero.add(v);
+  for (const v of Object.values(content.locationSection?.photos ?? {})) if (v && all.includes(v)) map.add(v);
+  return { hero: [...hero], map: [...map].filter(s => !hero.has(s)), rest: all.filter(s => !hero.has(s) && !map.has(s)) };
 }

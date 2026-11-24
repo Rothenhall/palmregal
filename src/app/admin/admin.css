@@ -53,7 +53,7 @@
 .adm-shell { min-height: 100dvh; display: grid; grid-template-columns: var(--side-w) minmax(0, 1fr) }
 .adm-side { position: sticky; top: 0; height: 100dvh; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: var(--s4) var(--s3); gap: var(--s5); overflow-y: auto }
 .adm-brand { display: flex; align-items: center; gap: 10px; padding: 0 var(--s2) }
-.adm-mark { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; background: var(--teal); color: #fff; font: 500 12px/1 "Fraunces", Georgia, serif; letter-spacing: .04em }
+.adm-mark { display: block; flex: none; width: 34px; height: 34px; object-fit: contain }
 .adm-nav { display: flex; flex-direction: column; gap: var(--s4); flex: 1 }
 .adm-nav-group { display: flex; flex-direction: column; gap: 2px }
 .adm-nav-label { padding: 0 var(--s2) var(--s1); font-size: 12px; font-weight: 600; color: var(--text-3); letter-spacing: .02em }

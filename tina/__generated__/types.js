@@ -67,15 +67,6 @@ export const HomePartsFragmentDoc = gql`
       }
     }
   }
-  arrival {
-    __typename
-    eyebrow
-    title
-    em
-    lede
-    ledeEm
-    place
-  }
   suitesSection {
     __typename
     eyebrow
@@ -83,6 +74,7 @@ export const HomePartsFragmentDoc = gql`
     em
     lede
     exploreButton
+    walkHint
     suites {
       __typename
       name
@@ -149,6 +141,17 @@ export const HomePartsFragmentDoc = gql`
     title
     em
     lede
+    photos {
+      __typename
+      pr
+      beach
+      bam
+      tt
+      chilika
+      sonpur
+      jirang
+    }
+    photoCredits
   }
   momentsSection {
     __typename
@@ -170,6 +173,14 @@ export const HomePartsFragmentDoc = gql`
     eyebrow
     heading
     intro
+    overall {
+      __typename
+      rating
+      count
+      source
+      link
+      asOf
+    }
     items {
       __typename
       quote

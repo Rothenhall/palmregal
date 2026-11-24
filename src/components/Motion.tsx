@@ -17,8 +17,7 @@ const COLORS: Record<string, string> = { dusk: '#0C252C', night: '#102E37' };
 
 /* held sections fill the screen from their own top; everything else clears the header */
 const offsetFor = (t: Element) =>
-  t.matches('.location-map') && document.documentElement.classList.contains('dsun-exit') ? innerHeight
-  : t.matches('.location-map, .dsun.held, .aerial-hero') ? 0 : -70;
+  t.matches('.location-map, .dsun.held, .aerial-hero') ? 0 : -70;
 
 export function Motion() {
   const path = usePathname();

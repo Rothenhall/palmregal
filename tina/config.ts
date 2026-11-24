@@ -283,6 +283,17 @@ export default defineConfig({
             text('heading', 'Heading'),
             long('intro', 'Introduction (optional)'),
             {
+              type: 'object', name: 'overall', label: 'Overall rating shown above the reviews',
+              description: 'Update these from your Google profile now and then. Leave the rating empty to hide the line. Do not work out an average from the reviews listed below; use the figure Google shows.',
+              fields: [
+                { type: 'number', name: 'rating', label: 'Google rating, e.g. 4.7', description: 'Out of 5, exactly as Google shows it.' },
+                { type: 'number', name: 'count', label: 'Number of Google reviews', description: 'The total Google shows, e.g. 1639.' },
+                { type: 'string', name: 'source', label: 'Where the rating is from', options: ['Google', 'Booking.com', 'Airbnb', 'MakeMyTrip', 'TripAdvisor'] },
+                text('link', 'Link to your listing (optional)', 'A full web address starting with https://'),
+                text('asOf', 'Date you copied it (optional)', 'e.g. 2026-11-16. Shown as "as of November 2026".'),
+              ],
+            } as TinaField,
+            {
               type: 'object', name: 'items', label: 'Testimonials', list: true,
               description: 'One entry per guest. Use the guest words as they wrote them.',
               ui: { itemProps: (item: Record<string, unknown>) => word(item, 'name', 'New testimonial') },

@@ -78,6 +78,8 @@ a.tm-src:hover { opacity: 1; text-decoration: underline; text-underline-offset: 
 .tm-score-n { font: 400 2.1rem/1 var(--display); color: var(--on-dark) }
 .tm-score-txt { display: grid; gap: 3px; text-align: left }
 .tm-score-txt small { font-size: .74rem; letter-spacing: .02em; color: var(--muted) }
+.tm-score-txt small a { color: inherit; text-decoration: underline; text-underline-offset: 3px }
+.tm-score { max-width: 100%; border-radius: 28px }
 .tm-score-stars i { font-style: normal; font-size: 1rem; letter-spacing: .14em; background: linear-gradient(90deg, var(--sun-2) var(--fill), rgba(238, 245, 242, .2) var(--fill)); -webkit-background-clip: text; background-clip: text; color: transparent }
 
 /* cards: depth, a big soft quotation mark, a spotlight that follows the pointer, a gentle tilt */

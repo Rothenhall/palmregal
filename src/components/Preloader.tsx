@@ -13,7 +13,11 @@
    - Reduced motion: no curtain, a short fade. */
 import { useEffect, useRef, useState } from 'react';
 
-const MIN_MS = 900, MAX_MS = 4000, FIRST = 6;
+const MIN_MS = 900, MAX_MS = 6000;
+/* the coast map's photos get this long to arrive (fetched and decoded); after that the page carries on and they finish behind it */
+const MAP_CAP_MS = 3000;
+/* decoded pictures are kept alive for the page's lifetime, so the browser cannot drop them before the map shows them */
+const kept: HTMLImageElement[] = [];
 
 /* one task per photo, plus the fonts and the hero's first film */
 function photo(src: string, low = false) {
@@ -36,30 +40,7 @@ function heroFilm() {
   });
 }
 
-/* the rest of the page's photos, after the page is shown: a few at a time, when the browser is idle,
-   at low priority, so they are cached (and decoded) before the scroll reaches them without competing
-   with the first screen. Skipped when the visitor asked to save data. */
-function backfill(list: string[]) {
-  const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
-  if (saveData || !list.length) return () => {};
-  const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number; cancelIdleCallback?: (h: number) => void };
-  let at = 0, handle = 0, stopped = false;
-  const next = () => {
-    if (stopped || at >= list.length) return;
-    handle = w.requestIdleCallback ? w.requestIdleCallback(batch, { timeout: 3000 }) : window.setTimeout(batch, 400);
-  };
-  function batch() {
-    if (stopped) return;
-    const part = list.slice(at, at + 3); at += part.length;
-    Promise.all(part.map(src => photo(src, true))).then(next);
-  }
-  next();
-  return () => { stopped = true; if (w.cancelIdleCallback) w.cancelIdleCallback(handle); clearTimeout(handle); };
-}
-
-/** `photos`: what the first screen needs (the loading screen waits for the first few of them);
-    `later`: every other photo on the page, loaded in the background once the page is shown */
-export function Preloader({ photos, later = [], name, tagline }: { photos: string[]; later?: string[]; name: string; tagline: string }) {
+export function Preloader({ groups, name, tagline }: { groups: { hero: string[]; map: string[]; rest: string[] }; name: string; tagline: string }) {
   const [state, setState] = useState<'loading' | 'leaving' | 'gone'>('loading');
   const count = useRef<HTMLSpanElement>(null), line = useRef<HTMLSpanElement>(null);
 
@@ -71,13 +52,19 @@ export function Preloader({ photos, later = [], name, tagline }: { photos: strin
 
     /* phones skip the laptop-only versions and the other way round */
     const phone = matchMedia('(max-width: 760px)').matches;
-    const fits = (src: string) => (phone ? !/-poster\.webp$/.test(src) : !/-mobile\./.test(src));
-    const first = photos.filter(fits), list = first.slice(0, FIRST);
-    const rest = [...first.slice(FIRST), ...later.filter(src => fits(src) && !photos.includes(src))];
-    const tasks: Promise<void>[] = [document.fonts?.ready.then(() => {}) ?? Promise.resolve(), heroFilm(), ...list.map(src => photo(src))];
-    let done = 0, shown = 0, frame = 0, alive = true, finished = false, stopBackfill = () => {};
-    const total = tasks.length, start = performance.now();
-    tasks.forEach(t => t.then(() => { done++; }));
+    const keep = (list: string[]) => list.filter(src => (phone ? !/-poster\.webp$/.test(src) : !/-mobile\./.test(src)));
+    const hero = keep(groups.hero), map = keep(groups.map), rest = keep(groups.rest);
+    let done = 0, shown = 0, frame = 0, alive = true, finished = false;
+    const total = 2 + hero.length + map.length, start = performance.now();
+    const track = (t: Promise<void>) => { t.then(() => { done++; }); return t; };
+    /* the opening screen first (fonts, first film, its photos), then the map's photos and the rest side by side,
+       so the hero never queues behind something far down the page */
+    const capped = (p: Promise<void>) => Promise.race([p, new Promise<void>(r => setTimeout(r, MAP_CAP_MS))]);
+    Promise.all([track(document.fonts?.ready.then(() => {}) ?? Promise.resolve()), track(heroFilm()), ...hero.map(s => track(photo(s)))]).then(() => {
+      if (!alive) return;
+      map.forEach(s => track(capped(photo(s))));
+      rest.forEach(s => { void photo(s); }); // fetched and decoded behind the page; not waited for
+    });
 
     const finish = () => {
       if (finished) return; finished = true;
@@ -88,8 +75,6 @@ export function Preloader({ photos, later = [], name, tagline }: { photos: strin
       dispatchEvent(new Event('pr:ready'));
       const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
       setTimeout(() => { if (alive) setState('gone'); html.classList.remove('pl-arrive'); }, still ? 450 : 1500);
-      /* the rest of the photos, once the curtain is up */
-      setTimeout(() => { if (alive) stopBackfill = backfill(rest); }, still ? 450 : 1500);
     };
     const tick = () => {
       if (!alive) return;
@@ -106,7 +91,7 @@ export function Preloader({ photos, later = [], name, tagline }: { photos: strin
     /* the progress runs on animation frames, which a browser pauses when the tab or window is not being
        drawn; a plain timer makes sure the page is always let go shortly after MAX_MS anyway */
     const hard = window.setTimeout(() => { if (alive) finish(); }, MAX_MS + 500);
-    return () => { alive = false; cancelAnimationFrame(frame); clearTimeout(hard); stopBackfill(); html.classList.remove('pl-on', 'pl-arrive'); };
+    return () => { alive = false; cancelAnimationFrame(frame); clearTimeout(hard); html.classList.remove('pl-on', 'pl-arrive'); };
     // the photo list is fixed for the page's lifetime
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
