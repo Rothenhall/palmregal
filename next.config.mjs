@@ -5,6 +5,10 @@ const nextConfig = {
   reactStrictMode: true,
   // Lets unmatched URLs render the branded 404 while the site and /admin keep separate root layouts.
   experimental: { globalNotFound: true },
+  // /menu opens the Shack restaurant menu (a PDF in public/; replace that file to update the menu).
+  async redirects() {
+    return [{ source: '/menu', destination: '/shack-menu.pdf', permanent: false }];
+  },
   // The Edit site editor (Tina) is a built single page in public/admin/editor; serve its index at /admin/editor/.
   // src/middleware.ts guards /admin/*, so it is behind the admin sign-in like everything else there.
   async rewrites() {
